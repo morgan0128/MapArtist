@@ -59,6 +59,10 @@
         <None Include="MapArtist/**"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="MapArtist\localization\eng\" />
+    </ItemGroup>
+
     <Target Name="CheckDependencyPaths">
         <Error
                 Text=" Slay the Spire 2 data not found at path '$(Sts2DataDir)'"
