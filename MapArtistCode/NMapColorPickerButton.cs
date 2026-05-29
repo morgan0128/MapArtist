@@ -6,6 +6,7 @@ using Godot;
 using Godot.Bridge;
 using Godot.NativeInterop;
 using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
@@ -36,6 +37,8 @@ public partial class NMapColorPickerButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
 
+    // private ColorPicker _colorPickerGUI;
+
     private NMapColorPickerButton()
     {
         Name = "ColorPickerButton";
@@ -46,6 +49,9 @@ public partial class NMapColorPickerButton : NButton
 
         _icon = InitIcon();
         this.AddChild(_icon);
+        
+        // _colorPickerGUI =  InitColorButton();
+        // this.AddChild(_colorPickerGUI);
 
         _drawingToolHolder = (Control)ResourceLoader.Load<PackedScene>("res://scenes/screens/map/map_screen.tscn")
             .Instantiate().GetNode<HBoxContainer>("DrawingTools/HBoxContainer");
@@ -76,6 +82,39 @@ public partial class NMapColorPickerButton : NButton
         return icon;
     }
 
+    // private static ColorPicker InitColorButton()
+    // {
+    //     var gui = new ColorPicker();
+    //     gui.GlobalPosition = new Vector2(0f, 0f);
+    //     gui.SetVisible(true);
+        // gui.ShowBehindParent(true);
+        // gui.SetMouseFilter(MouseFilterEnum.Ignore);
+        
+
+        
+        // test
+        // var icon = (TextureRect)ResourceLoader.Load<PackedScene>("res://scenes/screens/map/map_screen.tscn").Instantiate().
+            // GetNode<HBoxContainer>("DrawingTools/HBoxContainer").GetNode<NButton>("ClearButton").GetNode<TextureRect>("Icon");
+        // gui.SelfModulate = icon.SelfModulate;
+        // gui.SetMaterial(icon.GetMaterial());
+        // gui.SetUseParentMaterial(icon.GetUseParentMaterial());
+        // gui.LayoutMode = icon.LayoutMode;
+        // gui.AnchorsPreset = icon.AnchorsPreset;
+        // gui.AnchorRight = icon.AnchorRight;
+        // gui.AnchorBottom = icon.AnchorBottom;
+        // gui.GrowHorizontal = icon.GrowHorizontal;
+        // gui.GrowVertical = icon.GrowVertical;
+        // gui.Scale =  new Vector2(icon.Scale.X, icon.Scale.Y);
+        // gui.PivotOffset = new Vector2(icon.PivotOffset.X, icon.PivotOffset.Y);
+        // gui.MouseFilter = icon.MouseFilter;
+        // // gui.SetTexture(icon.GetTexture());
+        // gui.SetUseParentMaterial(icon.GetUseParentMaterial());
+        // gui.ExpandMode = icon.ExpandMode;
+        // gui.StretchMode = icon.StretchMode;
+
+    //     return gui;
+    // }
+
     public override void _Ready()
     {
 
@@ -85,6 +124,7 @@ public partial class NMapColorPickerButton : NButton
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.title"), locDesc);
 
         ConnectSignals();
+        // AddUserSignal("backing_DisplayGUI");
     }
     
     protected override void ConnectSignals()
@@ -128,7 +168,11 @@ public partial class NMapColorPickerButton : NButton
     protected override void OnPress()
     {
         base.OnPress();
+
         // display the color picker here
+        // EmitSignal("backing_DisplayGUI");
+        NColorPickerGUI.hideGUI();
+        
     }
 
     protected override void OnFocus()
