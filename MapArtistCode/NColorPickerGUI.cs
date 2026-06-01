@@ -1,3 +1,5 @@
+using MegaCrit.Sts2.Core.Entities.Players;
+
 namespace MapArtist.MapArtistCode;
 
 using System.ComponentModel;
@@ -35,33 +37,37 @@ public partial class NColorPickerGUI : ColorPicker
         // CustomMinimumSize = new Vector2(68, 60);
         // LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
-        Visible = true;
+        Visible = false;
         instance = this;
     }
 
     public static void displayGUI()
     {
-        var colorPickerGUI = ResourceLoader.Load<PackedScene>("res://scenes/screens/map/map_screen.tscn").Instantiate().
-            GetNode<NColorPickerGUI>("ColorPickerGUI");
-        
-        
-        if (!colorPickerGUI.IsVisible())
+        if (!instance.IsVisible())
         {
-            colorPickerGUI.Visible = true;
+            instance.Visible = true;
         }
     }
     
     public static void hideGUI()
     {
-        var colorPickerGUI = ResourceLoader.Load<PackedScene>("res://scenes/screens/map/map_screen.tscn").Instantiate().
-            GetNode<NColorPickerGUI>("ColorPickerGUI");
-        
-        if (colorPickerGUI.IsVisible())
+        if (instance.IsVisible())
         {
-            colorPickerGUI.Visible = false;
+            instance.Visible = false;
         }
     }
-
+    
+    public static void toggleGUI(Player localPlayer)
+    {
+        if (instance.IsVisible())
+        {
+            // instance._selectedColor = instance.Color;
+            MapArtistDrawingColors.Set(localPlayer, instance.Color);
+        }
+        instance.Visible = !instance.Visible;
+        
+    }
+    
     // public override void _Ready()
     // {
     //     // Initialize Signal events
