@@ -22,11 +22,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Settings;
 public partial class NColorPickerGUI : ColorPicker
 {
     
-    // [Signal]
-    // public delegate void DisplayGUIEventHandler();
-    
-    // [Signal]
-    // public delegate void HideGUIEventHandler();
+    private static readonly StringName HoverTipImagePath = "res://images/ui/hover_tip.png";
 
     private static NColorPickerGUI instance;
     
@@ -37,8 +33,46 @@ public partial class NColorPickerGUI : ColorPicker
         // CustomMinimumSize = new Vector2(68, 60);
         // LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
+        GlobalPosition = new Vector2(200f, 200f);
         Visible = false;
         instance = this;
+
+
+        // var r = new Resource();
+        // r.ResourcePath = HoverTipImagePath;
+        // r.ResourceName = "bg";
+        // r.ResourceLocalToScene = true;
+
+
+
+        // ------ test ------
+        
+        this.TextureRepeat = TextureRepeatEnum.Disabled;
+        this.ClipChildren = ClipChildrenMode.AndDraw;
+        this.ClipContents = true;
+        
+        var sbt = new StyleBoxTexture();
+        var t = new Theme();
+
+        sbt.Texture = PreloadManager.Cache.GetTexture2D((string) HoverTipImagePath);
+        t.SetStylebox("color_picker_background", "background", sbt);
+        this.AddThemeStyleboxOverride("color_picker_background", sbt);
+        this.AddThemeIconOverride("color_picker_icon", sbt.Texture);
+        this.Theme = t;
+        
+        // ------------
+        
+        InitRestrictiveDefaultSettings();
+    }
+
+    // For a cleaner gui with fewer levers. Allow this to be toggleable in mod config, but set this as the default.
+    private void InitRestrictiveDefaultSettings()
+    {
+        CanAddSwatches = false;
+        ColorModesVisible = false;
+        EditAlpha = false;
+        EditIntensity = false;
+        PresetsVisible = false;
     }
 
     public static void displayGUI()
@@ -75,7 +109,7 @@ public partial class NColorPickerGUI : ColorPicker
         
         // initialize color picker gui node
         var gui = new NColorPickerGUI();
-        // gui.SetGlobalPosition(new Vector2(50f, 50f));
+        // gui.SetGlobalPosition(new Vector2(200f, 200f));
         
         // add this node to the drawing tools container
         // parent.AddChild(gui);
