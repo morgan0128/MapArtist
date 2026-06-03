@@ -7,11 +7,13 @@ using Godot;
 using Godot.Bridge;
 using Godot.NativeInterop;
 using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Pooling;
@@ -37,7 +39,7 @@ public partial class NMapColorPickerButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
 
-    private Player _localPlayer;
+    private Player? _localPlayer;
     
     private NMapColorPickerButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
     {
@@ -55,7 +57,6 @@ public partial class NMapColorPickerButton : NButton
         _icon = InitIcon(neighborIcon);
         this.AddChild(_icon);
 
-        _localPlayer = GetLocalPlayer();
     }
 
     private static TextureRect InitIcon(TextureRect toCopy)
@@ -110,11 +111,54 @@ public partial class NMapColorPickerButton : NButton
         return button;
     });
 
-    private Player GetLocalPlayer()
+    private Player? FetchLocalPlayer()
     {
-        LocalContext.NetId = RunManager.Instance.NetService.NetId;
-        return LocalContext.GetMe(_mapScene.PlayerVoteDictionary.Keys);
+        // if (_localPlayer != null)
+        //     return _localPlayer;
+        // var netService = RunManager.Instance.NetService;
+        // var singleService = RunManager.Instance.IsSinglePlayerOrFakeMultiplayer;
+        //
+        //
+        // LocalContext.NetId = netService.NetId;
+        //
+        // _localPlayer = _mapScene.PlayerVoteDictionary.Keys.FirstOrDefault((player) => player.NetId == netService.NetId);
+        
+        if (_localPlayer == null)
+        {
+            if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+            {
+                // not intended use, however most straightforward approach, good for now
+                _localPlayer = RunManager.Instance.DebugOnlyGetState().Players.First();
+                return  _localPlayer;
+            }
+            else
+            {
+                // multiplayer not yet implemented
+                return null;
+            }
+        }
+        else
+        {
+            return _localPlayer;
+        }
     }
+    
+    // private void SetLocalPlayer(Player player)
+    // {
+    //     if (_localPlayer != null)
+    //     {
+    //         return;
+    //     }
+    //     
+    //     // var netService = RunManager.Instance.NetService;
+    //     // var singleService = RunManager.Instance.IsSinglePlayerOrFakeMultiplayer;
+    //     
+    //     
+    //     // LocalContext.NetId = netService.NetId;
+    //
+    //     // _localPlayer = _mapScene.PlayerVoteDictionary.Keys.FirstOrDefault((player) => player.NetId == netService.NetId);
+    //     _localPlayer = player;
+    // }
 
     public override void _Ready()
     {
@@ -143,7 +187,7 @@ public partial class NMapColorPickerButton : NButton
 
         // display the color picker here
         // EmitSignal("backing_DisplayGUI");
-        NColorPickerGUI.toggleGUI(_localPlayer);
+        NColorPickerGUI.toggleGUI(FetchLocalPlayer());
     }
 
     protected override void OnFocus()

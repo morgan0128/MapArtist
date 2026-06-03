@@ -11,6 +11,7 @@ public static class MapArtistDrawingColorPatch
 {
     private static void Postfix(Player player, bool isErasing, Line2D __result)
     {
+        // NMapColorPickerButton.SetOwner __result.GetOwner();
         if (isErasing || __result == null)
             return;
 

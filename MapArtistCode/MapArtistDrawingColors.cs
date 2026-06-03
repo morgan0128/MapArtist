@@ -7,8 +7,14 @@ public static class MapArtistDrawingColors
 {
     private static readonly Dictionary<ulong, Color> ColorsByPlayer = new();
 
-    public static void Set(Player player, Color color)
+    public static void Set(Player? player, Color color)
     {
+        if (player == null)
+        {
+            GD.PushWarning("MapArtist: tried to set a map drawing color before the local player was available.");
+            return;
+        }
+
         ColorsByPlayer[player.NetId] = color;
     }
 

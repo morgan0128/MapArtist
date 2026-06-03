@@ -57,7 +57,7 @@ public partial class NColorPickerGUI : ColorPicker
         }
     }
     
-    public static void toggleGUI(Player localPlayer)
+    public static void toggleGUI(Player? localPlayer)
     {
         if (instance.IsVisible())
         {
@@ -67,14 +67,6 @@ public partial class NColorPickerGUI : ColorPicker
         instance.Visible = !instance.Visible;
         
     }
-    
-    // public override void _Ready()
-    // {
-    //     // Initialize Signal events
-    //     // DisplayGUI += () => Visible = true;
-    //     // HideGUI += () => Visible = false;
-    //     // NMapColorPickerButton colorPickerButton = GetNode<NMapColorPickerButton>("ColorPickerButton");
-    // }
     
     public static readonly AddedNode<NMapScreen, NColorPickerGUI> Map = new((mapScreen) =>
     {
