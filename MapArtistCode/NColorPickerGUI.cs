@@ -47,17 +47,25 @@ public partial class NColorPickerGUI : ColorPicker
 
         // ------ test ------
         
-        this.TextureRepeat = TextureRepeatEnum.Disabled;
-        this.ClipChildren = ClipChildrenMode.AndDraw;
-        this.ClipContents = true;
-        
+        // this.TextureRepeat = TextureRepeatEnum.Disabled;
+        // this.ClipChildren = ClipChildrenMode.AndDraw;
+        // this.ClipContents = true;
+
         var sbt = new StyleBoxTexture();
+        sbt.AxisStretchHorizontal = StyleBoxTexture.AxisStretchMode.Stretch;
+        sbt.AxisStretchVertical = StyleBoxTexture.AxisStretchMode.Stretch;
+        sbt.DrawCenter = true;
+        sbt.RegionRect = new Rect2(0, 0, 0, 0);
+        sbt.Texture = PreloadManager.Cache.GetTexture2D((string) HoverTipImagePath);
+        sbt.SetName("color_picker_sbt");
+        
         var t = new Theme();
 
-        sbt.Texture = PreloadManager.Cache.GetTexture2D((string) HoverTipImagePath);
-        t.SetStylebox("color_picker_background", "background", sbt);
-        this.AddThemeStyleboxOverride("color_picker_background", sbt);
-        this.AddThemeIconOverride("color_picker_icon", sbt.Texture);
+        t.AddType("color_picker_theme");
+
+        t.SetStylebox("color_picker_bg", "color_picker_theme", sbt);
+        // this.AddThemeStyleboxOverride("color_picker_background", sbt);
+        // this.AddThemeIconOverride("color_picker_icon", sbt.Texture);
         this.Theme = t;
         
         // ------------
@@ -73,6 +81,10 @@ public partial class NColorPickerGUI : ColorPicker
         EditAlpha = false;
         EditIntensity = false;
         PresetsVisible = false;
+        SlidersVisible = false;
+        PresetsVisible = false;
+        SamplerVisible = false;
+        Alignment = AlignmentMode.Begin;
     }
 
     public static void displayGUI()
