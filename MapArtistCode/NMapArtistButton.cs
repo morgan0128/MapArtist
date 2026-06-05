@@ -23,8 +23,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-[ScriptPath("res://MapArtistCode/NMapColorPickerButton.cs")]
-public partial class NMapColorPickerButton : NButton
+[ScriptPath("res://MapArtistCode/NMapArtistButton.cs")]
+public partial class NMapArtistButton : NButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -41,7 +41,7 @@ public partial class NMapColorPickerButton : NButton
 
     private Player? _localPlayer;
     
-    private NMapColorPickerButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
+    private NMapArtistButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
     {
         Name = "ColorPickerButton";
         UniqueNameInOwner = true;
@@ -82,7 +82,7 @@ public partial class NMapColorPickerButton : NButton
         return icon;
     }
     
-    public static readonly AddedNode<NMapScreen, NMapColorPickerButton> Map = new((mapScreen) =>
+    public static readonly AddedNode<NMapScreen, NMapArtistButton> Map = new((mapScreen) =>
     {
         // grab drawing tools display container node
         var parent = mapScreen.GetNode<HBoxContainer>("DrawingTools/HBoxContainer");
@@ -91,7 +91,7 @@ public partial class NMapColorPickerButton : NButton
         var clearButton = (NButton)parent.GetNode("ClearButton");
         
         // initialize color picker button
-        var button = new NMapColorPickerButton(mapScreen, parent, clearButton);
+        var button = new NMapArtistButton(mapScreen, parent, clearButton);
         
         // add this node to the drawing tools container
         parent.AddChild(button);
@@ -125,17 +125,17 @@ public partial class NMapColorPickerButton : NButton
         
         if (_localPlayer == null)
         {
-            if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-            {
+            // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+            // {
                 // not intended use, however most straightforward approach, good for now
                 _localPlayer = RunManager.Instance.DebugOnlyGetState().Players.First();
                 return  _localPlayer;
-            }
-            else
-            {
+            // }
+            // else
+            // {
                 // multiplayer not yet implemented
-                return null;
-            }
+                // return null;
+            // }
         }
         else
         {
@@ -187,7 +187,7 @@ public partial class NMapColorPickerButton : NButton
 
         // display the color picker here
         // EmitSignal("backing_DisplayGUI");
-        NColorPickerGUI.toggleGUI(FetchLocalPlayer());
+        NMapArtistGUI.toggleGUI(FetchLocalPlayer());
     }
 
     protected override void OnFocus()
