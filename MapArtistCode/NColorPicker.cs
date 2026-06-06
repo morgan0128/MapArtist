@@ -1,37 +1,21 @@
-using MegaCrit.Sts2.Core.Entities.Players;
-
 namespace MapArtist.MapArtistCode;
 
-using System.ComponentModel;
-using BaseLib.Abstracts;
-using BaseLib.Patches.Localization;
-using BaseLib.Utils;
 using Godot;
-using Godot.Bridge;
-using Godot.NativeInterop;
-using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
-using MegaCrit.Sts2.Core.Nodes.HoverTips;
-using MegaCrit.Sts2.Core.Nodes.Pooling;
-using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Nodes.Screens.Settings;
 
 [ScriptPath("res://MapArtistCode/NColorPicker.cs")]
 public partial class NColorPicker : ColorPicker
 {
     
-    private static readonly StringName HoverTipImagePath = "res://images/ui/hover_tip.png";
+    // private static readonly StringName HoverTipImagePath = "res://images/ui/hover_tip.png";
 
-    private static NColorPicker instance;
+    // public static NColorPicker Instance { get; } = new NColorPicker();
 
-    public static NColorPicker Instance()
-    {
-        return instance;
-    }
+    // public static NColorPicker? Instance()
+    // {
+    //     return instance;
+    // }
     
-    private NColorPicker()
+    public NColorPicker()
     {
         Name = "NColorPicker";
         UniqueNameInOwner = true;
@@ -39,7 +23,7 @@ public partial class NColorPicker : ColorPicker
         FocusMode = FocusModeEnum.All;
         GlobalPosition = new Vector2(200f, 200f);
         // Visible = false;
-        instance = this;
+        // instance = this;
         
         InitRestrictiveDefaultSettings();
     }

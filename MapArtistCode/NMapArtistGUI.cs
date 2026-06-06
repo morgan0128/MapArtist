@@ -7,26 +7,40 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
 namespace MapArtist.MapArtistCode;
 
+[ScriptPath("res://MapArtistCode/NMapArtistGUI.cs")]
 public partial class NMapArtistGUI : Control
 {
     
-    private static NMapArtistGUI instance;
-
-    public static NMapArtistGUI Instance()
-    {
-        return instance;
-    }
+    private NColorPicker _colorPicker;
+    
+    // public static NMapArtistGUI Instance { get; } = new NMapArtistGUI();
+    // public static NMapArtistGUI? Instance()
+    // {
+    //     return instance;
+    // }
     
    private NMapArtistGUI()
    {
       Name = "NMapArtistGUI";
       UniqueNameInOwner = true;
       Visible = false;
+      CustomMinimumSize = new Vector2(1000.0f, 1000.0f);
+      // instance = this;
+      var vb =  InitVbContainer();
+      var hb =  InitHBoxContainer();
+      var button1 =  InitGeneric_NButton();
+      // var button2 =  InitGeneric_NButton();
+      _colorPicker = new NColorPicker();
+
+      this.AddChild(vb);
+      vb.AddChild(_colorPicker);
+      vb.AddChild(hb);
+      hb.AddChild(button1);
    }
 
-   private static VBoxContainer InitVBContainer()
+   private static VBoxContainer InitVbContainer()
    {
-      VBoxContainer vbc = new VBoxContainer();
+      var vbc = new VBoxContainer();
       vbc.Name = "VBC_MapArtistGUI";
       vbc.UniqueNameInOwner = true;
       vbc.LayoutMode = 2;
@@ -37,7 +51,7 @@ public partial class NMapArtistGUI : Control
 
    private static HBoxContainer InitHBoxContainer()
    {
-      HBoxContainer hbc = new HBoxContainer();
+      var hbc = new HBoxContainer();
       hbc.Name = "HBC_MapArtistGUI";
       hbc.UniqueNameInOwner = true;
       hbc.SizeFlagsHorizontal = SizeFlags.ShrinkCenter;
@@ -57,43 +71,45 @@ public partial class NMapArtistGUI : Control
    {
       var gui = new NMapArtistGUI();
       
-      var vb =  InitVBContainer();
-      var hb =  InitHBoxContainer();
-      var button1 =  InitGeneric_NButton();
-      // var button2 =  InitGeneric_NButton();
-      var colorPicker = NColorPicker.Instance();
-
-      gui.AddChild(vb);
-      vb.AddChild(colorPicker);
-      vb.AddChild(hb);
-      hb.AddChild(button1);
+      // var vb =  InitVbContainer();
+      // var hb =  InitHBoxContainer();
+      // var button1 =  InitGeneric_NButton();
+      // // var button2 =  InitGeneric_NButton();
+      // var colorPicker = NColorPicker.Instance;
+      //
+      // gui.AddChild(vb);
+      // vb.AddChild(colorPicker);
+      // vb.AddChild(hb);
+      // hb.AddChild(button1);
+      
+      mapScreen.AddChild(gui);
       
       return gui;
    });
    
-   public static void displayGUI()
+   private void DisplayGui()
    {
-       if (!instance.IsVisible())
+       if (!this.IsVisible())
        {
-           instance.Visible = true;
+           this.Visible = true;
        }
    }
    
-   public static void hideGUI()
+   private void HideGui()
    {
-       if (instance.IsVisible())
+       if (this.IsVisible())
        {
-           instance.Visible = false;
+           this.Visible = false;
        }
    }
    
-   public static void toggleGUI(Player? localPlayer)
+   public void ToggleGui(Player? localPlayer)
    {
-       if (instance.IsVisible())
+       if (this.IsVisible())
        {
-           MapArtistDrawingColors.Set(localPlayer, NColorPicker.Instance().Color);
+           MapArtistDrawingColors.Set(localPlayer, _colorPicker.Color);
        }
-       instance.Visible = !instance.Visible;
+       this.Visible = !this.Visible;
        
    }
 }

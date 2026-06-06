@@ -1,24 +1,13 @@
-using System.ComponentModel;
-using System.Reflection;
-using BaseLib.Abstracts;
-using BaseLib.Patches.Localization;
+using BaseLib;
 using BaseLib.Utils;
 using Godot;
-using Godot.Bridge;
-using Godot.NativeInterop;
 using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
-using MegaCrit.Sts2.Core.Nodes.Pooling;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Nodes.Screens.Settings;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
@@ -30,14 +19,15 @@ public partial class NMapArtistButton : NButton
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
     private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
     private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
-    private readonly NMapScreen _mapScene;
-    private readonly NButton _neighborButton;
-    private Control _drawingToolHolder;
-    private TextureRect _icon;
-    private HoverTip _hoverTip;
-    private Tween? _tween;
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
+    
+    private readonly NMapScreen? _mapScene;
+    private readonly NButton? _neighborButton;
+    private Control? _drawingToolHolder;
+    private TextureRect? _icon;
+    private HoverTip _hoverTip;
+    private Tween? _tween;
 
     private Player? _localPlayer;
     
@@ -56,6 +46,10 @@ public partial class NMapArtistButton : NButton
         var neighborIcon = neighbor.GetNode<TextureRect>("Icon");
         _icon = InitIcon(neighborIcon);
         this.AddChild(_icon);
+    }
+
+    private NMapArtistButton()
+    {
 
     }
 
@@ -80,6 +74,16 @@ public partial class NMapArtistButton : NButton
         icon.StretchMode = toCopy.StretchMode;
         
         return icon;
+    }
+
+    private bool CheckIsUninitialized()
+    {
+        return _mapScene != null && _neighborButton != null && _drawingToolHolder != null && _icon != null && _tween != null;
+    }
+
+    private static void PrintUninitializedError()
+    {
+        BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistButton. Use the parameterized constructor.");
     }
     
     public static readonly AddedNode<NMapScreen, NMapArtistButton> Map = new((mapScreen) =>
@@ -113,56 +117,34 @@ public partial class NMapArtistButton : NButton
 
     private Player? FetchLocalPlayer()
     {
-        // if (_localPlayer != null)
-        //     return _localPlayer;
-        // var netService = RunManager.Instance.NetService;
-        // var singleService = RunManager.Instance.IsSinglePlayerOrFakeMultiplayer;
-        //
-        //
-        // LocalContext.NetId = netService.NetId;
-        //
-        // _localPlayer = _mapScene.PlayerVoteDictionary.Keys.FirstOrDefault((player) => player.NetId == netService.NetId);
+        // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+        // {
+            if (_localPlayer != null)
+            {
+                return _localPlayer;
+            }
+
+            var currState = RunManager.Instance.DebugOnlyGetState();
+            if (currState == null)
+            {
+                BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
+                return null;
+            }
+
+            _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+            return  _localPlayer;
+
+            // }
+        // else
+        // {
+        //    // not yet implemented
+            // return null;
+        // }
         
-        if (_localPlayer == null)
-        {
-            // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-            // {
-                // not intended use, however most straightforward approach, good for now
-                _localPlayer = RunManager.Instance.DebugOnlyGetState().Players.First();
-                return  _localPlayer;
-            // }
-            // else
-            // {
-                // multiplayer not yet implemented
-                // return null;
-            // }
-        }
-        else
-        {
-            return _localPlayer;
-        }
     }
-    
-    // private void SetLocalPlayer(Player player)
-    // {
-    //     if (_localPlayer != null)
-    //     {
-    //         return;
-    //     }
-    //     
-    //     // var netService = RunManager.Instance.NetService;
-    //     // var singleService = RunManager.Instance.IsSinglePlayerOrFakeMultiplayer;
-    //     
-    //     
-    //     // LocalContext.NetId = netService.NetId;
-    //
-    //     // _localPlayer = _mapScene.PlayerVoteDictionary.Keys.FirstOrDefault((player) => player.NetId == netService.NetId);
-    //     _localPlayer = player;
-    // }
 
     public override void _Ready()
     {
-
         _drawingToolHolder = this.GetParent<HBoxContainer>();
         
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.description");
@@ -184,16 +166,34 @@ public partial class NMapArtistButton : NButton
     protected override void OnPress()
     {
         base.OnPress();
+        // var localPlayer = FetchLocalPlayer();
+        if (FetchLocalPlayer() == null)
+        {
+            BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
+            return;
+        }
 
-        // display the color picker here
-        // EmitSignal("backing_DisplayGUI");
-        NMapArtistGUI.toggleGUI(FetchLocalPlayer());
+        if (_mapScene == null)
+        {
+            BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
+            return;
+        }
+        
+        _mapScene.GetNode<NMapArtistGUI>("NMapArtistGUI").ToggleGui(_localPlayer);
+        // NMapArtistGUI.Instance.ToggleGui(_localPlayer);
     }
 
     protected override void OnFocus()
     {
         base.OnFocus();
-        this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
+ 
+        if (_icon == null || this._drawingToolHolder == null)
+        {
+            PrintUninitializedError();
+            return;
+        }
+        
+        _icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
@@ -204,6 +204,12 @@ public partial class NMapArtistButton : NButton
     protected override void OnUnfocus()
     {
         base.OnUnfocus();
+
+        if (_icon == null || this._drawingToolHolder == null)
+        {
+            PrintUninitializedError();
+            return;
+        }
         this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();

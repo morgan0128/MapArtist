@@ -1,11 +1,12 @@
 using Godot;
+using Godot.Collections;
 
 namespace MapArtist.MapArtistCode;
 using MegaCrit.Sts2.Core.Entities.Players;
 
 public static class MapArtistDrawingColors
 {
-    private static readonly Dictionary<ulong, Color> ColorsByPlayer = new();
+    private static readonly Godot.Collections.Dictionary<ulong, Color> ColorsByPlayer = new();
 
     public static void Set(Player? player, Color color)
     {
