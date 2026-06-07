@@ -29,25 +29,6 @@ public partial class MainFile : Node
         Harmony harmony = new(ModId);
     
         harmony.PatchAll();
-        
-        // NMapColorPickerButton button = new NMapColorPickerButton();
-        // button._Ready();
     }
-        // public static void Initialize()
-        // {
-        //     Harmony harmony = new(ModId);
-        //     harmony.PatchAll();
-        //     harmony.CreateProcessor()
-        //     if (Engine.GetMainLoop() is SceneTree tree)
-        //         tree.NodeAdded += OnNodeAdded;
-        // }
-        //
-        // private static void OnNodeAdded(Node node)
-        // {
-        //     if (node is NMapClearButton clearButton)
-        //     {
-        //         NMapColorPickerButton button = new NMapColorPickerButton();
-        //         button._Ready();
-        //     }
-        // }
+
     }

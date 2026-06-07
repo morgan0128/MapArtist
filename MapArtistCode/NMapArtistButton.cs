@@ -22,7 +22,7 @@ public partial class NMapArtistButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    private readonly NMapScreen? _mapScene;
+    private NMapScreen? _mapScene;
     private readonly NButton? _neighborButton;
     private Control? _drawingToolHolder;
     private TextureRect? _icon;
@@ -110,6 +110,8 @@ public partial class NMapArtistButton : NButton
         parent.OffsetRight += 34;
         
         button._drawingToolHolder = parent;
+
+
         
         // return the newly created color picker button
         return button;
@@ -150,7 +152,11 @@ public partial class NMapArtistButton : NButton
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.title"), locDesc);
 
+        var gui = new NMapArtistGUI(_icon.Texture);
+        _mapScene.AddChild(gui);
+        
         ConnectSignals();
+
         // AddUserSignal("backing_DisplayGUI");
     }
     
