@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -12,8 +13,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-[ScriptPath("res://MapArtistCode/NMapArtistButton.cs")]
-public partial class NMapArtistButton : NButton
+[ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
+public partial class NMapArtistApplyButton : NButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -23,32 +24,40 @@ public partial class NMapArtistButton : NButton
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     private NMapScreen? _mapScene;
-    private readonly NButton? _neighborButton;
-    private Control? _drawingToolHolder;
+    // private readonly NButton? _neighborButton;
+    // private Control? _drawingToolHolder;
+
+    private ColorPicker? _itemColorPicker;
+    
+    private Control? _mapArtistButtonContainer;
+    private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
     private Player? _localPlayer;
     
-    private NMapArtistButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
+    // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
+    public NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+
     {
-        Name = "ColorPickerButton";
+        Name = "MapArtistApplyButton";
         UniqueNameInOwner = true;
-        CustomMinimumSize = new Vector2(68, 60);
+        CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
 
         _mapScene = mapScene;
-        _drawingToolHolder = parent;
-        _neighborButton = neighbor;
+        _mapArtistButtonContainer = parent;
+        _placeholderIcon = placeholderIcon;
         
-        var neighborIcon = neighbor.GetNode<TextureRect>("Icon");
-        _icon = InitIcon(neighborIcon);
+        _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
+        
+        _icon = InitIcon(placeholderIcon);
         this.AddChild(_icon);
     }
 
-    private NMapArtistButton()
+    private NMapArtistApplyButton()
     {
 
     }
@@ -76,46 +85,47 @@ public partial class NMapArtistButton : NButton
         return icon;
     }
 
-    private bool CheckIsUninitialized()
-    {
-        return _mapScene != null && _neighborButton != null && _drawingToolHolder != null && _icon != null && _tween != null;
-    }
+    // private bool CheckIsUninitialized()
+    // {
+        // return _mapScene != null && _neighborButton != null && _drawingToolHolder != null && _icon != null && _tween != null;
+    // }
 
     private static void PrintUninitializedError()
     {
-        BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistButton. Use the parameterized constructor.");
+        BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
     }
     
-    public static readonly AddedNode<NMapScreen, NMapArtistButton> Map = new((mapScreen) =>
-    {
-        // grab drawing tools display container node
-        var parent = mapScreen.GetNode<HBoxContainer>("DrawingTools/HBoxContainer");
-        
-        // grab the (to be) neighboring button
-        var clearButton = (NButton)parent.GetNode("ClearButton");
-        
-        // initialize color picker button
-        var button = new NMapArtistButton(mapScreen, parent, clearButton);
-        
-        // add this node to the drawing tools container
-        parent.AddChild(button);
-        
-        // introduce the new neighbors
-        clearButton.FocusNeighborRight = button.GetPath();
-        button.FocusNeighborLeft = new NodePath("../ClearButton");
-        
-        // drawing tools hbox resizing
-        parent.OffsetRight += 68;
-        parent.OffsetLeft -= 34;
-        parent.OffsetRight += 34;
-        
-        button._drawingToolHolder = parent;
-
-
-        
-        // return the newly created color picker button
-        return button;
-    });
+    // public static readonly AddedNode<NMapScreen, NMapArtistApplyButton> Map = new((mapScreen) =>
+    // {
+    //     var parent = mapScreen.GetNode<HBoxContainer>("MapArtistGUI/HBC_MapArtistGUI");
+    //
+    //     
+    //     // grab the (to be) neighboring button
+    //     var placeholder = (TextureRect)mapScreen.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon").GetNode("ClearButton");
+    //     
+    //     // initialize color picker button
+    //     
+    //     var button = new NMapArtistApplyButton(mapScreen, parent, placeholder);
+    //     
+    //
+    //     parent.AddChild(button);
+    //     
+    //     // introduce the new neighbors
+    //     // clearButton.FocusNeighborRight = button.GetPath();
+    //     // button.FocusNeighborLeft = new NodePath("../ClearButton");
+    //     
+    //     // drawing tools hbox resizing
+    //     // parent.OffsetRight += 68;
+    //     // parent.OffsetLeft -= 34;
+    //     // parent.OffsetRight += 34;
+    //     
+    //     // button._drawingToolHolder = parent;
+    //
+    //
+    //     
+    //     // return the newly created color picker button
+    //     return button;
+    // });
 
     private Player? FetchLocalPlayer()
     {
@@ -147,13 +157,19 @@ public partial class NMapArtistButton : NButton
 
     public override void _Ready()
     {
-        _drawingToolHolder = this.GetParent<HBoxContainer>();
+        // _drawingToolHolder = this.GetParent<HBoxContainer>();
         
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-COLOR_PICKER.title"), locDesc);
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
 
-        var gui = new NMapArtistGUI(_icon.Texture);
-        _mapScene.AddChild(gui);
+        // temporarily passing the "clear icon" texture (which I globally use as placeholder) here through an accommodating temporary version of the constructor
+        // var gui = new NMapArtistGUI(_icon.Texture);
+        // var icon1 = InitIcon(_icon);
+        // var icon2 = InitIcon(_icon);
+        // var gui = new NMapArtistGUI(icon1, icon2);
+        // _mapScene.AddChild(gui);
+        // gui._itemButtonPenSettings.FocusNeighborRight = gui._itemButtonApplySettings.GetPath();
+        // gui._itemButtonApplySettings.FocusNeighborLeft = gui._itemButtonApplySettings.GetPath();
         
         ConnectSignals();
 
@@ -185,7 +201,7 @@ public partial class NMapArtistButton : NButton
             return;
         }
         
-        _mapScene.GetNode<NMapArtistGUI>("NMapArtistGUI").ToggleGui(_localPlayer);
+        MapArtistDrawingColors.Set(FetchLocalPlayer(), _itemColorPicker.Color);
         // NMapArtistGUI.Instance.ToggleGui(_localPlayer);
     }
 
@@ -193,7 +209,7 @@ public partial class NMapArtistButton : NButton
     {
         base.OnFocus();
  
-        if (_icon == null || this._drawingToolHolder == null)
+        if (_icon == null)
         {
             PrintUninitializedError();
             return;
@@ -204,14 +220,14 @@ public partial class NMapArtistButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
-        NHoverTipSet.CreateAndShow(this._drawingToolHolder, (IHoverTip) this._hoverTip).GlobalPosition = this._drawingToolHolder.GlobalPosition + new Vector2(10f, -132f);
+        NHoverTipSet.CreateAndShow(this._mapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this._mapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
     protected override void OnUnfocus()
     {
         base.OnUnfocus();
 
-        if (_icon == null || this._drawingToolHolder == null)
+        if (_icon == null)
         {
             PrintUninitializedError();
             return;
@@ -221,7 +237,7 @@ public partial class NMapArtistButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
-        NHoverTipSet.Remove(this._drawingToolHolder);
+        NHoverTipSet.Remove(this._mapArtistButtonContainer);
     }
   
 
