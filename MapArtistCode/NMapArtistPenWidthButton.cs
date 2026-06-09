@@ -13,8 +13,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-[ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
-public partial class NMapArtistApplyButton : NButton
+[ScriptPath("res://MapArtistCode/NMapArtistPenWidthButton.cs")]
+public partial class NMapArtistPenWidthButton : NButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -27,8 +27,8 @@ public partial class NMapArtistApplyButton : NButton
     // private readonly NButton? _neighborButton;
     // private Control? _drawingToolHolder;
 
-
-    
+    private ColorPicker? _itemColorPicker;
+    //
     private Control? _mapArtistButtonContainer;
     private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
@@ -36,13 +36,15 @@ public partial class NMapArtistApplyButton : NButton
     private Tween? _tween;
 
     private Player? _localPlayer;
+
+    public TextEdit? WidthSelection;
     
-    // buttons and widgets which NMapArtistApplyButton retrieves values from to assign on press
-    private ColorPicker? _itemColorPicker;
-    private NMapArtistPenWidthButton? _itemPenWidthButton;
     
-    // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
-    public NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    // temporary for testing: pressing button increments width
+    public float PenWidth = 10.0f;
+    
+    
+    public NMapArtistPenWidthButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
 
     {
         Name = "MapArtistApplyButton";
@@ -59,9 +61,22 @@ public partial class NMapArtistApplyButton : NButton
         
         _icon = InitIcon(placeholderIcon);
         this.AddChild(_icon);
+        
+        WidthSelection = new TextEdit();
+        // var cmSizeX = _mapArtistButtonContainer.Size.X - this.Size.X;
+        // var cmSizeY = this.Size.Y;
+        // WidthSelection.CustomMinimumSize =  new Vector2(cmSizeX, cmSizeY);
+        WidthSelection.CustomMinimumSize = new Vector2(100f, 35f);
+        // WidthSelection.CustomMinimumSize = new Vector2(100f, 50f);
+
+        // var gpModifyY = this.Size.Y;
+        WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(0f, 40f);
+        WidthSelection.PlaceholderText = "Pen Width";
+        WidthSelection.Visible = false;
+        AddChild(WidthSelection);
     }
 
-    private NMapArtistApplyButton()
+    private NMapArtistPenWidthButton()
     {
 
     }
@@ -88,7 +103,7 @@ public partial class NMapArtistApplyButton : NButton
         
         return icon;
     }
-    
+
     private static void PrintUninitializedError()
     {
         BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
@@ -124,26 +139,11 @@ public partial class NMapArtistApplyButton : NButton
 
     public override void _Ready()
     {
-        // _drawingToolHolder = this.GetParent<HBoxContainer>();
-        
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
-
-        _itemPenWidthButton = new NMapArtistPenWidthButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
-        _mapArtistButtonContainer.AddChild(_itemPenWidthButton);
-        
-        // temporarily passing the "clear icon" texture (which I globally use as placeholder) here through an accommodating temporary version of the constructor
-        // var gui = new NMapArtistGUI(_icon.Texture);
-        // var icon1 = InitIcon(_icon);
-        // var icon2 = InitIcon(_icon);
-        // var gui = new NMapArtistGUI(icon1, icon2);
-        // _mapScene.AddChild(gui);
-        // gui._itemButtonPenSettings.FocusNeighborRight = gui._itemButtonApplySettings.GetPath();
-        // gui._itemButtonApplySettings.FocusNeighborLeft = gui._itemButtonApplySettings.GetPath();
+        // Localization
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-PEN_WIDTH.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-PEN_WIDTH.title"), locDesc);
         
         ConnectSignals();
-
-        // AddUserSignal("backing_DisplayGUI");
     }
     
     protected override void ConnectSignals()
@@ -170,13 +170,10 @@ public partial class NMapArtistApplyButton : NButton
             BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
             return;
         }
-        
-        
-        // apply pen color
-        MapArtistDrawingColors.Set(FetchLocalPlayer(), _itemColorPicker.Color);
-        
-        // apply pen width
-        MapArtistDrawingPenWidth.Set(FetchLocalPlayer(), _itemPenWidthButton.WidthSelection.GetLine(0).ToFloat());
+
+        // PenWidth = PenWidth + 1.0f;
+        // NMapArtistGUI.Instance.ToggleGui(_localPlayer);
+        WidthSelection.Visible = !WidthSelection.Visible;
     }
 
     protected override void OnFocus()
