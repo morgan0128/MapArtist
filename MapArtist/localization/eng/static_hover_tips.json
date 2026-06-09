@@ -3,6 +3,8 @@
   "MAPARTIST-GUI_BUTTON.description": "Choose a color and change pen properties",
   "MAPARTIST-APPLY_BUTTON.title": "Apply",
   "MAPARTIST-APPLY_BUTTON.description": "Update pen properties to current selections",
+  "MAPARTIST-RESET_BUTTON.title": "Reset",
+  "MAPARTIST-RESET_BUTTON.description": "Return to default drawing settings",
   "MAPARTIST-PEN_WIDTH.title": "Pen Width",
-  "MAPARTIST-PEN_WIDTH.description": "Default = 3.0"
+  "MAPARTIST-PEN_WIDTH.description": "Default: 4.0"
 }

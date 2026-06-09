@@ -13,8 +13,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-[ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
-public partial class NMapArtistApplyButton : NButton
+[ScriptPath("res://MapArtistCode/NMapArtistResetButton.cs")]
+public partial class NMapArtistResetButton : NButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -39,11 +39,10 @@ public partial class NMapArtistApplyButton : NButton
     
     // buttons and widgets which NMapArtistApplyButton retrieves values from to assign on press
     private ColorPicker? _itemColorPicker;
-    private NMapArtistResetButton? _itemResetButton;
     private NMapArtistPenWidthButton? _itemPenWidthButton;
     
     // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
-    public NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    public NMapArtistResetButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
 
     {
         Name = "MapArtistApplyButton";
@@ -62,7 +61,7 @@ public partial class NMapArtistApplyButton : NButton
         this.AddChild(_icon);
     }
 
-    private NMapArtistApplyButton()
+    private NMapArtistResetButton()
     {
 
     }
@@ -127,24 +126,8 @@ public partial class NMapArtistApplyButton : NButton
     {
         // _drawingToolHolder = this.GetParent<HBoxContainer>();
         
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
-
-        
-        _itemResetButton = new NMapArtistResetButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
-        _mapArtistButtonContainer.AddChild(_itemResetButton);
-        
-        _itemPenWidthButton = new NMapArtistPenWidthButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
-        _mapArtistButtonContainer.AddChild(_itemPenWidthButton);
-        
-        // temporarily passing the "clear icon" texture (which I globally use as placeholder) here through an accommodating temporary version of the constructor
-        // var gui = new NMapArtistGUI(_icon.Texture);
-        // var icon1 = InitIcon(_icon);
-        // var icon2 = InitIcon(_icon);
-        // var gui = new NMapArtistGUI(icon1, icon2);
-        // _mapScene.AddChild(gui);
-        // gui._itemButtonPenSettings.FocusNeighborRight = gui._itemButtonApplySettings.GetPath();
-        // gui._itemButtonApplySettings.FocusNeighborLeft = gui._itemButtonApplySettings.GetPath();
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.title"), locDesc);
         
         ConnectSignals();
 
@@ -176,12 +159,7 @@ public partial class NMapArtistApplyButton : NButton
             return;
         }
         
-        
-        // apply pen color
-        MapArtistDictionaries.SetColor(FetchLocalPlayer(), _itemColorPicker.Color);
-        
-        // apply pen width
-        MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), _itemPenWidthButton.WidthSelection.GetLine(0).ToFloat());
+        MapArtistDictionaries.ClearAll(FetchLocalPlayer());
     }
 
     protected override void OnFocus()

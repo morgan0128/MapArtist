@@ -17,12 +17,12 @@ public static class MapArtistDrawingPatch
             return;
         }
 
-        if (MapArtistDrawingColors.TryGet(player, out var color))
+        if (MapArtistDictionaries.TryGetColor(player, out var color))
         {
             __result.DefaultColor = color;
         }
 
-        if (MapArtistDrawingPenWidth.TryGet(player, out var width))
+        if (MapArtistDictionaries.TryGetPenWidth(player, out var width))
         {
             __result.Width = width;
         }
