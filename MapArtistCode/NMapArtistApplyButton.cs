@@ -23,49 +23,53 @@ public partial class NMapArtistApplyButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    private NMapScreen? _mapScene;
+    // private NMapScreen? _mapScene;
     // private readonly NButton? _neighborButton;
     // private Control? _drawingToolHolder;
 
 
     
     private Control? _mapArtistButtonContainer;
-    private TextureRect? _placeholderIcon;
+    // private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
-    private Player? _localPlayer;
+    // private Player? _localPlayer;
     
     // buttons and widgets which NMapArtistApplyButton retrieves values from to assign on press
-    private ColorPicker? _itemColorPicker;
-    private NMapArtistResetButton? _itemResetButton;
-    private NMapArtistPenWidthButton? _itemPenWidthButton;
+    // private ColorPicker? _itemColorPicker;
+    // private NMapArtistResetButton? _itemResetButton;
+    // private NMapArtistBrushWidthButton? _itemPenWidthButton;
     
     // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
-    public NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
-
+    // public NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    
+    public NMapArtistApplyButton()
     {
         Name = "MapArtistApplyButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
+        
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
 
-        _mapScene = mapScene;
-        _mapArtistButtonContainer = parent;
-        _placeholderIcon = placeholderIcon;
+        // _mapScene = mapScene;
+        // _mapArtistButtonContainer = parent;
+        // _placeholderIcon = placeholderIcon;
         
-        _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
+        // _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
         
-        _icon = InitIcon(placeholderIcon);
-        this.AddChild(_icon);
+        // _icon = InitIcon(placeholderIcon);
+        // this.AddChild(_icon);
     }
 
-    private NMapArtistApplyButton()
-    {
-
-    }
+    // private NMapArtistApplyButton()
+    // {
+    //
+    // }
 
     private static TextureRect InitIcon(TextureRect toCopy)
     {
@@ -95,58 +99,54 @@ public partial class NMapArtistApplyButton : NButton
         BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
     }
 
-    private Player? FetchLocalPlayer()
+    // private Player? FetchLocalPlayer()
+    // {
+    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+    //     // {
+    //         if (_localPlayer != null)
+    //         {
+    //             return _localPlayer;
+    //         }
+    //
+    //         var currState = RunManager.Instance.DebugOnlyGetState();
+    //         if (currState == null)
+    //         {
+    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
+    //             return null;
+    //         }
+    //
+    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+    //         return  _localPlayer;
+    //
+    //         // }
+    //     // else
+    //     // {
+    //     //    // not yet implemented
+    //         // return null;
+    //     // }
+    //     
+    // }
+
+    public void SetIcon(TextureRect icon)
     {
-        // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-        // {
-            if (_localPlayer != null)
-            {
-                return _localPlayer;
-            }
-
-            var currState = RunManager.Instance.DebugOnlyGetState();
-            if (currState == null)
-            {
-                BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-                return null;
-            }
-
-            _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-            return  _localPlayer;
-
-            // }
-        // else
-        // {
-        //    // not yet implemented
-            // return null;
-        // }
-        
+        _icon = icon;
     }
-
+    
     public override void _Ready()
     {
         // _drawingToolHolder = this.GetParent<HBoxContainer>();
         
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
+        // LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
+        // _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
 
         
-        _itemResetButton = new NMapArtistResetButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
-        _mapArtistButtonContainer.AddChild(_itemResetButton);
+        // _itemResetButton = new NMapArtistResetButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
+        // _mapArtistButtonContainer.AddChild(_itemResetButton);
+        //
+        // _itemPenWidthButton = new NMapArtistBrushWidthButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
+        // _mapArtistButtonContainer.AddChild(_itemPenWidthButton);
         
-        _itemPenWidthButton = new NMapArtistPenWidthButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
-        _mapArtistButtonContainer.AddChild(_itemPenWidthButton);
-        
-        // temporarily passing the "clear icon" texture (which I globally use as placeholder) here through an accommodating temporary version of the constructor
-        // var gui = new NMapArtistGUI(_icon.Texture);
-        // var icon1 = InitIcon(_icon);
-        // var icon2 = InitIcon(_icon);
-        // var gui = new NMapArtistGUI(icon1, icon2);
-        // _mapScene.AddChild(gui);
-        // gui._itemButtonPenSettings.FocusNeighborRight = gui._itemButtonApplySettings.GetPath();
-        // gui._itemButtonApplySettings.FocusNeighborLeft = gui._itemButtonApplySettings.GetPath();
-        
-        ConnectSignals();
+        // ConnectSignals();
 
         // AddUserSignal("backing_DisplayGUI");
     }
@@ -164,24 +164,26 @@ public partial class NMapArtistApplyButton : NButton
     {
         base.OnPress();
         // var localPlayer = FetchLocalPlayer();
-        if (FetchLocalPlayer() == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-            return;
-        }
-
-        if (_mapScene == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-            return;
-        }
+        // if (FetchLocalPlayer() == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
+        //     return;
+        // }
+        //
+        // if (_mapScene == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
+        //     return;
+        // }
+        //
+        //
+        // // apply pen color
+        // MapArtistDictionaries.SetColor(FetchLocalPlayer(), _itemColorPicker.Color);
+        //
+        // // apply pen width
+        // MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), _itemPenWidthButton.WidthSelection.GetLine(0).ToFloat());
         
-        
-        // apply pen color
-        MapArtistDictionaries.SetColor(FetchLocalPlayer(), _itemColorPicker.Color);
-        
-        // apply pen width
-        MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), _itemPenWidthButton.WidthSelection.GetLine(0).ToFloat());
+        MapArtistController.Instance.ApplySettings();
     }
 
     protected override void OnFocus()

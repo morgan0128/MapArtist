@@ -13,8 +13,8 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-[ScriptPath("res://MapArtistCode/NMapArtistPenWidthButton.cs")]
-public partial class NMapArtistPenWidthButton : NButton
+[ScriptPath("res://MapArtistCode/NMapArtistBrushWidthButton.cs")]
+public partial class NMapArtistBrushWidthButton : NButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -44,23 +44,24 @@ public partial class NMapArtistPenWidthButton : NButton
     public float PenWidth = 10.0f;
     
     
-    public NMapArtistPenWidthButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    // public NMapArtistBrushWidthButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    public NMapArtistBrushWidthButton()
 
     {
-        Name = "MapArtistApplyButton";
+        Name = "MapArtistBrushWidthButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
 
-        _mapScene = mapScene;
-        _mapArtistButtonContainer = parent;
-        _placeholderIcon = placeholderIcon;
+        // _mapScene = mapScene;
+        // _mapArtistButtonContainer = parent;
+        // _placeholderIcon = placeholderIcon;
         
-        _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
+        // _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
         
-        _icon = InitIcon(placeholderIcon);
-        this.AddChild(_icon);
+        // _icon = InitIcon(placeholderIcon);
+        // this.AddChild(_icon);
         
         WidthSelection = new TextEdit();
         // var cmSizeX = _mapArtistButtonContainer.Size.X - this.Size.X;
@@ -76,11 +77,16 @@ public partial class NMapArtistPenWidthButton : NButton
         AddChild(WidthSelection);
     }
 
-    private NMapArtistPenWidthButton()
+    // private NMapArtistBrushWidthButton()
+    // {
+    //
+    // }
+
+    public void SetIcon(TextureRect icon)
     {
-
+        _icon = icon;
     }
-
+    
     private static TextureRect InitIcon(TextureRect toCopy)
     {
         var icon = new TextureRect();

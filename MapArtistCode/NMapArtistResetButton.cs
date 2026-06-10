@@ -39,33 +39,38 @@ public partial class NMapArtistResetButton : NButton
     
     // buttons and widgets which NMapArtistApplyButton retrieves values from to assign on press
     private ColorPicker? _itemColorPicker;
-    private NMapArtistPenWidthButton? _itemPenWidthButton;
+    private NMapArtistBrushWidthButton? _itemPenWidthButton;
     
     // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
-    public NMapArtistResetButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
-
+    // public NMapArtistResetButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
+    public NMapArtistResetButton()
     {
-        Name = "MapArtistApplyButton";
+        Name = "MapArtistResetButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
 
-        _mapScene = mapScene;
-        _mapArtistButtonContainer = parent;
-        _placeholderIcon = placeholderIcon;
+        // _mapScene = mapScene;
+        // _mapArtistButtonContainer = parent;
+        // _placeholderIcon = placeholderIcon;
         
-        _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
+        // _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
         
-        _icon = InitIcon(placeholderIcon);
-        this.AddChild(_icon);
+        // _icon = InitIcon(placeholderIcon);
+        // this.AddChild(_icon);
     }
 
-    private NMapArtistResetButton()
+    // private NMapArtistResetButton()
+    // {
+
+    // }
+
+    public void SetIcon(TextureRect icon)
     {
-
+        _icon = icon;
     }
-
+    
     private static TextureRect InitIcon(TextureRect toCopy)
     {
         var icon = new TextureRect();
@@ -94,33 +99,33 @@ public partial class NMapArtistResetButton : NButton
         BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
     }
 
-    private Player? FetchLocalPlayer()
-    {
-        // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-        // {
-            if (_localPlayer != null)
-            {
-                return _localPlayer;
-            }
-
-            var currState = RunManager.Instance.DebugOnlyGetState();
-            if (currState == null)
-            {
-                BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-                return null;
-            }
-
-            _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-            return  _localPlayer;
-
-            // }
-        // else
-        // {
-        //    // not yet implemented
-            // return null;
-        // }
-        
-    }
+    // private Player? FetchLocalPlayer()
+    // {
+    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+    //     // {
+    //         if (_localPlayer != null)
+    //         {
+    //             return _localPlayer;
+    //         }
+    //
+    //         var currState = RunManager.Instance.DebugOnlyGetState();
+    //         if (currState == null)
+    //         {
+    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
+    //             return null;
+    //         }
+    //
+    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+    //         return  _localPlayer;
+    //
+    //         // }
+    //     // else
+    //     // {
+    //     //    // not yet implemented
+    //         // return null;
+    //     // }
+    //     
+    // }
 
     public override void _Ready()
     {
@@ -147,19 +152,21 @@ public partial class NMapArtistResetButton : NButton
     {
         base.OnPress();
         // var localPlayer = FetchLocalPlayer();
-        if (FetchLocalPlayer() == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-            return;
-        }
+        // if (FetchLocalPlayer() == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
+        //     return;
+        // }
+        //
+        // if (_mapScene == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
+        //     return;
+        // }
+        //
+        // MapArtistDictionaries.ClearAll(FetchLocalPlayer());
 
-        if (_mapScene == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-            return;
-        }
-        
-        MapArtistDictionaries.ClearAll(FetchLocalPlayer());
+        MapArtistController.Instance.ClearAllDictionaries();
     }
 
     protected override void OnFocus()

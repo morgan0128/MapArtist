@@ -23,17 +23,17 @@ public partial class NMapArtistGUIButton : NButton
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     private NMapScreen? _mapScene;
-    private readonly NButton? _neighborButton;
+    // private readonly NButton? _neighborButton;
     private Control? _drawingToolHolder;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
-    private NMapArtistGUI? _gui;
+    // private NMapArtistGUI? _gui;
 
-    private Player? _localPlayer;
+    // private Player? _localPlayer;
     
-    private NMapArtistGUIButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
+    private NMapArtistGUIButton(NMapScreen mapScene)
     {
         Name = "MapArtistGUIButton";
         UniqueNameInOwner = true;
@@ -42,12 +42,12 @@ public partial class NMapArtistGUIButton : NButton
         FocusMode = FocusModeEnum.All;
 
         _mapScene = mapScene;
-        _drawingToolHolder = parent;
-        _neighborButton = neighbor;
+        // _drawingToolHolder = parent;
+        // _neighborButton = neighbor;
         
-        var neighborIcon = neighbor.GetNode<TextureRect>("Icon");
-        _icon = InitIcon(neighborIcon);
-        this.AddChild(_icon);
+        // var neighborIcon = neighbor.GetNode<TextureRect>("Icon");
+        // _icon = InitIcon(neighborIcon);
+        // this.AddChild(_icon);
     }
 
     private NMapArtistGUIButton()
@@ -55,38 +55,43 @@ public partial class NMapArtistGUIButton : NButton
 
     }
 
-    private static TextureRect InitIcon(TextureRect toCopy)
+    public void SetIcon(TextureRect icon)
     {
-        var icon = new TextureRect();
-        icon.SelfModulate = toCopy.SelfModulate;
-        icon.SetMaterial(toCopy.GetMaterial());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.LayoutMode = toCopy.LayoutMode;
-        icon.AnchorsPreset = toCopy.AnchorsPreset;
-        icon.AnchorRight = toCopy.AnchorRight;
-        icon.AnchorBottom = toCopy.AnchorBottom;
-        icon.GrowHorizontal = toCopy.GrowHorizontal;
-        icon.GrowVertical = toCopy.GrowVertical;
-        icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
-        icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
-        icon.MouseFilter = toCopy.MouseFilter;
-        icon.SetTexture(toCopy.GetTexture());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.ExpandMode = toCopy.ExpandMode;
-        icon.StretchMode = toCopy.StretchMode;
-        
-        return icon;
+        _icon = icon;
     }
 
-    private bool CheckIsUninitialized()
-    {
-        return _mapScene != null && _neighborButton != null && _drawingToolHolder != null && _icon != null && _tween != null;
-    }
+    // private static TextureRect InitIcon(TextureRect toCopy)
+    // {
+    //     var icon = new TextureRect();
+    //     icon.SelfModulate = toCopy.SelfModulate;
+    //     icon.SetMaterial(toCopy.GetMaterial());
+    //     icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
+    //     icon.LayoutMode = toCopy.LayoutMode;
+    //     icon.AnchorsPreset = toCopy.AnchorsPreset;
+    //     icon.AnchorRight = toCopy.AnchorRight;
+    //     icon.AnchorBottom = toCopy.AnchorBottom;
+    //     icon.GrowHorizontal = toCopy.GrowHorizontal;
+    //     icon.GrowVertical = toCopy.GrowVertical;
+    //     icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
+    //     icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
+    //     icon.MouseFilter = toCopy.MouseFilter;
+    //     icon.SetTexture(toCopy.GetTexture());
+    //     icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
+    //     icon.ExpandMode = toCopy.ExpandMode;
+    //     icon.StretchMode = toCopy.StretchMode;
+    //     
+    //     return icon;
+    // }
 
-    private static void PrintUninitializedError()
-    {
-        BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
-    }
+    // private bool CheckIsUninitialized()
+    // {
+    //     return _mapScene != null && _neighborButton != null && _drawingToolHolder != null && _icon != null && _tween != null;
+    // }
+
+    // private static void PrintUninitializedError()
+    // {
+    //     BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
+    // }
     
     public static readonly AddedNode<NMapScreen, NMapArtistGUIButton> Map = new((mapScreen) =>
     {
@@ -96,8 +101,8 @@ public partial class NMapArtistGUIButton : NButton
         // grab the (to be) neighboring button
         var clearButton = (NButton)parent.GetNode("ClearButton");
         
-        // initialize color picker button
-        var button = new NMapArtistGUIButton(mapScreen, parent, clearButton);
+        // initialize, grabbing the instantiated NMapScreen node to give to controller for gui initialization process
+        var button = new NMapArtistGUIButton(mapScreen);
         
         // add this node to the drawing tools container
         parent.AddChild(button);
@@ -119,53 +124,48 @@ public partial class NMapArtistGUIButton : NButton
         return button;
     });
 
-    private Player? FetchLocalPlayer()
-    {
-        // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-        // {
-            if (_localPlayer != null)
-            {
-                return _localPlayer;
-            }
-
-            var currState = RunManager.Instance.DebugOnlyGetState();
-            if (currState == null)
-            {
-                BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-                return null;
-            }
-
-            _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-            return  _localPlayer;
-
-            // }
-        // else
-        // {
-        //    // not yet implemented
-            // return null;
-        // }
-        
-    }
+    // private Player? FetchLocalPlayer()
+    // {
+    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+    //     // {
+    //         if (_localPlayer != null)
+    //         {
+    //             return _localPlayer;
+    //         }
+    //
+    //         var currState = RunManager.Instance.DebugOnlyGetState();
+    //         if (currState == null)
+    //         {
+    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
+    //             return null;
+    //         }
+    //
+    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+    //         return  _localPlayer;
+    //
+    //         // }
+    //     // else
+    //     // {
+    //     //    // not yet implemented
+    //         // return null;
+    //     // }
+    //     
+    // }
 
     public override void _Ready()
     {
-        _drawingToolHolder = this.GetParent<HBoxContainer>();
+        // _drawingToolHolder = this.GetParent<HBoxContainer>();
         
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.title"), locDesc);
 
-        // temporarily passing the "clear icon" texture (which I globally use as placeholder) here through an accommodating temporary version of the constructor
-        _gui = new NMapArtistGUI(_mapScene);
-        // var icon1 = InitIcon(_icon);
-        // var icon2 = InitIcon(_icon);
-        // var gui = new NMapArtistGUI(icon1, icon2);
-        _mapScene.AddChild(_gui);
-        // gui._itemButtonPenSettings.FocusNeighborRight = gui._itemButtonApplySettings.GetPath();
-        // gui._itemButtonApplySettings.FocusNeighborLeft = gui._itemButtonApplySettings.GetPath();
+        MapArtistController.Instance.InitializeGui(_mapScene);
+        
+
+        // _gui = new NMapArtistGUI(_mapScene);
+        // _mapScene.AddChild(_gui); // Add the popup
         
         ConnectSignals();
-
-        // AddUserSignal("backing_DisplayGUI");
     }
     
     protected override void ConnectSignals()
@@ -181,21 +181,23 @@ public partial class NMapArtistGUIButton : NButton
     {
         base.OnPress();
         // var localPlayer = FetchLocalPlayer();
-        if (FetchLocalPlayer() == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-            return;
-        }
-
-        if (_mapScene == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-            return;
-        }
+        
+        // if (FetchLocalPlayer() == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
+        //     return;
+        // }
+        //
+        // if (_mapScene == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
+        //     return;
+        // }
         
         // test
         // _mapScene.GetNode<NMapArtistGUI>("NMapArtistGUI").ToggleGui();
-        _gui.ToggleGui();
+        // _gui.ToggleGui();
+        MapArtistController.Instance.ToggleGui();
     }
 
     protected override void OnFocus()
@@ -204,7 +206,7 @@ public partial class NMapArtistGUIButton : NButton
  
         if (_icon == null || this._drawingToolHolder == null)
         {
-            PrintUninitializedError();
+            // PrintUninitializedError();
             return;
         }
         
@@ -222,7 +224,7 @@ public partial class NMapArtistGUIButton : NButton
 
         if (_icon == null || this._drawingToolHolder == null)
         {
-            PrintUninitializedError();
+            // PrintUninitializedError();
             return;
         }
         this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
