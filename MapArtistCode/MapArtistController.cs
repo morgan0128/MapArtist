@@ -138,6 +138,11 @@ public sealed class MapArtistController
         _rowitemColorPicker = new NColorPicker();
         _rowitemColorPicker.Name = "ItemColorPicker";
         _rowitemColorPicker.UniqueNameInOwner = true;
+        var player = FetchLocalPlayer();
+        if (player != null)
+        {
+            _rowitemColorPicker.Color = FetchLocalPlayer().Character.MapDrawingColor;
+        }
         _guiContainer.AddChild(_rowitemColorPicker);
       
         // GUI row 2: additional brush property (buttons)
@@ -260,9 +265,24 @@ public sealed class MapArtistController
         }
     }
     
-    // i.e., "ResetSettings"
-    public void ClearAllDictionaries(){
+    
+    
+    public void ResetSettings(){
+        var player = FetchLocalPlayer();
+        if (player == null)
+        {
+            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
+            return;
+        }
+
+        if (_rowitemColorPicker == null)
+        {
+            BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ResetSettings() call.");
+            return;
+        }
+        
         MapArtistDictionaries.ClearAll(FetchLocalPlayer());
+        _rowitemColorPicker.Color = player.Character.MapDrawingColor;
     }
 
 }

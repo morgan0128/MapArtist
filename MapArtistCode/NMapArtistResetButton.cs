@@ -67,7 +67,7 @@ public partial class NMapArtistResetButton : NButton
     protected override void OnPress()
     {
         base.OnPress();
-        MapArtistController.Instance.ClearAllDictionaries();
+        MapArtistController.Instance.ResetSettings();
     }
 
     protected override void OnFocus()
