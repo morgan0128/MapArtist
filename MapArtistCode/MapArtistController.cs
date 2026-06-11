@@ -147,6 +147,7 @@ public sealed class MapArtistController
         _itemWidthButton.SetIcon(widthButtonIcon);
         _itemWidthButton.AddChild(widthButtonIcon);
         _rowPropertyButtonsContainer.AddChild(_itemWidthButton);
+        _itemWidthButton.MapArtistButtonContainer = _rowPropertyButtonsContainer;
       
         // GUI row 3: apply/reset brush color and properties
         _rowApplyResetButtonsContainer =  InitHBoxContainer();
@@ -159,13 +160,15 @@ public sealed class MapArtistController
         _itemApplyButton.SetIcon(applyButtonIcon);
         _itemApplyButton.AddChild(applyButtonIcon);
         _rowApplyResetButtonsContainer.AddChild(_itemApplyButton);
+        _itemApplyButton.MapArtistButtonContainer = _rowApplyResetButtonsContainer;
         
-        // Item 1: Reset Button
+        // Item 2: Reset Button
         _itemResetButton = new NMapArtistResetButton();
         var resetButtonIcon = ShallowCopyIcon(_debugPlaceholderIcon);
         _itemResetButton.SetIcon(resetButtonIcon);
         _itemResetButton.AddChild(resetButtonIcon);
         _rowApplyResetButtonsContainer.AddChild(_itemResetButton);
+        _itemResetButton.MapArtistButtonContainer = _rowApplyResetButtonsContainer;
     }
     
     private static HBoxContainer InitHBoxContainer()
@@ -250,9 +253,16 @@ public sealed class MapArtistController
 
         // apply pen color
         MapArtistDictionaries.SetColor(FetchLocalPlayer(), _rowitemColorPicker.Color);
-        
+
         // apply pen width
-        MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), _itemWidthButton.WidthSelection.GetLine(0).ToFloat());
+        try
+        {
+            var widthVal = _itemWidthButton.WidthSelection.GetLine(0).ToFloat();
+            MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), widthVal);
+        } catch (FormatException notFloat)
+        {
+            // no valid pen width to apply
+        }
     }
     
     public void ClearAllDictionaries(){

@@ -29,7 +29,7 @@ public partial class NMapArtistBrushWidthButton : NButton
 
     private ColorPicker? _itemColorPicker;
     //
-    private Control? _mapArtistButtonContainer;
+    public Control? MapArtistButtonContainer;
     private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
@@ -71,7 +71,7 @@ public partial class NMapArtistBrushWidthButton : NButton
         // WidthSelection.CustomMinimumSize = new Vector2(100f, 50f);
 
         // var gpModifyY = this.Size.Y;
-        WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(0f, 40f);
+        WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0f);
         WidthSelection.PlaceholderText = "Pen Width";
         WidthSelection.Visible = false;
         AddChild(WidthSelection);
@@ -110,44 +110,39 @@ public partial class NMapArtistBrushWidthButton : NButton
         return icon;
     }
 
-    private static void PrintUninitializedError()
-    {
-        BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
-    }
-
-    private Player? FetchLocalPlayer()
-    {
-        // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-        // {
-            if (_localPlayer != null)
-            {
-                return _localPlayer;
-            }
-
-            var currState = RunManager.Instance.DebugOnlyGetState();
-            if (currState == null)
-            {
-                BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-                return null;
-            }
-
-            _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-            return  _localPlayer;
-
-            // }
-        // else
-        // {
-        //    // not yet implemented
-            // return null;
-        // }
-        
-    }
+    // private Player? FetchLocalPlayer()
+    // {
+    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
+    //     // {
+    //         if (_localPlayer != null)
+    //         {
+    //             return _localPlayer;
+    //         }
+    //
+    //         var currState = RunManager.Instance.DebugOnlyGetState();
+    //         if (currState == null)
+    //         {
+    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
+    //             return null;
+    //         }
+    //
+    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+    //         return  _localPlayer;
+    //
+    //         // }
+    //     // else
+    //     // {
+    //     //    // not yet implemented
+    //         // return null;
+    //     // }
+    //     
+    // }
 
     public override void _Ready()
     {
         // Localization
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-PEN_WIDTH.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-PEN_WIDTH.title"), locDesc);
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
         
         ConnectSignals();
     }
@@ -165,17 +160,17 @@ public partial class NMapArtistBrushWidthButton : NButton
     {
         base.OnPress();
         // var localPlayer = FetchLocalPlayer();
-        if (FetchLocalPlayer() == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-            return;
-        }
-
-        if (_mapScene == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-            return;
-        }
+        // if (FetchLocalPlayer() == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
+        //     return;
+        // }
+        //
+        // if (_mapScene == null)
+        // {
+        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
+        //     return;
+        // }
 
         // PenWidth = PenWidth + 1.0f;
         // NMapArtistGUI.Instance.ToggleGui(_localPlayer);
@@ -188,7 +183,7 @@ public partial class NMapArtistBrushWidthButton : NButton
  
         if (_icon == null)
         {
-            PrintUninitializedError();
+            // PrintUninitializedError();
             return;
         }
         
@@ -197,7 +192,7 @@ public partial class NMapArtistBrushWidthButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
-        NHoverTipSet.CreateAndShow(this._mapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this._mapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
+        NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
     protected override void OnUnfocus()
@@ -206,7 +201,7 @@ public partial class NMapArtistBrushWidthButton : NButton
 
         if (_icon == null)
         {
-            PrintUninitializedError();
+            // PrintUninitializedError();
             return;
         }
         this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
@@ -214,7 +209,7 @@ public partial class NMapArtistBrushWidthButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
-        NHoverTipSet.Remove(this._mapArtistButtonContainer);
+        NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
   
 

@@ -29,7 +29,7 @@ public partial class NMapArtistResetButton : NButton
 
 
     
-    private Control? _mapArtistButtonContainer;
+    public Control? MapArtistButtonContainer;
     private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
@@ -184,7 +184,7 @@ public partial class NMapArtistResetButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
-        NHoverTipSet.CreateAndShow(this._mapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this._mapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
+        NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
     protected override void OnUnfocus()
@@ -201,7 +201,7 @@ public partial class NMapArtistResetButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
-        NHoverTipSet.Remove(this._mapArtistButtonContainer);
+        NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
   
 

@@ -34,7 +34,7 @@ public partial class NMapArtistGUI : VBoxContainer
       Visible = false; 
       LayoutMode = 2;
       SetAnchorsPreset(LayoutPreset.TopLeft);
-      GlobalPosition = new Vector2(50f, 150f);
+      GlobalPosition = new Vector2(23f, 158f);
       
       // // GUI row 1: color picker
       // _rowColorPicker = new NColorPicker();

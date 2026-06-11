@@ -95,8 +95,11 @@ public partial class NMapArtistGUIButton : NButton
     
     public static readonly AddedNode<NMapScreen, NMapArtistGUIButton> Map = new((mapScreen) =>
     {
+        // grab the drawing tools node
+        var drawingTools = mapScreen.GetNode<NinePatchRect>("DrawingTools");
+        
         // grab drawing tools display container node
-        var parent = mapScreen.GetNode<HBoxContainer>("DrawingTools/HBoxContainer");
+        var parent = drawingTools.GetNode<HBoxContainer>("HBoxContainer");
         
         // grab the (to be) neighboring button
         var clearButton = (NButton)parent.GetNode("ClearButton");
@@ -112,45 +115,18 @@ public partial class NMapArtistGUIButton : NButton
         button.FocusNeighborLeft = new NodePath("../ClearButton");
         
         // drawing tools hbox resizing
-        parent.OffsetRight += 68;
-        parent.OffsetLeft -= 34;
-        parent.OffsetRight += 34;
+        // parent.OffsetRight += 68;
+        // parent.OffsetLeft -= 34;
+        // parent.OffsetRight += 34;
+        // drawingTools.AxisStretchHorizontal = NinePatchRect.AxisStretchMode.Stretch;
+        // drawingTools.PatchMarginLeft = 18;
+        // drawingTools.PatchMarginRight = 18;
         
         button._drawingToolHolder = parent;
-
-
         
         // return the newly created color picker button
         return button;
     });
-
-    // private Player? FetchLocalPlayer()
-    // {
-    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-    //     // {
-    //         if (_localPlayer != null)
-    //         {
-    //             return _localPlayer;
-    //         }
-    //
-    //         var currState = RunManager.Instance.DebugOnlyGetState();
-    //         if (currState == null)
-    //         {
-    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-    //             return null;
-    //         }
-    //
-    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-    //         return  _localPlayer;
-    //
-    //         // }
-    //     // else
-    //     // {
-    //     //    // not yet implemented
-    //         // return null;
-    //     // }
-    //     
-    // }
 
     public override void _Ready()
     {

@@ -29,7 +29,7 @@ public partial class NMapArtistApplyButton : NButton
 
 
     
-    private Control? _mapArtistButtonContainer;
+    public Control? MapArtistButtonContainer;
     // private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
@@ -53,8 +53,8 @@ public partial class NMapArtistApplyButton : NButton
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
         
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
+        // LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
+        // _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
 
         // _mapScene = mapScene;
         // _mapArtistButtonContainer = parent;
@@ -136,8 +136,8 @@ public partial class NMapArtistApplyButton : NButton
     {
         // _drawingToolHolder = this.GetParent<HBoxContainer>();
         
-        // LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        // _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
+        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
 
         
         // _itemResetButton = new NMapArtistResetButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
@@ -146,7 +146,7 @@ public partial class NMapArtistApplyButton : NButton
         // _itemPenWidthButton = new NMapArtistBrushWidthButton(_mapScene, (HBoxContainer)_mapArtistButtonContainer, _placeholderIcon);
         // _mapArtistButtonContainer.AddChild(_itemPenWidthButton);
         
-        // ConnectSignals();
+        ConnectSignals();
 
         // AddUserSignal("backing_DisplayGUI");
     }
@@ -201,7 +201,7 @@ public partial class NMapArtistApplyButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
-        NHoverTipSet.CreateAndShow(this._mapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this._mapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
+        NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
     protected override void OnUnfocus()
@@ -218,7 +218,7 @@ public partial class NMapArtistApplyButton : NButton
         this._tween = this.CreateTween().SetParallel();
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
-        NHoverTipSet.Remove(this._mapArtistButtonContainer);
+        NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
   
 

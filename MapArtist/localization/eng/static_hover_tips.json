@@ -5,6 +5,6 @@
   "MAPARTIST-APPLY_BUTTON.description": "Update pen properties to current selections",
   "MAPARTIST-RESET_BUTTON.title": "Reset",
   "MAPARTIST-RESET_BUTTON.description": "Return to default drawing settings",
-  "MAPARTIST-PEN_WIDTH.title": "Pen Width",
-  "MAPARTIST-PEN_WIDTH.description": "Default: 4.0"
+  "MAPARTIST-BRUSH_WIDTH.title": "Brush Width",
+  "MAPARTIST-BRUSH_WIDTH.description": "Default: 4.0"
 }
