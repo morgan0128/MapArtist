@@ -23,26 +23,11 @@ public partial class NMapArtistResetButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    private NMapScreen? _mapScene;
-    // private readonly NButton? _neighborButton;
-    // private Control? _drawingToolHolder;
-
-
-    
     public Control? MapArtistButtonContainer;
-    private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
-    private Player? _localPlayer;
-    
-    // buttons and widgets which NMapArtistApplyButton retrieves values from to assign on press
-    private ColorPicker? _itemColorPicker;
-    private NMapArtistBrushWidthButton? _itemPenWidthButton;
-    
-    // private NMapArtistApplyButton(NMapScreen mapScene, HBoxContainer parent, NButton neighbor)
-    // public NMapArtistResetButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
     public NMapArtistResetButton()
     {
         Name = "MapArtistResetButton";
@@ -50,48 +35,11 @@ public partial class NMapArtistResetButton : NButton
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
-
-        // _mapScene = mapScene;
-        // _mapArtistButtonContainer = parent;
-        // _placeholderIcon = placeholderIcon;
-        
-        // _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
-        
-        // _icon = InitIcon(placeholderIcon);
-        // this.AddChild(_icon);
     }
-
-    // private NMapArtistResetButton()
-    // {
-
-    // }
 
     public void SetIcon(TextureRect icon)
     {
         _icon = icon;
-    }
-    
-    private static TextureRect InitIcon(TextureRect toCopy)
-    {
-        var icon = new TextureRect();
-        icon.SelfModulate = toCopy.SelfModulate;
-        icon.SetMaterial(toCopy.GetMaterial());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.LayoutMode = toCopy.LayoutMode;
-        icon.AnchorsPreset = toCopy.AnchorsPreset;
-        icon.AnchorRight = toCopy.AnchorRight;
-        icon.AnchorBottom = toCopy.AnchorBottom;
-        icon.GrowHorizontal = toCopy.GrowHorizontal;
-        icon.GrowVertical = toCopy.GrowVertical;
-        icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
-        icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
-        icon.MouseFilter = toCopy.MouseFilter;
-        icon.SetTexture(toCopy.GetTexture());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.ExpandMode = toCopy.ExpandMode;
-        icon.StretchMode = toCopy.StretchMode;
-        
-        return icon;
     }
     
     private static void PrintUninitializedError()
@@ -99,44 +47,12 @@ public partial class NMapArtistResetButton : NButton
         BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
     }
 
-    // private Player? FetchLocalPlayer()
-    // {
-    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-    //     // {
-    //         if (_localPlayer != null)
-    //         {
-    //             return _localPlayer;
-    //         }
-    //
-    //         var currState = RunManager.Instance.DebugOnlyGetState();
-    //         if (currState == null)
-    //         {
-    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-    //             return null;
-    //         }
-    //
-    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-    //         return  _localPlayer;
-    //
-    //         // }
-    //     // else
-    //     // {
-    //     //    // not yet implemented
-    //         // return null;
-    //     // }
-    //     
-    // }
-
     public override void _Ready()
     {
-        // _drawingToolHolder = this.GetParent<HBoxContainer>();
-        
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.title"), locDesc);
         
         ConnectSignals();
-
-        // AddUserSignal("backing_DisplayGUI");
     }
     
     protected override void ConnectSignals()
@@ -151,21 +67,6 @@ public partial class NMapArtistResetButton : NButton
     protected override void OnPress()
     {
         base.OnPress();
-        // var localPlayer = FetchLocalPlayer();
-        // if (FetchLocalPlayer() == null)
-        // {
-        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-        //     return;
-        // }
-        //
-        // if (_mapScene == null)
-        // {
-        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-        //     return;
-        // }
-        //
-        // MapArtistDictionaries.ClearAll(FetchLocalPlayer());
-
         MapArtistController.Instance.ClearAllDictionaries();
     }
 
@@ -203,9 +104,5 @@ public partial class NMapArtistResetButton : NButton
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
         NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
-  
-
-
-
 
 }

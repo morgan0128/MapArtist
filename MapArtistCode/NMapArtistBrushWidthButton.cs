@@ -1,15 +1,9 @@
-using BaseLib;
-using BaseLib.Utils;
 using Godot;
 using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
-using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
@@ -23,28 +17,13 @@ public partial class NMapArtistBrushWidthButton : NButton
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    private NMapScreen? _mapScene;
-    // private readonly NButton? _neighborButton;
-    // private Control? _drawingToolHolder;
-
-    private ColorPicker? _itemColorPicker;
-    //
     public Control? MapArtistButtonContainer;
-    private TextureRect? _placeholderIcon;
     private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
-    private Player? _localPlayer;
-
     public TextEdit? WidthSelection;
     
-    
-    // temporary for testing: pressing button increments width
-    public float PenWidth = 10.0f;
-    
-    
-    // public NMapArtistBrushWidthButton(NMapScreen mapScene, HBoxContainer parent, TextureRect placeholderIcon)
     public NMapArtistBrushWidthButton()
 
     {
@@ -53,90 +32,20 @@ public partial class NMapArtistBrushWidthButton : NButton
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
-
-        // _mapScene = mapScene;
-        // _mapArtistButtonContainer = parent;
-        // _placeholderIcon = placeholderIcon;
-        
-        // _itemColorPicker = mapScene.GetNode<ColorPicker>("MapArtistGUI/ItemColorPicker");
-        
-        // _icon = InitIcon(placeholderIcon);
-        // this.AddChild(_icon);
         
         WidthSelection = new TextEdit();
-        // var cmSizeX = _mapArtistButtonContainer.Size.X - this.Size.X;
-        // var cmSizeY = this.Size.Y;
-        // WidthSelection.CustomMinimumSize =  new Vector2(cmSizeX, cmSizeY);
         WidthSelection.CustomMinimumSize = new Vector2(100f, 35f);
-        // WidthSelection.CustomMinimumSize = new Vector2(100f, 50f);
 
-        // var gpModifyY = this.Size.Y;
         WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0f);
         WidthSelection.PlaceholderText = "Pen Width";
         WidthSelection.Visible = false;
         AddChild(WidthSelection);
     }
 
-    // private NMapArtistBrushWidthButton()
-    // {
-    //
-    // }
-
     public void SetIcon(TextureRect icon)
     {
         _icon = icon;
     }
-    
-    private static TextureRect InitIcon(TextureRect toCopy)
-    {
-        var icon = new TextureRect();
-        icon.SelfModulate = toCopy.SelfModulate;
-        icon.SetMaterial(toCopy.GetMaterial());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.LayoutMode = toCopy.LayoutMode;
-        icon.AnchorsPreset = toCopy.AnchorsPreset;
-        icon.AnchorRight = toCopy.AnchorRight;
-        icon.AnchorBottom = toCopy.AnchorBottom;
-        icon.GrowHorizontal = toCopy.GrowHorizontal;
-        icon.GrowVertical = toCopy.GrowVertical;
-        icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
-        icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
-        icon.MouseFilter = toCopy.MouseFilter;
-        icon.SetTexture(toCopy.GetTexture());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.ExpandMode = toCopy.ExpandMode;
-        icon.StretchMode = toCopy.StretchMode;
-        
-        return icon;
-    }
-
-    // private Player? FetchLocalPlayer()
-    // {
-    //     // if (RunManager.Instance.NetService.Type == NetGameType.Singleplayer)
-    //     // {
-    //         if (_localPlayer != null)
-    //         {
-    //             return _localPlayer;
-    //         }
-    //
-    //         var currState = RunManager.Instance.DebugOnlyGetState();
-    //         if (currState == null)
-    //         {
-    //             BaseLibMain.Logger.Error("[MapArtist] Failed to load current state");
-    //             return null;
-    //         }
-    //
-    //         _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
-    //         return  _localPlayer;
-    //
-    //         // }
-    //     // else
-    //     // {
-    //     //    // not yet implemented
-    //         // return null;
-    //     // }
-    //     
-    // }
 
     public override void _Ready()
     {
@@ -159,21 +68,6 @@ public partial class NMapArtistBrushWidthButton : NButton
     protected override void OnPress()
     {
         base.OnPress();
-        // var localPlayer = FetchLocalPlayer();
-        // if (FetchLocalPlayer() == null)
-        // {
-        //     BaseLibMain.Logger.Error("[MapArtist] Failed to fetch player");
-        //     return;
-        // }
-        //
-        // if (_mapScene == null)
-        // {
-        //     BaseLibMain.Logger.Error("[MapArtist] The Map Artist button failed to store the Map Scene");
-        //     return;
-        // }
-
-        // PenWidth = PenWidth + 1.0f;
-        // NMapArtistGUI.Instance.ToggleGui(_localPlayer);
         WidthSelection.Visible = !WidthSelection.Visible;
     }
 
@@ -211,9 +105,5 @@ public partial class NMapArtistBrushWidthButton : NButton
         this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
         NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
-  
-
-
-
 
 }

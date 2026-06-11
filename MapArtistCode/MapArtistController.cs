@@ -9,35 +9,39 @@ namespace MapArtist.MapArtistCode;
 
 public sealed class MapArtistController
 {
-    //----------------------------------- Singleton -----------------------------------
+//--------------------------------------------------- Singleton ------------------------------------------------
     static MapArtistController() { }
     private MapArtistController() { }
     public static MapArtistController Instance { get; } = new MapArtistController();
-    //---------------------------------------------------------------------------------
-
-    private NMapScreen? _existingMapScene;
-    private HBoxContainer? _existingDrawingToolsContainer;
-    private NButton? _existingRightmostDrawingToolButton;
+//--------------------------------------------------------------------------------------------------------------
+//-------------------------------------- Relevant NMapScreen Scene Nodes ---------------------------------------
+    private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself
     
-    private TextureRect? _debugPlaceholderIcon;
+    private TextureRect? _debugPlaceholderIcon; // Temporary
     
+    // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
     private NMapArtistGUIButton? _guiDisplayButton;
     
-    private NMapArtistGUI? _guiContainer;
+    // Container for the MapArtist GUI
+    private NMapArtistGUIContainer? _guiContainer;
 
+    // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
     private NColorPicker? _rowitemColorPicker;
     
+    // Container for the second row of the MapArtist GUI container: buttons to adjust brush properties beyond Color
     private HBoxContainer? _rowPropertyButtonsContainer;
-    private NMapArtistBrushWidthButton? _itemWidthButton;
+    private NMapArtistBrushWidthButton? _itemWidthButton; // Row 2, Item 1
     
+    // Container for the third row of the MapArtist GUI container: apply selections button and reset properties button
     private HBoxContainer? _rowApplyResetButtonsContainer;
-    private NMapArtistApplyButton? _itemApplyButton;
-    private NMapArtistResetButton? _itemResetButton;
-    
-    // Player
-    private Player? _localPlayer;
+    private NMapArtistApplyButton? _itemApplyButton; // Row 3, Item 1
+    private NMapArtistResetButton? _itemResetButton; // Row 3, Item 2
+//--------------------------------------------------------------------------------------------------------------
+//---------------------------------------- Additional Member Variables -----------------------------------------
+    private Player? _localPlayer; // Needed for controller logic
+//--------------------------------------------------------------------------------------------------------------
 
-
+//----------------------------------- GUI Initialization Methods and Helpers -----------------------------------
     public void InitializeGui(NMapScreen? mapScene)
     {
         if (mapScene == null)
@@ -92,7 +96,7 @@ public sealed class MapArtistController
         _debugPlaceholderIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
     }
     
-    private TextureRect ShallowCopyIcon(TextureRect toCopy)
+    private static TextureRect ShallowCopyIcon(TextureRect toCopy)
     {
         var icon = new TextureRect();
 
@@ -127,7 +131,7 @@ public sealed class MapArtistController
             return;
         }
         
-        _guiContainer = new NMapArtistGUI();
+        _guiContainer = new NMapArtistGUIContainer();
         _existingMapScene.AddChild(_guiContainer);
         
         // GUI row 1: color picker
@@ -180,11 +184,9 @@ public sealed class MapArtistController
       
         return hbc;
     }
-    
-    
-    
-    // Controller Logic
-    
+//--------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------- Controller Logic ----------------------------------------------
     private Player? FetchLocalPlayer()
     {
         // Not yet tested/suitable for Multiplayer
@@ -206,12 +208,6 @@ public sealed class MapArtistController
 
     public void ToggleGui()
     {
-        // if (FetchLocalPlayer() == null)
-        // {
-        //     BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
-        //     return;
-        // }
-
         if (_guiContainer == null)
         {
             BaseLibMain.Logger.Info("[MapArtistController] _guiContainer == null on ToggleGui() call.");
@@ -255,8 +251,7 @@ public sealed class MapArtistController
         MapArtistDictionaries.SetColor(FetchLocalPlayer(), _rowitemColorPicker.Color);
 
         // apply pen width
-        try
-        {
+        try {
             var widthVal = _itemWidthButton.WidthSelection.GetLine(0).ToFloat();
             MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), widthVal);
         } catch (FormatException notFloat)
@@ -265,10 +260,9 @@ public sealed class MapArtistController
         }
     }
     
+    // i.e., "ResetSettings"
     public void ClearAllDictionaries(){
         MapArtistDictionaries.ClearAll(FetchLocalPlayer());
     }
-    
-
 
 }
