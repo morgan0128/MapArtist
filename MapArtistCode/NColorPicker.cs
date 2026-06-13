@@ -12,6 +12,7 @@ public partial class NColorPicker : ColorPicker
 
         FocusMode = FocusModeEnum.All;
         GlobalPosition = new Vector2(200f, 200f);
+        EditAlpha = false;
         
         InitRestrictiveDefaultSettings();
     }
@@ -21,13 +22,18 @@ public partial class NColorPicker : ColorPicker
     {
         CanAddSwatches = false;
         ColorModesVisible = false;
-        EditAlpha = false;
-        EditIntensity = false;
+        // EditAlpha = false; disabled by default (eraser issues)
+        EditIntensity = false; // unsafe? test later
         PresetsVisible = false;
         SlidersVisible = false;
         PresetsVisible = false;
         SamplerVisible = false;
         Alignment = AlignmentMode.Begin;
+    }
+    
+    private void UnsafeEnableEditAlpha()
+    {
+        EditAlpha = true;
     }
     
 }
