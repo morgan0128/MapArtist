@@ -14,17 +14,19 @@ using MegaCrit.Sts2.Core.Runs;
 namespace MapArtist.MapArtistCode;
 
 [ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
-public partial class NMapArtistApplyButton : NButton
+public partial class NMapArtistApplyButton : NMapArtistButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
-    private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
-    private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
+    // private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
+    private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
+    // private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
+    private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     public Control? MapArtistButtonContainer;
-    private TextureRect? _icon;
+    // private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
     
@@ -41,16 +43,13 @@ public partial class NMapArtistApplyButton : NButton
     {
         BaseLibMain.Logger.Error("[MapArtist] Tried to unsafely access uninitialized NMapArtistGUIButton. Use the parameterized constructor.");
     }
-
-    public void SetIcon(TextureRect icon)
-    {
-        _icon = icon;
-    }
     
     public override void _Ready()
     {
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
+        
+        // _icon.Texture =  PreloadManager.Cache.GetTexture2D((string) ImagePath);
         
         ConnectSignals();
     }
@@ -74,17 +73,17 @@ public partial class NMapArtistApplyButton : NButton
     {
         base.OnFocus();
  
-        if (_icon == null)
+        if (Icon == null)
         {
             PrintUninitializedError();
             return;
         }
         
-        _icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
+        Icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
         NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
@@ -92,16 +91,16 @@ public partial class NMapArtistApplyButton : NButton
     {
         base.OnUnfocus();
 
-        if (_icon == null)
+        if (Icon == null)
         {
             PrintUninitializedError();
             return;
         }
-        this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
+        this.Icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
         NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
     

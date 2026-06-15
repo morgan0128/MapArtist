@@ -8,17 +8,17 @@ using MegaCrit.Sts2.Core.Nodes.HoverTips;
 namespace MapArtist.MapArtistCode;
 
 [ScriptPath("res://MapArtistCode/NMapArtistBrushWidthButton.cs")]
-public partial class NMapArtistBrushWidthButton : NButton
+public partial class NMapArtistBrushWidthButton : NMapArtistButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
-    private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
-    private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
+    private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+    private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     public Control? MapArtistButtonContainer;
-    private TextureRect? _icon;
+    // private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
 
@@ -40,11 +40,6 @@ public partial class NMapArtistBrushWidthButton : NButton
         WidthSelection.PlaceholderText = "Pen Width";
         WidthSelection.Visible = false;
         AddChild(WidthSelection);
-    }
-
-    public void SetIcon(TextureRect icon)
-    {
-        _icon = icon;
     }
 
     public override void _Ready()
@@ -75,17 +70,17 @@ public partial class NMapArtistBrushWidthButton : NButton
     {
         base.OnFocus();
  
-        if (_icon == null)
+        if (Icon == null)
         {
             // PrintUninitializedError();
             return;
         }
         
-        _icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
+        Icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
         NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
 
@@ -93,16 +88,16 @@ public partial class NMapArtistBrushWidthButton : NButton
     {
         base.OnUnfocus();
 
-        if (_icon == null)
+        if (Icon == null)
         {
             // PrintUninitializedError();
             return;
         }
-        this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
+        this.Icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
         NHoverTipSet.Remove(this.MapArtistButtonContainer);
     }
 

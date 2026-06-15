@@ -17,7 +17,15 @@ public sealed class MapArtistController
 //-------------------------------------- Relevant NMapScreen Scene Nodes ---------------------------------------
     private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself
     
-    private TextureRect? _debugPlaceholderIcon; // Temporary
+    // An existing Icon pulled from the Map Scene. Make new icons by shallow copying and modifying Texture.
+    private TextureRect? _prototypeIcon;
+
+    private static readonly StringName ApplyImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
+    // private static readonly StringName ApplyGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
+    private static readonly StringName ResetImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
+    // private static readonly StringName ResetGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
+    private static readonly StringName WidthImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+    // private static readonly StringName WidthGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
     private NMapArtistGUIButton? _guiDisplayButton;
@@ -27,15 +35,22 @@ public sealed class MapArtistController
 
     // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
     private NColorPicker? _rowitemColorPicker;
+
+    // Use in future when more buttons added
+    // // Container for the second row of the MapArtist GUI container: buttons to adjust brush properties beyond Color
+    // private HBoxContainer? _rowPropertyButtonsContainer;
+    // private NMapArtistBrushWidthButton? _itemWidthButton; // Row 2, Item 1
+    //
+    // // Container for the third row of the MapArtist GUI container: apply selections button and reset properties button
+    // private HBoxContainer? _rowApplyResetButtonsContainer;
+    // private NMapArtistApplyButton? _itemApplyButton; // Row 3, Item 1
+    // private NMapArtistResetButton? _itemResetButton; // Row 3, Item 2
     
-    // Container for the second row of the MapArtist GUI container: buttons to adjust brush properties beyond Color
-    private HBoxContainer? _rowPropertyButtonsContainer;
+    // Container for the second row of the MapArtist GUI container: all buttons
+    private HBoxContainer? _rowButtonsContainer;
     private NMapArtistBrushWidthButton? _itemWidthButton; // Row 2, Item 1
-    
-    // Container for the third row of the MapArtist GUI container: apply selections button and reset properties button
-    private HBoxContainer? _rowApplyResetButtonsContainer;
-    private NMapArtistApplyButton? _itemApplyButton; // Row 3, Item 1
-    private NMapArtistResetButton? _itemResetButton; // Row 3, Item 2
+    private NMapArtistApplyButton? _itemApplyButton; // Row 2, Item 2
+    private NMapArtistResetButton? _itemResetButton; // Row 2, Item 3
 //--------------------------------------------------------------------------------------------------------------
 //---------------------------------------- Additional Member Variables -----------------------------------------
     private Player? _localPlayer; // Needed for controller logic
@@ -78,13 +93,13 @@ public sealed class MapArtistController
             return;
         }
         
-        DebugInitializePlaceholderIcon();
-        var childIcon = ShallowCopyIcon(_debugPlaceholderIcon);
+        InitializePrototypeIcon();
+        var childIcon = ShallowCopyIcon(_prototypeIcon);
         _guiDisplayButton.SetIcon(childIcon);
         _guiDisplayButton.AddChild(childIcon);
     }
 
-    private void DebugInitializePlaceholderIcon()
+    private void InitializePrototypeIcon()
     {
         if (_existingMapScene == null)
         {
@@ -93,7 +108,7 @@ public sealed class MapArtistController
             return;
         }
         
-        _debugPlaceholderIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
+        _prototypeIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
     }
     
     private static TextureRect ShallowCopyIcon(TextureRect toCopy)
@@ -122,6 +137,21 @@ public sealed class MapArtistController
         return icon;
     }
 
+    private static TextureRect ShallowCopyIcon(TextureRect toCopy, StringName imagePath)
+    {
+        var icon = ShallowCopyIcon(toCopy);
+        icon.Texture = ResourceLoader.Load<Texture2D>(imagePath);
+
+        return icon;
+    }
+    
+    private static void InitializeIconUseShallow(TextureRect toCopy, StringName imagePath, NMapArtistButton forButton)
+    {
+        var icon = ShallowCopyIcon(toCopy, imagePath);
+        forButton.SetIcon(icon);
+        forButton.AddChild(icon);
+    }
+
     private void ConstructGui()
     {
         if (_existingMapScene == null)
@@ -146,38 +176,25 @@ public sealed class MapArtistController
         _guiContainer.AddChild(_rowitemColorPicker);
       
         // GUI row 2: additional brush property (buttons)
-        _rowPropertyButtonsContainer =  InitHBoxContainer();
-        _rowPropertyButtonsContainer.Name = "BrushPropertyButtonContainer";
-        _guiContainer.AddChild(_rowPropertyButtonsContainer);
+        _rowButtonsContainer =  InitHBoxContainer();
+        _rowButtonsContainer.Name = "BrushPropertyButtonContainer";
+        _guiContainer.AddChild(_rowButtonsContainer);
 
-        // Item 1: Brush width button
-        _itemWidthButton = new NMapArtistBrushWidthButton();
-        var widthButtonIcon = ShallowCopyIcon(_debugPlaceholderIcon);
-        _itemWidthButton.SetIcon(widthButtonIcon);
-        _itemWidthButton.AddChild(widthButtonIcon);
-        _rowPropertyButtonsContainer.AddChild(_itemWidthButton);
-        _itemWidthButton.MapArtistButtonContainer = _rowPropertyButtonsContainer;
-      
-        // GUI row 3: apply/reset brush color and properties
-        _rowApplyResetButtonsContainer =  InitHBoxContainer();
-        _rowApplyResetButtonsContainer.Name = "ApplyResetButtonContainer";
-        _guiContainer.AddChild(_rowApplyResetButtonsContainer);
-        
-        // Item 1: Apply Button
+
         _itemApplyButton = new NMapArtistApplyButton();
-        var applyButtonIcon = ShallowCopyIcon(_debugPlaceholderIcon);
-        _itemApplyButton.SetIcon(applyButtonIcon);
-        _itemApplyButton.AddChild(applyButtonIcon);
-        _rowApplyResetButtonsContainer.AddChild(_itemApplyButton);
-        _itemApplyButton.MapArtistButtonContainer = _rowApplyResetButtonsContainer;
+        InitializeIconUseShallow(_prototypeIcon, ApplyImagePath, _itemApplyButton);
+        _rowButtonsContainer.AddChild(_itemApplyButton);
+        _itemApplyButton.MapArtistButtonContainer = _rowButtonsContainer;
         
-        // Item 2: Reset Button
         _itemResetButton = new NMapArtistResetButton();
-        var resetButtonIcon = ShallowCopyIcon(_debugPlaceholderIcon);
-        _itemResetButton.SetIcon(resetButtonIcon);
-        _itemResetButton.AddChild(resetButtonIcon);
-        _rowApplyResetButtonsContainer.AddChild(_itemResetButton);
-        _itemResetButton.MapArtistButtonContainer = _rowApplyResetButtonsContainer;
+        InitializeIconUseShallow(_prototypeIcon, ResetImagePath, _itemResetButton);
+        _rowButtonsContainer.AddChild(_itemResetButton);
+        _itemResetButton.MapArtistButtonContainer = _rowButtonsContainer;
+        
+        _itemWidthButton = new NMapArtistBrushWidthButton();
+        InitializeIconUseShallow(_prototypeIcon, WidthImagePath, _itemWidthButton);
+        _rowButtonsContainer.AddChild(_itemWidthButton);
+        _itemWidthButton.MapArtistButtonContainer = _rowButtonsContainer;
     }
     
     private static HBoxContainer InitHBoxContainer()
