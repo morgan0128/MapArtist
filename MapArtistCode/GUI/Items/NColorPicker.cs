@@ -1,6 +1,6 @@
-namespace MapArtist.MapArtistCode;
-
 using Godot;
+
+namespace MapArtist.MapArtistCode.GUI.Items;
 
 [ScriptPath("res://MapArtistCode/NColorPicker.cs")]
 public partial class NColorPicker : ColorPicker

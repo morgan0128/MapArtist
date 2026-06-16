@@ -1,11 +1,11 @@
 using BaseLib;
 using Godot;
+using MapArtist.MapArtistCode.GUI.Items;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.MapArtistController;
 
 public sealed class MapArtistController
 {
@@ -28,10 +28,10 @@ public sealed class MapArtistController
     // private static readonly StringName WidthGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
-    private NMapArtistGUIButton? _guiDisplayButton;
+    private GUI.NMapArtistGUIButton? _guiDisplayButton;
     
     // Container for the MapArtist GUI
-    private NMapArtistGUIContainer? _guiContainer;
+    private GUI.NMapArtistGUIContainer? _guiContainer;
 
     // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
     private NColorPicker? _rowitemColorPicker;
@@ -86,7 +86,7 @@ public sealed class MapArtistController
             return;
         }
         
-        _guiDisplayButton = _existingMapScene.GetNode<NMapArtistGUIButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
+        _guiDisplayButton = _existingMapScene.GetNode<GUI.NMapArtistGUIButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
         if (_guiDisplayButton == null)
         {
             BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch or assign _guiDisplayButton from _existingMapScene.");
@@ -145,7 +145,7 @@ public sealed class MapArtistController
         return icon;
     }
     
-    private static void InitializeIconUseShallow(TextureRect toCopy, StringName imagePath, NMapArtistButton forButton)
+    private static void InitializeIconUseShallow(TextureRect toCopy, StringName imagePath, GUI.Items.Abstract.NMapArtistButton forButton)
     {
         var icon = ShallowCopyIcon(toCopy, imagePath);
         forButton.SetIcon(icon);
@@ -161,7 +161,7 @@ public sealed class MapArtistController
             return;
         }
         
-        _guiContainer = new NMapArtistGUIContainer();
+        _guiContainer = new GUI.NMapArtistGUIContainer();
         _existingMapScene.AddChild(_guiContainer);
         
         // GUI row 1: color picker
@@ -212,8 +212,10 @@ public sealed class MapArtistController
     private Player? FetchLocalPlayer()
     {
         // Not yet tested/suitable for Multiplayer
+        
         if (_localPlayer != null)
         {
+            // results in ResetSettings() grabbing the wrong color to display in ColorPicker where character changed
             return _localPlayer;
         }
 

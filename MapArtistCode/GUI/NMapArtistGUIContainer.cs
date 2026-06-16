@@ -1,6 +1,6 @@
 using Godot;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.GUI;
 
 [ScriptPath("res://MapArtistCode/NMapArtistGUIContainer.cs")]
 public partial class NMapArtistGUIContainer : VBoxContainer

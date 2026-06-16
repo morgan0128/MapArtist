@@ -1,8 +1,7 @@
 using Godot;
-using Godot.Collections;
 using MegaCrit.Sts2.Core.Entities.Players;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.MapArtistController;
 
 public class MapArtistDictionaries
 {

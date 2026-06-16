@@ -3,12 +3,11 @@ using Godot;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.GUI;
 
 [ScriptPath("res://MapArtistCode/NMapArtistGUIButton.cs")]
 public partial class NMapArtistGUIButton : NButton
@@ -107,14 +106,14 @@ public partial class NMapArtistGUIButton : NButton
         base._EnterTree();
         if (_mapScene.GetNodeOrNull<VBoxContainer>("MapArtistGUI") == null)
         {
-            MapArtistController.Instance.InitializeGui(_mapScene);
+            MapArtistController.MapArtistController.Instance.InitializeGui(_mapScene);
         }
     }
     
     protected override void OnPress()
     {
         base.OnPress();
-        MapArtistController.Instance.ToggleGui();
+        MapArtistController.MapArtistController.Instance.ToggleGui();
     }
 
     protected override void OnFocus()

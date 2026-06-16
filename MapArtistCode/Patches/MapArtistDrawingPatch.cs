@@ -1,10 +1,10 @@
-namespace MapArtist.MapArtistCode;
-
-using System;
 using Godot;
 using HarmonyLib;
+using MapArtist.MapArtistCode.MapArtistController;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+
+namespace MapArtist.MapArtistCode.Patches;
 
 [HarmonyPatch(typeof(NMapDrawings), "CreateLineForPlayer", new Type[] { typeof(Player), typeof(bool) })]
 public static class MapArtistDrawingPatch

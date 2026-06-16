@@ -1,7 +1,7 @@
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.GUI.Items.Abstract;
 
 public abstract partial class NMapArtistButton : NButton
 {

@@ -2,13 +2,12 @@ using Godot;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.GUI.Items;
 
 [ScriptPath("res://MapArtistCode/NMapArtistBrushWidthButton.cs")]
-public partial class NMapArtistBrushWidthButton : NMapArtistButton
+public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;

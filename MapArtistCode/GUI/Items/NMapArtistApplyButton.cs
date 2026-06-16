@@ -1,20 +1,14 @@
 using BaseLib;
-using BaseLib.Utils;
 using Godot;
 using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
-using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Runs;
 
-namespace MapArtist.MapArtistCode;
+namespace MapArtist.MapArtistCode.GUI.Items;
 
 [ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
-public partial class NMapArtistApplyButton : NMapArtistButton
+public partial class NMapArtistApplyButton : GUI.Items.Abstract.NMapArtistButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
@@ -66,7 +60,7 @@ public partial class NMapArtistApplyButton : NMapArtistButton
     protected override void OnPress()
     {
         base.OnPress();
-        MapArtistController.Instance.ApplySettings();
+        MapArtistController.MapArtistController.Instance.ApplySettings();
     }
 
     protected override void OnFocus()
