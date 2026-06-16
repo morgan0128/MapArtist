@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.HoverTips;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
-[ScriptPath("res://MapArtistCode/NMapArtistApplyButton.cs")]
+[ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistApplyButton.cs")]
 public partial class NMapArtistApplyButton : GUI.Items.Abstract.NMapArtistButton
 {
     

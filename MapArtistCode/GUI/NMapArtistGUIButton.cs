@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
 namespace MapArtist.MapArtistCode.GUI;
 
-[ScriptPath("res://MapArtistCode/NMapArtistGUIButton.cs")]
+[ScriptPath("res://MapArtistCode/GUI/NMapArtistGUIButton.cs")]
 public partial class NMapArtistGUIButton : NButton
 {
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;

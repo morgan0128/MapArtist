@@ -2,7 +2,7 @@ using Godot;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
-[ScriptPath("res://MapArtistCode/NColorPicker.cs")]
+[ScriptPath("res://MapArtistCode/GUI/Items/NColorPicker.cs")]
 public partial class NColorPicker : ColorPicker
 {
     public NColorPicker()
