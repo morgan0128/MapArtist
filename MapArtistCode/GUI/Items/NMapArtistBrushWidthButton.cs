@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
+using Range = Godot.Range;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
@@ -21,10 +22,14 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     private HoverTip _hoverTip;
     private Tween? _tween;
 
-    public TextEdit? WidthSelection;
+    // public TextEdit? WidthSelection;
+    private HBoxContainer EditContainer = new HBoxContainer();
+    private HSlider _widthSlider = new HSlider();
+    private LineEdit _widthEdit = new LineEdit();
+    public float BrushWidth;
+    
     
     public NMapArtistBrushWidthButton()
-
     {
         Name = "MapArtistBrushWidthButton";
         UniqueNameInOwner = true;
@@ -32,13 +37,30 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
         
-        WidthSelection = new TextEdit();
-        WidthSelection.CustomMinimumSize = new Vector2(100f, 35f);
+        // WidthSelection = new TextEdit();
+        // WidthSelection.CustomMinimumSize = new Vector2(100f, 35f);
+        //
+        // WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0f);
+        // WidthSelection.PlaceholderText = "Pen Width";
+        // WidthSelection.Visible = false;
+        // AddChild(WidthSelection);
+        
+        EditContainer.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0);
+        EditContainer.CustomMinimumSize = new Vector2(150f, 35f);
+        EditContainer.Visible = false;
+        AddChild(EditContainer);
 
-        WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0f);
-        WidthSelection.PlaceholderText = "Pen Width";
-        WidthSelection.Visible = false;
-        AddChild(WidthSelection);
+        // _widthSlider = new HSlider();
+        // _widthSlider.MinValue = 0;
+        // _widthSlider.MaxValue = 100;
+        _widthSlider.Step = 0.01;
+        _widthSlider.SetHSizeFlags(SizeFlags.ExpandFill);
+        _widthSlider.SetAnchorsPreset(LayoutPreset.CenterLeft);
+        EditContainer.AddChild(_widthSlider);
+        
+        // _widthEdit = new LineEdit();
+        _widthEdit.Size = new Vector2(35f, 35f);
+        EditContainer.AddChild(_widthEdit);
     }
 
     public override void _Ready()
@@ -46,8 +68,24 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         // Localization
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
+
+        _widthSlider.ValueChanged += OnSliderValueChanged;
+        _widthEdit.TextChanged += OnTextValueChanged;
         
         ConnectSignals();
+    }
+
+    private void OnSliderValueChanged(double value)
+    {
+        BrushWidth = (float)value;
+        _widthEdit.Set(LineEdit.PropertyName.Text, BrushWidth); // does not emit TextChanged signal
+    }
+    
+    private void OnTextValueChanged(string text)
+    {
+        if (!double.TryParse(text, out double result)) return;
+        BrushWidth = (float)Math.Round(result);
+        _widthSlider.SetValueNoSignal(BrushWidth);
     }
     
     protected override void ConnectSignals()
@@ -62,7 +100,7 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     protected override void OnPress()
     {
         base.OnPress();
-        WidthSelection.Visible = !WidthSelection.Visible;
+        EditContainer.Visible = !EditContainer.Visible;
     }
 
     protected override void OnFocus()

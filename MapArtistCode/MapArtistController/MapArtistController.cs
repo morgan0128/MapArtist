@@ -263,20 +263,13 @@ public sealed class MapArtistController
             BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton == null on ApplySettings() call.");
             return;
         }
-        
-        if (_itemWidthButton.WidthSelection == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton.WidthSelection == null" +
-                                    " on ApplySettings() call.");
-            return;
-        }
 
         // apply pen color
         MapArtistDictionaries.SetColor(FetchLocalPlayer(), _rowitemColorPicker.Color);
 
         // apply pen width
         try {
-            var widthVal = _itemWidthButton.WidthSelection.GetLine(0).ToFloat();
+            var widthVal = _itemWidthButton.BrushWidth;
             MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), widthVal);
         } catch (FormatException notFloat)
         {
