@@ -64,13 +64,13 @@ public sealed class MapArtistController
             BaseLibMain.Logger.Error("[MapArtistController] Null mapScene passed to InitializeExisting.");
             return;
         }
-        if (_existingMapScene != null)
-        {
-            // Allow initialization only once
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to re-initialize pre-existing node(s)" +
-                                     " in MapArtistController. InitializeExisting should be called only once");
-            return;
-        }
+        // if (_existingMapScene != null)
+        // {
+        //     // Allow initialization only once
+        //     BaseLibMain.Logger.Info("[MapArtistController] Attempted to re-initialize pre-existing node(s)" +
+        //                              " in MapArtistController. InitializeExisting should be called only once");
+        //     return;
+        // }
         
         _existingMapScene =  mapScene;
         InitializeAddedNodeGuiButton();

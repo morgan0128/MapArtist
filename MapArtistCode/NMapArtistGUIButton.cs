@@ -3,6 +3,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -87,7 +88,7 @@ public partial class NMapArtistGUIButton : NButton
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.title"), locDesc);
 
-        MapArtistController.Instance.InitializeGui(_mapScene);
+        // MapArtistController.Instance.InitializeGui(_mapScene);
         
         ConnectSignals();
     }
@@ -99,6 +100,15 @@ public partial class NMapArtistGUIButton : NButton
             this.RegisterHotkeys();
         this._controllerHotkeyIcon = this.GetNodeOrNull<TextureRect>((NodePath) "%ControllerIcon");
         this.UpdateControllerButton();
+    }
+    
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        if (_mapScene.GetNodeOrNull<VBoxContainer>("MapArtistGUI") == null)
+        {
+            MapArtistController.Instance.InitializeGui(_mapScene);
+        }
     }
     
     protected override void OnPress()
