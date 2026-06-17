@@ -26,7 +26,7 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     private HBoxContainer EditContainer = new HBoxContainer();
     private HSlider _widthSlider = new HSlider();
     private LineEdit _widthEdit = new LineEdit();
-    public float BrushWidth;
+    public int BrushWidth;
     
     
     public NMapArtistBrushWidthButton()
@@ -37,30 +37,36 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
         
-        // WidthSelection = new TextEdit();
-        // WidthSelection.CustomMinimumSize = new Vector2(100f, 35f);
-        //
-        // WidthSelection.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0f);
-        // WidthSelection.PlaceholderText = "Pen Width";
-        // WidthSelection.Visible = false;
-        // AddChild(WidthSelection);
-        
         EditContainer.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0);
         EditContainer.CustomMinimumSize = new Vector2(150f, 35f);
         EditContainer.Visible = false;
         AddChild(EditContainer);
-
-        // _widthSlider = new HSlider();
-        // _widthSlider.MinValue = 0;
-        // _widthSlider.MaxValue = 100;
-        _widthSlider.Step = 0.01;
+        
+        _widthSlider.MinValue = 0;
+        _widthSlider.MaxValue = 100;
+        _widthSlider.Step = 1;
         _widthSlider.SetHSizeFlags(SizeFlags.ExpandFill);
-        _widthSlider.SetAnchorsPreset(LayoutPreset.CenterLeft);
+        _widthSlider.SetVSizeFlags(SizeFlags.ShrinkCenter);
+        _widthSlider.Scrollable = false;
         EditContainer.AddChild(_widthSlider);
         
-        // _widthEdit = new LineEdit();
-        _widthEdit.Size = new Vector2(35f, 35f);
-        EditContainer.AddChild(_widthEdit);
+
+        _widthSlider.AddChild(_widthEdit);
+        // _widthEdit.Size = new Vector2(0f, 35f);
+        _widthEdit.Editable = false;
+        _widthEdit.FocusMode = FocusModeEnum.None;
+        _widthEdit.SelectingEnabled = false;
+        _widthEdit.MouseFilter = MouseFilterEnum.Ignore;
+        // var beginPos = (_widthSlider.GetSize().X / 2) - (_widthEdit.GetSize().X / 2); // need to instead get node I think
+        // _widthEdit.Position = new Vector2(beginPos, 15f);
+        _widthEdit.Position = new Vector2((_widthSlider.GetSize().X / 2), 15f);
+        // _widthEdit.SetAnchorsPreset(LayoutPreset.VcenterWide);
+        _widthEdit.Flat = true;
+        _widthEdit.MaxLength = 3;
+        _widthEdit.ContextMenuEnabled = false;
+        _widthEdit.EmojiMenuEnabled = false;
+        _widthEdit.DragAndDropSelectionEnabled = false;
+        _widthEdit.AddThemeColorOverride("_widthEditOverride", Colors.Black);
     }
 
     public override void _Ready()
@@ -70,23 +76,24 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
 
         _widthSlider.ValueChanged += OnSliderValueChanged;
-        _widthEdit.TextChanged += OnTextValueChanged;
+        // _widthEdit.TextChanged += OnTextValueChanged;
         
         ConnectSignals();
     }
 
     private void OnSliderValueChanged(double value)
     {
-        BrushWidth = (float)value;
+        BrushWidth = (int)value;
         _widthEdit.Set(LineEdit.PropertyName.Text, BrushWidth); // does not emit TextChanged signal
     }
     
-    private void OnTextValueChanged(string text)
-    {
-        if (!double.TryParse(text, out double result)) return;
-        BrushWidth = (float)Math.Round(result);
-        _widthSlider.SetValueNoSignal(BrushWidth);
-    }
+    // Editable disabled
+    // private void OnTextValueChanged(string text)
+    // {
+    //     if (!double.TryParse(text, out double result)) return;
+    //     BrushWidth = (float)Math.Round(result);
+    //     _widthSlider.SetValueNoSignal(BrushWidth);
+    // }
     
     protected override void ConnectSignals()
     {

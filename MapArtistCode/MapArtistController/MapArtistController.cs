@@ -270,7 +270,7 @@ public sealed class MapArtistController
         // apply pen width
         try {
             var widthVal = _itemWidthButton.BrushWidth;
-            MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), widthVal);
+            MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), (float)widthVal);
         } catch (FormatException notFloat)
         {
             // no valid pen width to apply
