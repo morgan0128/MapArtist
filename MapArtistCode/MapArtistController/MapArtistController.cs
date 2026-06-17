@@ -51,6 +51,12 @@ public sealed class MapArtistController
     private NMapArtistBrushWidthButton? _itemWidthButton; // Row 2, Item 1
     private NMapArtistApplyButton? _itemApplyButton; // Row 2, Item 2
     private NMapArtistResetButton? _itemResetButton; // Row 2, Item 3
+
+
+    private HBoxContainer? _bWidthSliderContainer;
+    private HSlider? _bWidthSlider;
+    private Label? _bWidthLabel;
+    
 //--------------------------------------------------------------------------------------------------------------
 //---------------------------------------- Additional Member Variables -----------------------------------------
     private Player? _localPlayer; // Needed for controller logic
@@ -191,10 +197,52 @@ public sealed class MapArtistController
         _rowButtonsContainer.AddChild(_itemResetButton);
         _itemResetButton.MapArtistButtonContainer = _rowButtonsContainer;
         
-        _itemWidthButton = new NMapArtistBrushWidthButton();
+        _itemWidthButton = new NMapArtistBrushWidthButton(_rowButtonsContainer);
         InitializeIconUseShallow(_prototypeIcon, WidthImagePath, _itemWidthButton);
         _rowButtonsContainer.AddChild(_itemWidthButton);
-        _itemWidthButton.MapArtistButtonContainer = _rowButtonsContainer;
+    }
+
+    public void ConstructBrushWidthSlider()
+    {
+        _bWidthSliderContainer = _rowButtonsContainer.GetNode<HBoxContainer>("LabelledSlideContainer");
+        _bWidthSlider = _bWidthSliderContainer.GetNode<HSlider>("WidthSlider");
+        // _bWidthLabel = _bWidthSlider.GetNode<Label>("WidthSliderLabel");
+        _bWidthLabel = _bWidthSliderContainer.GetNode<Label>("WidthSliderLabel");
+        
+        _bWidthSliderContainer.Position = new Vector2((_itemWidthButton.Size.X + 7f), 0f);
+        
+        _bWidthSlider.MinValue = 1;
+        _bWidthSlider.MaxValue = 20;
+        _bWidthSlider.Step = 1;
+        _bWidthSlider.SetHSizeFlags(Control.SizeFlags.ExpandFill);
+        _bWidthSlider.SetVSizeFlags(Control.SizeFlags.ShrinkCenter);
+        _bWidthSlider.Scrollable = false;
+
+        // _bWidthSlider.OffsetLeft = 3.0f;
+
+        _bWidthLabel.CustomMinimumSize = new Vector2(27f, 0f);
+        _bWidthLabel.ClipText = true;
+        _bWidthLabel.FocusMode = Control.FocusModeEnum.None;
+        _bWidthLabel.MouseFilter =  Control.MouseFilterEnum.Pass;
+        _bWidthLabel.VerticalAlignment = VerticalAlignment.Center;
+
+        // _bWidthLabel.Position = new Vector2(0f, 0f);
+        // _bWidthLabel.SizeFlagsVertical = Control.SizeFlags.ShrinkBegin;
+        _bWidthLabel.VerticalAlignment = VerticalAlignment.Center;
+        
+        
+        // _bWidthLabel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
+        _bWidthLabel.SetLabelSettings(new LabelSettings());
+        _bWidthLabel.GetLabelSettings().FontColor = Colors.Gainsboro;
+        // _bWidthLabel.CustomMinimumSize = new Vector2(25f, 15f);
+        // var labelPosX = (_bWidthSlider.GetSize().X / 2) - (_bWidthLabel.GetCustomMinimumSize().X / 2);
+        // _bWidthLabel.Position = new Vector2(labelPosX, 0.0f);
+        // _bWidthLabel.AddThemeColorOverride("width_label_font", Colors.Black);
+
+        // _widthSlider.AddChild(_widthSliderLabel);
+        // _widthSliderLabel.SetAnchor(Side.Left, 1, false, true);
+        // _widthSliderLabel.AddThemeColorOverride("width_label_font", Colors.Black);
+
     }
     
     private static HBoxContainer InitHBoxContainer()
@@ -295,6 +343,10 @@ public sealed class MapArtistController
         
         MapArtistDictionaries.ClearAll(FetchLocalPlayer());
         _rowitemColorPicker.Color = player.Character.MapDrawingColor;
+        
+        _bWidthSlider.Value = 4; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
+        var widthVal = _itemWidthButton.BrushWidth;
+        MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), (float)widthVal);
     }
 
 }

@@ -23,57 +23,86 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     private Tween? _tween;
 
     // public TextEdit? WidthSelection;
-    private HBoxContainer EditContainer = new HBoxContainer();
+    private HBoxContainer _editContainer = new HBoxContainer();
     private HSlider _widthSlider = new HSlider();
-    private LineEdit _widthEdit = new LineEdit();
+    // private LineEdit _widthEdit = new LineEdit();
+    private Label _widthSliderLabel = new Label();
     public int BrushWidth;
     
     
-    public NMapArtistBrushWidthButton()
+    public NMapArtistBrushWidthButton(Control parent)
     {
         Name = "MapArtistBrushWidthButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
+
+        MapArtistButtonContainer = parent;
+
+        _editContainer.Name = "LabelledSlideContainer";
+        _editContainer.UniqueNameInOwner = true;
+        _widthSlider.Name = "WidthSlider";
+        _widthSlider.UniqueNameInOwner = true;
+        _widthSliderLabel.Name = "WidthSliderLabel";
+        _widthSliderLabel.UniqueNameInOwner = true;
         
-        EditContainer.GlobalPosition = this.GlobalPosition + new Vector2(35f, 0);
-        EditContainer.CustomMinimumSize = new Vector2(150f, 35f);
-        EditContainer.Visible = false;
-        AddChild(EditContainer);
+        _editContainer.CustomMinimumSize = new Vector2(150f, 35f);
+        _editContainer.Visible = false;
         
-        _widthSlider.MinValue = 0;
-        _widthSlider.MaxValue = 100;
-        _widthSlider.Step = 1;
-        _widthSlider.SetHSizeFlags(SizeFlags.ExpandFill);
-        _widthSlider.SetVSizeFlags(SizeFlags.ShrinkCenter);
-        _widthSlider.Scrollable = false;
-        EditContainer.AddChild(_widthSlider);
+        // _widthSlider.MinValue = 0;
+        // _widthSlider.MaxValue = 100;
+        // _widthSlider.Step = 1;
+        // _widthSlider.SetHSizeFlags(SizeFlags.ExpandFill);
+        // _widthSlider.SetVSizeFlags(SizeFlags.ShrinkCenter);
+        // _widthSlider.Scrollable = false;
+        // // EditContainer.AddChild(_widthSlider);
+        // _widthSlider.OffsetLeft = 3.0f;
         
 
-        _widthSlider.AddChild(_widthEdit);
-        // _widthEdit.Size = new Vector2(0f, 35f);
-        _widthEdit.Editable = false;
-        _widthEdit.FocusMode = FocusModeEnum.None;
-        _widthEdit.SelectingEnabled = false;
-        _widthEdit.MouseFilter = MouseFilterEnum.Ignore;
-        // var beginPos = (_widthSlider.GetSize().X / 2) - (_widthEdit.GetSize().X / 2); // need to instead get node I think
-        // _widthEdit.Position = new Vector2(beginPos, 15f);
-        _widthEdit.Position = new Vector2((_widthSlider.GetSize().X / 2), 15f);
-        // _widthEdit.SetAnchorsPreset(LayoutPreset.VcenterWide);
-        _widthEdit.Flat = true;
-        _widthEdit.MaxLength = 3;
-        _widthEdit.ContextMenuEnabled = false;
-        _widthEdit.EmojiMenuEnabled = false;
-        _widthEdit.DragAndDropSelectionEnabled = false;
-        _widthEdit.AddThemeColorOverride("_widthEditOverride", Colors.Black);
+        
+        // _widthSlider.AddChild(_widthEdit);
+        // // _widthEdit.Size = new Vector2(0f, 35f);
+        // _widthEdit.Editable = false;
+        // _widthEdit.FocusMode = FocusModeEnum.None;
+        // _widthEdit.SelectingEnabled = false;
+        // _widthEdit.MouseFilter = MouseFilterEnum.Ignore;
+        // // var beginPos = (_widthSlider.GetSize().X / 2) - (_widthEdit.GetSize().X / 2); // need to instead get node I think
+        // // _widthEdit.Position = new Vector2(beginPos, 15f);
+        // _widthEdit.Position = new Vector2((_widthSlider.GetSize().X / 2), 15f);
+        // // _widthEdit.SetAnchorsPreset(LayoutPreset.VcenterWide);
+        // _widthEdit.Flat = true;
+        // _widthEdit.MaxLength = 3;
+        // _widthEdit.ContextMenuEnabled = false;
+        // _widthEdit.EmojiMenuEnabled = false;
+        // _widthEdit.DragAndDropSelectionEnabled = false;
+        // _widthEdit.AddThemeColorOverride("_widthEditOverride", Colors.Black);
+
+
+        // _widthSlider.AddChild(_widthSliderLabel);
+        // _widthSliderLabel.SetAnchor(Side.Left, 1, false, true);
+        // _widthSliderLabel.AddThemeColorOverride("width_label_font", Colors.Black);
     }
+
+    // public void SetContainer(Container container)
+    // {
+    //     MapArtistButtonContainer = container;
+    //     MapArtistButtonContainer.AddChild(_editContainer);
+    //     _editContainer.AddChild(_widthSlider);
+    //     _editContainer.AddChild(_widthSliderLabel);
+    // }
 
     public override void _Ready()
     {
         // Localization
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
+        
+        MapArtistButtonContainer.AddChild(_editContainer);
+        _editContainer.AddChild(_widthSlider);
+        _editContainer.AddChild(_widthSliderLabel);
+        
+        MapArtistController.MapArtistController.Instance.ConstructBrushWidthSlider();
 
         _widthSlider.ValueChanged += OnSliderValueChanged;
         // _widthEdit.TextChanged += OnTextValueChanged;
@@ -84,7 +113,8 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     private void OnSliderValueChanged(double value)
     {
         BrushWidth = (int)value;
-        _widthEdit.Set(LineEdit.PropertyName.Text, BrushWidth); // does not emit TextChanged signal
+        // _widthEdit.Set(LineEdit.PropertyName.Text, BrushWidth); // does not emit TextChanged signal
+        _widthSliderLabel.Text = BrushWidth.ToString();
     }
     
     // Editable disabled
@@ -107,7 +137,7 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     protected override void OnPress()
     {
         base.OnPress();
-        EditContainer.Visible = !EditContainer.Visible;
+        _editContainer.Visible = !_editContainer.Visible;
     }
 
     protected override void OnFocus()
