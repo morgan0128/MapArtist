@@ -220,6 +220,7 @@ public sealed class MapArtistController
 
         // _bWidthSlider.OffsetLeft = 3.0f;
 
+
         _bWidthLabel.CustomMinimumSize = new Vector2(27f, 0f);
         _bWidthLabel.ClipText = true;
         _bWidthLabel.FocusMode = Control.FocusModeEnum.None;
@@ -234,14 +235,11 @@ public sealed class MapArtistController
         // _bWidthLabel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
         _bWidthLabel.SetLabelSettings(new LabelSettings());
         _bWidthLabel.GetLabelSettings().FontColor = Colors.Gainsboro;
-        // _bWidthLabel.CustomMinimumSize = new Vector2(25f, 15f);
-        // var labelPosX = (_bWidthSlider.GetSize().X / 2) - (_bWidthLabel.GetCustomMinimumSize().X / 2);
-        // _bWidthLabel.Position = new Vector2(labelPosX, 0.0f);
-        // _bWidthLabel.AddThemeColorOverride("width_label_font", Colors.Black);
 
-        // _widthSlider.AddChild(_widthSliderLabel);
-        // _widthSliderLabel.SetAnchor(Side.Left, 1, false, true);
-        // _widthSliderLabel.AddThemeColorOverride("width_label_font", Colors.Black);
+        // Initial value to display (game's default)
+        _itemWidthButton.BrushWidth = 4;
+        _bWidthSlider.Value = _itemWidthButton.BrushWidth;
+        _bWidthLabel.Text = _itemWidthButton.BrushWidth.ToString();
 
     }
     
