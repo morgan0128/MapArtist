@@ -18,10 +18,27 @@ public class MapArtistDictionaries
      */
     
     //----------------------------------------------------- Global ------------------------------------------------------
+    public static void ClearAll()
+    {
+        ColorsByPlayer.Clear();
+        WidthsByPlayer.Clear();
+    }
+
     public static void ClearAll(Player? player)
     {
-        ColorsByPlayer.Remove(player.NetId);
-        WidthsByPlayer.Remove(player.NetId);
+        if (player == null)
+        {
+            GD.PushWarning("MapArtist: tried to clear map drawing settings before the local player was available.");
+            return;
+        }
+
+        ClearAll(player.NetId);
+    }
+
+    public static void ClearAll(ulong netId)
+    {
+        ColorsByPlayer.Remove(netId);
+        WidthsByPlayer.Remove(netId);
     }
     //-------------------------------------------------------------------------------------------------------------------
 
@@ -35,7 +52,12 @@ public class MapArtistDictionaries
             return;
         }
 
-        ColorsByPlayer[player.NetId] = color;
+        SetColor(player.NetId, color);
+    }
+
+    public static void SetColor(ulong netId, Color color)
+    {
+        ColorsByPlayer[netId] = color;
     }
 
     public static bool TryGetColor(Player player, out Color color)
@@ -54,8 +76,12 @@ public class MapArtistDictionaries
             return;
         }
         
-        var w =  width ?? 4.0f;
-        WidthsByPlayer[player.NetId] = w;
+        SetPenWidth(player.NetId, width ?? 4.0f);
+    }
+
+    public static void SetPenWidth(ulong netId, float width)
+    {
+        WidthsByPlayer[netId] = width;
     }
 
     public static bool TryGetPenWidth(Player player, out float width)

@@ -1,6 +1,8 @@
 using BaseLib;
+using BaseLib.Abstracts;
 using Godot;
 using MapArtist.MapArtistCode.GUI.Items;
+using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
@@ -81,6 +83,8 @@ public sealed class MapArtistController
         _existingMapScene =  mapScene;
         InitializeAddedNodeGuiButton();
         ConstructGui();
+        BroadcastCurrentSettings();
+        CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
     
     private void InitializeAddedNodeGuiButton()
@@ -292,7 +296,8 @@ public sealed class MapArtistController
 
     public void ApplySettings()
     {
-        if (FetchLocalPlayer() == null)
+        var player = FetchLocalPlayer();
+        if (player == null)
         {
             BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
             return;
@@ -311,15 +316,17 @@ public sealed class MapArtistController
         }
 
         // apply pen color
-        MapArtistDictionaries.SetColor(FetchLocalPlayer(), _rowitemColorPicker.Color);
+        MapArtistDictionaries.SetColor(player, _rowitemColorPicker.Color);
 
         // apply pen width
         try {
             var widthVal = _itemWidthButton.BrushWidth;
-            MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), (float)widthVal);
+            MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
+            CustomMessageWrapper.Send(
+                new MapArtistBrushSettingsMessage(_rowitemColorPicker.Color, (float)widthVal));
         } catch (FormatException notFloat)
         {
-            // no valid pen width to apply
+            // no valid pen width to apply... this should not be reached in current iteration
         }
     }
     
@@ -339,12 +346,47 @@ public sealed class MapArtistController
             return;
         }
         
-        MapArtistDictionaries.ClearAll(FetchLocalPlayer());
+        if (_bWidthSlider == null)
+        {
+            BaseLibMain.Logger.Info("[MapArtistController] _bWidthSlider == null on ResetSettings() call.");
+            return;
+        }
+        
+        MapArtistDictionaries.ClearAll(player);
         _rowitemColorPicker.Color = player.Character.MapDrawingColor;
         
         _bWidthSlider.Value = 4; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
-        var widthVal = _itemWidthButton.BrushWidth;
-        MapArtistDictionaries.SetPenWidth(FetchLocalPlayer(), (float)widthVal);
+        CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
+    }
+
+    internal void BroadcastCurrentSettings(bool sendResetWhenDefault = false)
+    {
+        var player = FetchLocalPlayer();
+        if (player == null)
+        {
+            return;
+        }
+
+        var hasColor = MapArtistDictionaries.TryGetColor(player, out var color);
+        var hasWidth = MapArtistDictionaries.TryGetPenWidth(player, out var width);
+        if (!hasColor && !hasWidth)
+        {
+            if (sendResetWhenDefault)
+            {
+                CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
+            }
+
+            return;
+        }
+
+        CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(
+            hasColor ? color : player.Character.MapDrawingColor, hasWidth ? width : 4f));
+    }
+
+    internal void ResetRunState()
+    {
+        _localPlayer = null;
+        MapArtistDictionaries.ClearAll();
     }
 
 }
