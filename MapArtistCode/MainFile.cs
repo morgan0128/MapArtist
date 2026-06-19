@@ -4,6 +4,7 @@ using BaseLib.Patches.Localization;
 using Godot;
 using Godot.Bridge;
 using HarmonyLib;
+using MapArtist.MapArtistCode.Config;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -23,6 +24,8 @@ public partial class MainFile : Node
     {
         //If you want to use scripts defined in your mod for Godot scenes, uncomment the following line.
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
+     
+        ModConfigRegistry.Register(ModId, new MapArtistConfig());
         
         Harmony harmony = new(ModId);
     

@@ -10,18 +10,18 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 namespace MapArtist.MapArtistCode.GUI;
 
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGUIButton.cs")]
-public partial class NMapArtistGUIButton : NButton
+public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
 {
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
-    private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
-    private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
+    private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
+    private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     private NMapScreen? _mapScene;
 
     private Control? _drawingToolHolder;
-    private TextureRect? _icon;
+    // private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
     
@@ -40,11 +40,6 @@ public partial class NMapArtistGUIButton : NButton
     private NMapArtistGUIButton()
     {
 
-    }
-
-    public void SetIcon(TextureRect icon)
-    {
-        _icon = icon;
     }
     
     public static readonly AddedNode<NMapScreen, NMapArtistGUIButton> Map = new((mapScreen) =>
@@ -120,17 +115,17 @@ public partial class NMapArtistGUIButton : NButton
     {
         base.OnFocus();
  
-        if (_icon == null || this._drawingToolHolder == null)
+        if (Icon == null || this._drawingToolHolder == null)
         {
             // PrintUninitializedError();
             return;
         }
         
-        _icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
+        Icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
         NHoverTipSet.CreateAndShow(this._drawingToolHolder, (IHoverTip) this._hoverTip).GlobalPosition = this._drawingToolHolder.GlobalPosition + new Vector2(10f, -132f);
     }
 
@@ -138,16 +133,16 @@ public partial class NMapArtistGUIButton : NButton
     {
         base.OnUnfocus();
 
-        if (_icon == null || this._drawingToolHolder == null)
+        if (Icon == null || this._drawingToolHolder == null)
         {
             // PrintUninitializedError();
             return;
         }
-        this._icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
+        this.Icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
         this._tween?.Kill();
         this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
-        this._tween.TweenProperty((GodotObject) this._icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
+        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
         NHoverTipSet.Remove(this._drawingToolHolder);
     }
     
