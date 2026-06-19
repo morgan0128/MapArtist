@@ -33,7 +33,7 @@ public sealed class MapArtistController
     private GUI.NMapArtistGUIButton? _guiDisplayButton;
     
     // Container for the MapArtist GUI
-    private GUI.NMapArtistGUIContainer? _guiContainer;
+    private GUI.NMapArtistGUIContainer? _guiContainer;//
 
     // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
     private NColorPicker? _rowitemColorPicker;
