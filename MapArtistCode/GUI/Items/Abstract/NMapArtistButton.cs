@@ -10,4 +10,15 @@ public abstract partial class NMapArtistButton : NButton
     {
         Icon = icon;
     }
+
+    // public override void _Ready()
+    // {
+    //     this.MousePressed += OnMousePressed;
+    // }
+    //
+    // private void OnMousePressed(InputEvent @event)
+    // {
+    //         MapArtistController.MapArtistController.Instance.DisableDrawingMode();
+    // }
+
 }

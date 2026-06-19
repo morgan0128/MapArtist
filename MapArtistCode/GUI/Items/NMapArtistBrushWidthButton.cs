@@ -94,6 +94,7 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
 
     public override void _Ready()
     {
+        // base._Ready();
         // Localization
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);

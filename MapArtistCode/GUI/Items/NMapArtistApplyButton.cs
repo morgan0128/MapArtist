@@ -40,6 +40,7 @@ public partial class NMapArtistApplyButton : GUI.Items.Abstract.NMapArtistButton
     
     public override void _Ready()
     {
+        // base._Ready();
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
         

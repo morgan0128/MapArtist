@@ -38,6 +38,7 @@ public partial class NMapArtistResetButton : GUI.Items.Abstract.NMapArtistButton
 
     public override void _Ready()
     {
+        // base._Ready();
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.title"), locDesc);
         

@@ -5,6 +5,7 @@ using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -255,6 +256,7 @@ public sealed class MapArtistController
         hbc.UniqueNameInOwner = true;
         hbc.SizeFlagsHorizontal = Control.SizeFlags.Fill;
         hbc.SizeFlagsVertical = Control.SizeFlags.Fill;
+        hbc.MouseFilter = Control.MouseFilterEnum.Ignore;
       
         return hbc;
     }
@@ -390,5 +392,38 @@ public sealed class MapArtistController
         _localPlayer = null;
         MapArtistDictionaries.ClearAll();
     }
+
+    // public void DisableDrawingMode()
+    // {
+    //     var player = FetchLocalPlayer();
+    //     if (player == null)
+    //     {
+    //         return;
+    //     }
+    //     //
+    //     // var scenePath = SceneHelper.GetScenePath("screens/map/map_line_draw");
+    //     //
+    //     // var parent = _existingMapScene.GetParent();
+    //     // if (parent == null)
+    //     // {
+    //     //     BaseLibMain.Logger.Info("[MapArtistController] parent is null");
+    //     // }
+    //     // else
+    //     // {
+    //     //     BaseLibMain.Logger.Info("[MapArtistController] parent is " + parent.Name);
+    //     // }
+    //
+    //     var nMapDrawings = _existingMapScene.GetNode<NMapDrawings>("TheMap/Drawings");
+    //     if (nMapDrawings == null)
+    //         {
+    //
+    //         }
+    //         else
+    //         {
+    //             nMapDrawings.SetDrawingModeLocal(DrawingMode.None);
+    //         }
+    //
+    //
+    // }
 
 }
