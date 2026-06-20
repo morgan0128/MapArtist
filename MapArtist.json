@@ -1,11 +1,12 @@
 {
   "id": "MapArtist",
-  "name": "MapArtist",
-  "author": "Morgan_using_Alchyr_Empty_Mod_Template",
-  "description": "Slay the Spire 2 mod created from a template for use with BaseLib. Allows players to change pen color on map screen.",
-  "version": "v0.0.0",
+  "name": "Map Artist",
+  "author": "Morgan",
+  "description": "Version 1.0.1. Released June 19, 2026.",
+  "version": "v1.0.1",
   "has_pck": true,
   "has_dll": true,
-  "dependencies": ["BaseLib"],
+  "min_game_version": "0.107.1",
+  "dependencies": [{"id": "BaseLib", "min_version": "3.3.0"}],
   "affects_gameplay": true
 }
