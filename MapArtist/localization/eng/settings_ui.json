@@ -1,4 +1,15 @@
 {
   "MAPARTIST.mod_title": "Map Artist",
-  "MAPARTIST-BOTTOM_RIGHT_GUI.title": "Bottom Right GUI"
+  "MAPARTIST-GENERAL_SETTINGS.title": "General Settings",
+  "MAPARTIST-TOP_LEFT_GUI.title": "Top Left GUI",
+  "MAPARTIST-TOP_LEFT_GUI.hover.desc": "Displays the color picker and buttons in the top left of the screen",
+  "MAPARTIST-SYNCHRONIZED_COLOR_PICKER.title": "Synchronized Color Picker",
+  "MAPARTIST-SYNCHRONIZED_COLOR_PICKER.hover.desc": "Apply color picker selections automatically",
+  "MAPARTIST-SYNCHRONIZED_WIDTH_SLIDER.title": "Synchronized Width Slider",
+  "MAPARTIST-SYNCHRONIZED_WIDTH_SLIDER.hover.desc": "Apply brush width selections automatically",
+  "MAPARTIST-COLOR_SAMPLER_TOOL.title": "Color Sampler Tool",
+  "MAPARTIST-COLOR_SAMPLER_TOOL.hover.desc": "Enable and display the color sampler in the GUI",
+  "MAPARTIST-EXPERIMENTAL_SETTINGS.title": "Experimental Settings",
+  "MAPARTIST-USE_VANILLA_ERASER.title": "Use Vanilla Eraser",
+  "MAPARTIST-USE_VANILLA_ERASER.hover.desc": "WARNING: this option will likely result in inconsistent eraser behavior with custom colors."
 }

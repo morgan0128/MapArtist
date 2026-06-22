@@ -5,6 +5,8 @@ namespace MapArtist.MapArtistCode.GUI;
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGUIContainer.cs")]
 public partial class NMapArtistGUIContainer : VBoxContainer
 {
+
+    public Tween? Tween;
     public NMapArtistGUIContainer()
     {
       Name = "MapArtistGUI";

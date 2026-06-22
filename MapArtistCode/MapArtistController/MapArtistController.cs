@@ -66,7 +66,7 @@ public sealed class MapArtistController
         
         _existingMapScene =  mapScene;
         InitializeAddedNodeGuiButton();
-        ConstructGui(MapArtistConfig.BottomRightGui);
+        ConstructGui(MapArtistConfig.TopLeftGui);
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
@@ -145,7 +145,7 @@ public sealed class MapArtistController
         forButton.AddChild(icon);
     }
 
-    private void ConstructGui(bool bottomRight)
+    private void ConstructGui(bool topLeft)
     {
         if (_existingMapScene == null)
         {
@@ -165,14 +165,20 @@ public sealed class MapArtistController
         _guiContainer = new GUI.NMapArtistGUIContainer();
         _existingMapScene.AddChild(_guiContainer);
         
-        if (!bottomRight)
+        if (topLeft)
         {
             ConstructGuiRowItemColorPicker();
             ConstructGuiRowButtons();
         }
         else
         {
+            _guiContainer.AddThemeConstantOverride("separation", 0);
             _guiContainer.SetGlobalPosition(new Vector2(1605f, 725f));
+            if (MapArtistConfig.ColorSamplerTool)
+            {
+                // lazy way: to get v1.0.2 out today. refactor UI setup/config interactions later
+                _guiContainer.SetGlobalPosition(new Vector2(1605f, 725f));
+            }
             ConstructGuiRowButtons();
             ConstructGuiRowItemColorPicker();
         }
@@ -294,6 +300,22 @@ public sealed class MapArtistController
         
         _guiContainer.Visible = !_guiContainer.Visible;
     }
+    
+    public void HideGui()
+    {
+        if (_guiContainer == null)
+        {
+            BaseLibMain.Logger.Info("[MapArtistController] _guiContainer == null on ToggleGui() call.");
+            return;
+        }
+        
+        // maybe tween animations later
+        // _guiContainer.Tween = _guiContainer.CreateTween().SetParallel();
+        // _guiContainer.Tween.TweenProperty((GodotObject) _guiContainer, (NodePath) "modulate:a", (Variant) 0.0f, 0.15);
+        // _guiContainer.Tween.Kill();
+        
+        _guiContainer.Visible = false;
+    }
 
 
 
@@ -301,6 +323,18 @@ public sealed class MapArtistController
     public void ApplySettings()
     {
         var player = FetchLocalPlayer();
+        ApplySettingColor(player);
+        ApplySettingColor(player);
+    }
+
+    public void ApplySettingColor()
+    {
+        var player = FetchLocalPlayer();
+        ApplySettingColor(player);
+    }
+
+    private void ApplySettingColor(Player? player)
+    {
         if (player == null)
         {
             BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
@@ -313,21 +347,35 @@ public sealed class MapArtistController
             return;
         }
         
+        // apply brush color
+        MapArtistDictionaries.SetColor(player, _rowitemColorPicker.Color);
+    }
+
+    public void ApplySettingWidth()
+    {
+        var player = FetchLocalPlayer();
+        ApplySettingWidth(player);
+    }
+    
+    private void ApplySettingWidth(Player? player)
+    {
+        if (player == null)
+        {
+            BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
+            return;
+        }
+        
         if (_itemWidthButton == null)
         {
             BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton == null on ApplySettings() call.");
             return;
         }
-
-        // apply pen color
-        MapArtistDictionaries.SetColor(player, _rowitemColorPicker.Color);
-
+        
         // apply pen width
         try {
             var widthVal = _itemWidthButton.BrushWidth;
             MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
-            CustomMessageWrapper.Send(
-                new MapArtistBrushSettingsMessage(_rowitemColorPicker.Color, (float)widthVal));
+            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_rowitemColorPicker.Color, (float)widthVal));
         } catch (FormatException notFloat)
         {
             // no valid pen width to apply... this should not be reached in current iteration

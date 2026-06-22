@@ -1,4 +1,5 @@
 using Godot;
+using MapArtist.MapArtistCode.Config;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -116,6 +117,10 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         BrushWidth = (int)value;
         // _widthEdit.Set(LineEdit.PropertyName.Text, BrushWidth); // does not emit TextChanged signal
         _widthSliderLabel.Text = BrushWidth.ToString();
+        if (MapArtistConfig.SynchronizedWidthSlider)
+        {
+            MapArtistController.MapArtistController.Instance.ApplySettingWidth();
+        }
     }
     
     // Editable disabled

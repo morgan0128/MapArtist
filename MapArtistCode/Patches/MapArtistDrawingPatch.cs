@@ -1,5 +1,6 @@
 using Godot;
 using HarmonyLib;
+using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.MapArtistController;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -21,6 +22,10 @@ public static class MapArtistDrawingPatch
 
         if (isErasing)
         {
+            if (MapArtistConfig.UseVanillaEraser)
+            {
+                return;
+            }
             __result.DefaultColor = Colors.White;
             __result.Texture = GetHardEraserTexture();
             return;
