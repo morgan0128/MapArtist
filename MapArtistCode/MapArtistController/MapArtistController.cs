@@ -324,7 +324,7 @@ public sealed class MapArtistController
     {
         var player = FetchLocalPlayer();
         ApplySettingColor(player);
-        ApplySettingColor(player);
+        ApplySettingWidth(player);
     }
 
     public void ApplySettingColor()
