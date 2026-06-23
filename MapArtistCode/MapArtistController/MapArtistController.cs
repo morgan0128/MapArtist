@@ -177,7 +177,7 @@ public sealed class MapArtistController
             if (MapArtistConfig.ColorSamplerTool)
             {
                 // lazy way: to get v1.0.2 out today. refactor UI setup/config interactions later
-                _guiContainer.SetGlobalPosition(new Vector2(1605f, 725f));
+                _guiContainer.SetGlobalPosition(new Vector2(1605f, 720f));
             }
             ConstructGuiRowButtons();
             ConstructGuiRowItemColorPicker();

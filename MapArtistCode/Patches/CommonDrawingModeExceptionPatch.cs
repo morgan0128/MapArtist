@@ -10,6 +10,8 @@ namespace MapArtist.MapArtistCode.Patches;
 public class CommonDrawingModeExceptionPatch
 {
     
+    // temporary patch to suppress exception, to prevent users from experiencing BaseLib log window crash.
+    // to be removed upon BaseLib patching issue.
     static Exception Finalizer(Exception __exception)
     {
         switch (__exception)
