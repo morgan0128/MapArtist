@@ -6,19 +6,12 @@ namespace MapArtist.MapArtistCode.GUI;
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGUINode.cs")]
 public partial class NMapArtistGUINode : VBoxContainer
 {
-
-    // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
-    // private GUI.NMapArtistGUIButton? _guiDisplayButton;
-  
-    // this
-    // // Container for the MapArtist GUI
-    // private GUI.NMapArtistGUIContainer? _guiContainer;
-
     // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
     private NColorPicker? _rowitemColorPicker;
     
     // Container for buttons row of the MapArtist GUI container
     private HBoxContainer? _rowButtonsContainer;
+    
     private NMapArtistApplyButton? _itemApplyButton;
     private NMapArtistResetButton? _itemResetButton;
     private NMapArtistBrushWidthButton? _itemBrushWidthButton;
@@ -42,42 +35,42 @@ public partial class NMapArtistGUINode : VBoxContainer
         // this.GuiInput += OnGuiInput;
     }
 
-    public NColorPicker GetRowItemColorPicker()
+    public NColorPicker? GetRowItemColorPicker()
     {
         return _rowitemColorPicker;
     }
 
-    public HBoxContainer GetRowButtonsContainer()
+    public HBoxContainer? GetRowButtonsContainer()
     {
         return _rowButtonsContainer;
     }
 
-    public NMapArtistApplyButton GetItemApplyButton()
+    public NMapArtistApplyButton? GetItemApplyButton()
     {
         return _itemApplyButton;
     }
 
-    public NMapArtistResetButton GetItemResetButton()
+    public NMapArtistResetButton? GetItemResetButton()
     {
         return _itemResetButton;
     }
 
-    public NMapArtistBrushWidthButton GetItemBrushWidthButton()
+    public NMapArtistBrushWidthButton? GetItemBrushWidthButton()
     {
         return _itemBrushWidthButton;
     }
     
-    public HBoxContainer GetItemWidthSliderContainer()
+    public HBoxContainer? GetItemWidthSliderContainer()
     {
         return _bWidthSliderContainer;
     }
     
-    public HSlider GetItemWidthSlider()
+    public HSlider? GetItemWidthSlider()
     {
         return _bWidthSlider;
     }
     
-    public Label GetItemWidthLabel()
+    public Label? GetItemWidthLabel()
     {
         return _bWidthLabel;
     }

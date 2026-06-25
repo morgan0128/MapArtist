@@ -1,11 +1,7 @@
 using BaseLib;
 using BaseLib.Abstracts;
-using Godot;
-using MapArtist.MapArtistCode.Config;
-using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -13,84 +9,30 @@ namespace MapArtist.MapArtistCode.MapArtistController;
 
 public sealed class MapArtistController
 {
-//--------------------------------------------------- Singleton ------------------------------------------------
     static MapArtistController() { }
     private MapArtistController() { }
     public static MapArtistController Instance { get; } = new MapArtistController();
-//--------------------------------------------------------------------------------------------------------------
-//-------------------------------------- Relevant NMapScreen Scene Nodes ---------------------------------------
-    private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself
     
-    // An existing Icon pulled from the Map Scene. Make new icons by shallow copying and modifying Texture.
-    private TextureRect? _prototypeIcon;
-
-    private static readonly StringName ApplyImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    // private static readonly StringName ApplyGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
-    private static readonly StringName ResetImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
-    // private static readonly StringName ResetGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
-    private static readonly StringName WidthImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
-    // private static readonly StringName WidthGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
-    private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
-    
-    // // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
-    private GUI.NMapArtistGUIButton? _guiDisplayButton;
-    
-    // // Container for the MapArtist GUI
     private GUI.NMapArtistGUINode? _guiContainer;
     
-    // // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
-    // private NColorPicker? _rowitemColorPicker;
-    //
-    // // Container for buttons row of the MapArtist GUI container
-    // private HBoxContainer? _rowButtonsContainer;
-    // private NMapArtistBrushWidthButton? _itemWidthButton;
-    // private NMapArtistApplyButton? _itemApplyButton;
-    // private NMapArtistResetButton? _itemResetButton;
-    // private HBoxContainer? _bWidthSliderContainer;
-    // private HSlider? _bWidthSlider;
-    // private Label? _bWidthLabel;
+    private Player? _localPlayer;
     
-//--------------------------------------------------------------------------------------------------------------
-//---------------------------------------- Additional Member Variables -----------------------------------------
-    private Player? _localPlayer; // Needed for controller logic
-//--------------------------------------------------------------------------------------------------------------
-
-//----------------------------------- GUI Initialization Methods and Helpers -----------------------------------
-    public void InitializeGui(NMapScreen? mapScene)
+    // Only to be called by NMapArtistGUIButton when enters tree
+    public void InitializeGui(NMapScreen mapScene)
     {
-        if (mapScene == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtistController] Null mapScene passed to InitializeExisting.");
-            return;
-        }
-        
-        _existingMapScene =  mapScene;
-        _guiDisplayButton = TemporaryRefactoredInitializer.Instance.CompleteSetupAddedNodeGuiButton(mapScene);
-        _guiContainer = TemporaryRefactoredInitializer.Instance.InitializeGui();
-        
-        
+        _guiContainer = TemporaryRefactoredInitializer.Instance.InitializeMapArtistNodes(mapScene);
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
-//---------------------------------------------- Controller Logic ----------------------------------------------
+    
+    // Using "fetch" approach; so patched RunManager.Cleanup using Postfix to include call to ResetRunState()
     private Player? FetchLocalPlayer()
     {
-        // Not yet tested/suitable for Multiplayer
-        
         if (_localPlayer != null)
         {
-            // results in ResetSettings() grabbing the wrong color to display in ColorPicker where character changed
             return _localPlayer;
         }
-
-        var currState = RunManager.Instance.DebugOnlyGetState();
-        if (currState == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtistController] Failed to load current state");
-            return null;
-        }
-
-        _localPlayer = currState.GetPlayer(RunManager.Instance.NetService.NetId);
+        _localPlayer = Util.GetLocalPlayer();
         return  _localPlayer;
     }
 
@@ -239,41 +181,8 @@ public sealed class MapArtistController
     internal void ResetRunState()
     {
         _localPlayer = null;
-        TemporaryRefactoredInitializer.Instance.TemporaryResetPlayer();
         MapArtistDictionaries.ClearAll();
     }
-
-    // public void DisableDrawingMode()
-    // {
-    //     var player = FetchLocalPlayer();
-    //     if (player == null)
-    //     {
-    //         return;
-    //     }
-    //     //
-    //     // var scenePath = SceneHelper.GetScenePath("screens/map/map_line_draw");
-    //     //
-    //     // var parent = _existingMapScene.GetParent();
-    //     // if (parent == null)
-    //     // {
-    //     //     BaseLibMain.Logger.Info("[MapArtistController] parent is null");
-    //     // }
-    //     // else
-    //     // {
-    //     //     BaseLibMain.Logger.Info("[MapArtistController] parent is " + parent.Name);
-    //     // }
-    //
-    //     var nMapDrawings = _existingMapScene.GetNode<NMapDrawings>("TheMap/Drawings");
-    //     if (nMapDrawings == null)
-    //         {
-    //
-    //         }
-    //         else
-    //         {
-    //             nMapDrawings.SetDrawingModeLocal(DrawingMode.None);
-    //         }
-    //
-    //
-    // }
+    
 
 }
