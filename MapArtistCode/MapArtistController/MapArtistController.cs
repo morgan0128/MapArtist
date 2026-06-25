@@ -32,23 +32,23 @@ public sealed class MapArtistController
     // private static readonly StringName WidthGlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
     private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     
-    // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
+    // // The button added to the existing DrawingTools/HBoxContainer to display the MapArtist GUI
     private GUI.NMapArtistGUIButton? _guiDisplayButton;
     
-    // Container for the MapArtist GUI
-    private GUI.NMapArtistGUIContainer? _guiContainer;
-
-    // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
-    private NColorPicker? _rowitemColorPicker;
+    // // Container for the MapArtist GUI
+    private GUI.NMapArtistGUINode? _guiContainer;
     
-    // Container for buttons row of the MapArtist GUI container
-    private HBoxContainer? _rowButtonsContainer;
-    private NMapArtistBrushWidthButton? _itemWidthButton;
-    private NMapArtistApplyButton? _itemApplyButton;
-    private NMapArtistResetButton? _itemResetButton;
-    private HBoxContainer? _bWidthSliderContainer;
-    private HSlider? _bWidthSlider;
-    private Label? _bWidthLabel;
+    // // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
+    // private NColorPicker? _rowitemColorPicker;
+    //
+    // // Container for buttons row of the MapArtist GUI container
+    // private HBoxContainer? _rowButtonsContainer;
+    // private NMapArtistBrushWidthButton? _itemWidthButton;
+    // private NMapArtistApplyButton? _itemApplyButton;
+    // private NMapArtistResetButton? _itemResetButton;
+    // private HBoxContainer? _bWidthSliderContainer;
+    // private HSlider? _bWidthSlider;
+    // private Label? _bWidthLabel;
     
 //--------------------------------------------------------------------------------------------------------------
 //---------------------------------------- Additional Member Variables -----------------------------------------
@@ -65,209 +65,13 @@ public sealed class MapArtistController
         }
         
         _existingMapScene =  mapScene;
-        InitializeAddedNodeGuiButton();
-        ConstructGui(MapArtistConfig.TopLeftGui);
+        _guiDisplayButton = TemporaryRefactoredInitializer.Instance.CompleteSetupAddedNodeGuiButton(mapScene);
+        _guiContainer = TemporaryRefactoredInitializer.Instance.InitializeGui();
+        
+        
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
-    
-    private void InitializeAddedNodeGuiButton()
-    {
-        if (_existingMapScene == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call InitializeAddedNodeGuiButton() before" +
-                                     " assigning _existingMapScene.");
-            return;
-        }
-        
-        _guiDisplayButton = _existingMapScene.GetNode<GUI.NMapArtistGUIButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
-        if (_guiDisplayButton == null)
-        {
-            BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch or assign _guiDisplayButton from _existingMapScene.");
-            return;
-        }
-        
-        InitializePrototypeIcon();
-        InitializeIconUseShallow(_prototypeIcon, LogoImagePath, _guiDisplayButton);
-        // _guiDisplayButton.GetNode<TextureRect>("Icon").SetScale(new Vector2(0.5f, 0.5f));
-    }
-
-    private void InitializePrototypeIcon()
-    {
-        if (_existingMapScene == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call DebugInitializePlaceholderIcon() before" +
-                                     " assigning _existingMapScene.");
-            return;
-        }
-        
-        _prototypeIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
-    }
-    
-    private static TextureRect ShallowCopyIcon(TextureRect toCopy)
-    {
-        var icon = new TextureRect();
-
-        icon.Name = "Icon";
-        
-        icon.SelfModulate = toCopy.SelfModulate;
-        icon.SetMaterial(toCopy.GetMaterial());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.LayoutMode = toCopy.LayoutMode;
-        icon.AnchorsPreset = toCopy.AnchorsPreset;
-        icon.AnchorRight = toCopy.AnchorRight;
-        icon.AnchorBottom = toCopy.AnchorBottom;
-        icon.GrowHorizontal = toCopy.GrowHorizontal;
-        icon.GrowVertical = toCopy.GrowVertical;
-        icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
-        icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
-        icon.MouseFilter = toCopy.MouseFilter;
-        icon.SetTexture(toCopy.GetTexture());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.ExpandMode = toCopy.ExpandMode;
-        icon.StretchMode = toCopy.StretchMode;
-        
-        return icon;
-    }
-
-    private static TextureRect ShallowCopyIcon(TextureRect toCopy, StringName imagePath)
-    {
-        var icon = ShallowCopyIcon(toCopy);
-        icon.Texture = ResourceLoader.Load<Texture2D>(imagePath);
-
-        return icon;
-    }
-    
-    private static void InitializeIconUseShallow(TextureRect toCopy, StringName imagePath, GUI.Items.Abstract.NMapArtistButton forButton)
-    {
-        var icon = ShallowCopyIcon(toCopy, imagePath);
-        forButton.SetIcon(icon);
-        forButton.AddChild(icon);
-    }
-
-    private void ConstructGui(bool topLeft)
-    {
-        if (_existingMapScene == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call ConstructGui() before" +
-                                    " assigning _existingMapScene.");
-            return;
-        }
-        
-        // Have DrawingTools expand horizontally to visually house the newly added toggleGUI button
-        var dTools = _existingMapScene.GetNode<NinePatchRect>("DrawingTools");
-        dTools.SetOffset(Side.Right, (dTools.GetOffset(Side.Right) + 68f));
-        var dToolsHBox = _existingMapScene.GetNode<HBoxContainer>("DrawingTools/HBoxContainer");
-        dToolsHBox.SetOffset(Side.Left, (dToolsHBox.GetOffset(Side.Left) - 34f));
-        dToolsHBox.SetOffset(Side.Right, (dToolsHBox.GetOffset(Side.Right) + 34f));
-        
-        
-        _guiContainer = new GUI.NMapArtistGUIContainer();
-        _existingMapScene.AddChild(_guiContainer);
-        
-        if (topLeft)
-        {
-            ConstructGuiRowItemColorPicker();
-            ConstructGuiRowButtons();
-        }
-        else
-        {
-            _guiContainer.AddThemeConstantOverride("separation", 0);
-            _guiContainer.SetGlobalPosition(new Vector2(1605f, 725f));
-            if (MapArtistConfig.ColorSamplerTool)
-            {
-                // lazy way: to get v1.0.2 out today. refactor UI setup/config interactions later
-                _guiContainer.SetGlobalPosition(new Vector2(1605f, 720f));
-            }
-            ConstructGuiRowButtons();
-            ConstructGuiRowItemColorPicker();
-        }
-    }
-    
-    private void ConstructGuiRowItemColorPicker()
-    {
-        _rowitemColorPicker = new NColorPicker();
-        _rowitemColorPicker.Name = "ItemColorPicker";
-        _rowitemColorPicker.UniqueNameInOwner = true;
-        var player = FetchLocalPlayer();
-        if (player != null)
-        {
-            _rowitemColorPicker.Color = FetchLocalPlayer().Character.MapDrawingColor;
-        }
-        _guiContainer.AddChild(_rowitemColorPicker);
-    }
-    
-    private void ConstructGuiRowButtons()
-    {
-        _rowButtonsContainer =  InitHBoxContainer();
-        _rowButtonsContainer.Name = "BrushPropertyButtonContainer";
-        _guiContainer.AddChild(_rowButtonsContainer);
-        
-        _itemApplyButton = new NMapArtistApplyButton();
-        InitializeIconUseShallow(_prototypeIcon, ApplyImagePath, _itemApplyButton);
-        _rowButtonsContainer.AddChild(_itemApplyButton);
-        _itemApplyButton.MapArtistButtonContainer = _rowButtonsContainer;
-        
-        _itemResetButton = new NMapArtistResetButton();
-        InitializeIconUseShallow(_prototypeIcon, ResetImagePath, _itemResetButton);
-        _rowButtonsContainer.AddChild(_itemResetButton);
-        _itemResetButton.MapArtistButtonContainer = _rowButtonsContainer;
-        
-        _itemWidthButton = new NMapArtistBrushWidthButton(_rowButtonsContainer);
-        InitializeIconUseShallow(_prototypeIcon, WidthImagePath, _itemWidthButton);
-        _rowButtonsContainer.AddChild(_itemWidthButton);
-    }
-
-    public void ConstructBrushWidthSlider()
-    {
-        _bWidthSliderContainer = _rowButtonsContainer.GetNode<HBoxContainer>("LabelledSlideContainer");
-        _bWidthSlider = _bWidthSliderContainer.GetNode<HSlider>("WidthSlider");
-        // _bWidthLabel = _bWidthSlider.GetNode<Label>("WidthSliderLabel");
-        _bWidthLabel = _bWidthSliderContainer.GetNode<Label>("WidthSliderLabel");
-        
-        _bWidthSliderContainer.Position = new Vector2((_itemWidthButton.Size.X + 7f), 0f);
-        
-        _bWidthSlider.MinValue = 1;
-        _bWidthSlider.MaxValue = 20;
-        _bWidthSlider.Step = 1;
-        _bWidthSlider.SetHSizeFlags(Control.SizeFlags.ExpandFill);
-        _bWidthSlider.SetVSizeFlags(Control.SizeFlags.ShrinkCenter);
-        _bWidthSlider.Scrollable = false;
-
-        _bWidthLabel.CustomMinimumSize = new Vector2(27f, 0f);
-        _bWidthLabel.ClipText = true;
-        _bWidthLabel.FocusMode = Control.FocusModeEnum.None;
-        _bWidthLabel.MouseFilter =  Control.MouseFilterEnum.Pass;
-        _bWidthLabel.VerticalAlignment = VerticalAlignment.Center;
-
-        // _bWidthLabel.Position = new Vector2(0f, 0f);
-        // _bWidthLabel.SizeFlagsVertical = Control.SizeFlags.ShrinkBegin;
-        _bWidthLabel.VerticalAlignment = VerticalAlignment.Center;
-        
-        
-        // _bWidthLabel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
-        _bWidthLabel.SetLabelSettings(new LabelSettings());
-        _bWidthLabel.GetLabelSettings().FontColor = Colors.Gainsboro;
-
-        // Initial value to display (game's default)
-        _itemWidthButton.BrushWidth = 4;
-        _bWidthSlider.Value = _itemWidthButton.BrushWidth;
-        _bWidthLabel.Text = _itemWidthButton.BrushWidth.ToString();
-
-    }
-    
-    private static HBoxContainer InitHBoxContainer()
-    {
-        var hbc = new HBoxContainer();
-        hbc.UniqueNameInOwner = true;
-        hbc.SizeFlagsHorizontal = Control.SizeFlags.Fill;
-        hbc.SizeFlagsVertical = Control.SizeFlags.Fill;
-        hbc.MouseFilter = Control.MouseFilterEnum.Ignore;
-      
-        return hbc;
-    }
-//--------------------------------------------------------------------------------------------------------------
-
 //---------------------------------------------- Controller Logic ----------------------------------------------
     private Player? FetchLocalPlayer()
     {
@@ -317,9 +121,6 @@ public sealed class MapArtistController
         _guiContainer.Visible = false;
     }
 
-
-
-
     public void ApplySettings()
     {
         var player = FetchLocalPlayer();
@@ -341,14 +142,14 @@ public sealed class MapArtistController
             return;
         }
 
-        if (_rowitemColorPicker == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ApplySettings() call.");
-            return;
-        }
+        // if (_rowitemColorPicker == null)
+        // {
+        //     BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ApplySettings() call.");
+        //     return;
+        // }
         
         // apply brush color
-        MapArtistDictionaries.SetColor(player, _rowitemColorPicker.Color);
+        MapArtistDictionaries.SetColor(player, _guiContainer.GetRowItemColorPicker().Color);
     }
 
     public void ApplySettingWidth()
@@ -365,17 +166,17 @@ public sealed class MapArtistController
             return;
         }
         
-        if (_itemWidthButton == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton == null on ApplySettings() call.");
-            return;
-        }
+        // if (_itemWidthButton == null)
+        // {
+        //     BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton == null on ApplySettings() call.");
+        //     return;
+        // }
         
         // apply pen width
         try {
-            var widthVal = _itemWidthButton.BrushWidth;
+            var widthVal = _guiContainer.GetItemBrushWidthButton().BrushWidth;
             MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
-            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_rowitemColorPicker.Color, (float)widthVal));
+            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetRowItemColorPicker().Color, (float)widthVal));
         } catch (FormatException notFloat)
         {
             // no valid pen width to apply... this should not be reached in current iteration
@@ -392,22 +193,22 @@ public sealed class MapArtistController
             return;
         }
 
-        if (_rowitemColorPicker == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ResetSettings() call.");
-            return;
-        }
-        
-        if (_bWidthSlider == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] _bWidthSlider == null on ResetSettings() call.");
-            return;
-        }
+        // if (_rowitemColorPicker == null)
+        // {
+        //     BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ResetSettings() call.");
+        //     return;
+        // }
+        //
+        // if (_bWidthSlider == null)
+        // {
+        //     BaseLibMain.Logger.Info("[MapArtistController] _bWidthSlider == null on ResetSettings() call.");
+        //     return;
+        // }
         
         MapArtistDictionaries.ClearAll(player);
-        _rowitemColorPicker.Color = player.Character.MapDrawingColor;
-        
-        _bWidthSlider.Value = 4; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
+        _guiContainer.GetRowItemColorPicker().Color = player.Character.MapDrawingColor;
+
+        _guiContainer.GetItemWidthSlider().Value = 4; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
     }
 
@@ -438,6 +239,7 @@ public sealed class MapArtistController
     internal void ResetRunState()
     {
         _localPlayer = null;
+        TemporaryRefactoredInitializer.Instance.TemporaryResetPlayer();
         MapArtistDictionaries.ClearAll();
     }
 

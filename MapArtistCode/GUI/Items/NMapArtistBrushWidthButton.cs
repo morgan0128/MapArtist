@@ -31,15 +31,13 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     public int BrushWidth;
     
     
-    public NMapArtistBrushWidthButton(Control parent)
+    public NMapArtistBrushWidthButton()
     {
         Name = "MapArtistBrushWidthButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
-
-        MapArtistButtonContainer = parent;
 
         _editContainer.Name = "LabelledSlideContainer";
         _editContainer.UniqueNameInOwner = true;
@@ -104,10 +102,30 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
         _editContainer.AddChild(_widthSlider);
         _editContainer.AddChild(_widthSliderLabel);
         
-        MapArtistController.MapArtistController.Instance.ConstructBrushWidthSlider();
+        // MapArtistController.MapArtistController.Instance.ConstructBrushWidthSlider();
 
+        // _editContainer.Position = new Vector2((_itemBrushWidthButton.Size.X + 7f), 0f);
+        
+        _widthSlider.MinValue = 1;
+        _widthSlider.MaxValue = 20;
+        _widthSlider.Step = 1;
+        _widthSlider.SetHSizeFlags(Control.SizeFlags.ExpandFill);
+        _widthSlider.SetVSizeFlags(Control.SizeFlags.ShrinkCenter);
+        _widthSlider.Scrollable = false;
+
+        _widthSliderLabel.CustomMinimumSize = new Vector2(27f, 0f);
+        _widthSliderLabel.ClipText = true;
+        _widthSliderLabel.FocusMode = Control.FocusModeEnum.None;
+        _widthSliderLabel.MouseFilter =  Control.MouseFilterEnum.Pass;
+        _widthSliderLabel.VerticalAlignment = VerticalAlignment.Center;
+        _widthSliderLabel.SetLabelSettings(new LabelSettings());
+        _widthSliderLabel.GetLabelSettings().FontColor = Colors.Gainsboro;
+        
+        this.BrushWidth = 4;
+        _widthSlider.Value = this.BrushWidth;
+        _widthSliderLabel.Text = this.BrushWidth.ToString();
+        
         _widthSlider.ValueChanged += OnSliderValueChanged;
-        // _widthEdit.TextChanged += OnTextValueChanged;
         
         ConnectSignals();
     }
