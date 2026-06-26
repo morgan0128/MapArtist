@@ -11,12 +11,12 @@ using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 
-public class TemporaryRefactoredInitializer
+public class MapArtistGuiInitializer
 {
 //--------------------------------------------------- Singleton ------------------------------------------------
-    static TemporaryRefactoredInitializer() { }
-    private TemporaryRefactoredInitializer() { }
-    public static TemporaryRefactoredInitializer Instance { get; } = new TemporaryRefactoredInitializer();
+    static MapArtistGuiInitializer() { }
+    private MapArtistGuiInitializer() { }
+    public static MapArtistGuiInitializer Instance { get; } = new MapArtistGuiInitializer();
 //--------------------------------------------------------------------------------------------------------------
 
     private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself

@@ -20,7 +20,7 @@ public sealed class MapArtistController
     // Only to be called by NMapArtistGUIButton when enters tree
     public void InitializeGui(NMapScreen mapScene)
     {
-        _guiContainer = TemporaryRefactoredInitializer.Instance.InitializeMapArtistNodes(mapScene);
+        _guiContainer = MapArtistGuiInitializer.Instance.InitializeMapArtistNodes(mapScene);
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
