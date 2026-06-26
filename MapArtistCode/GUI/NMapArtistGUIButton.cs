@@ -63,14 +63,6 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
         clearButton.FocusNeighborRight = button.GetPath();
         button.FocusNeighborLeft = new NodePath("../ClearButton");
         
-        // drawing tools hbox resizing
-        // parent.OffsetRight += 68;
-        // parent.OffsetLeft -= 34;
-        // parent.OffsetRight += 34;
-        // drawingTools.AxisStretchHorizontal = NinePatchRect.AxisStretchMode.Stretch;
-        // drawingTools.PatchMarginLeft = 18;
-        // drawingTools.PatchMarginRight = 18;
-        
         button._drawingToolHolder = parent;
         
         // return the newly created color picker button

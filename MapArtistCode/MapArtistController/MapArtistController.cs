@@ -91,7 +91,7 @@ public sealed class MapArtistController
         // }
         
         // apply brush color
-        MapArtistDictionaries.SetColor(player, _guiContainer.GetRowItemColorPicker().Color);
+        MapArtistDictionaries.SetColor(player, _guiContainer.GetColorInColorPicker());
     }
 
     public void ApplySettingWidth()
@@ -116,9 +116,9 @@ public sealed class MapArtistController
         
         // apply pen width
         try {
-            var widthVal = _guiContainer.GetItemBrushWidthButton().BrushWidth;
+            var widthVal = _guiContainer.GetValueBrushWidth();
             MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
-            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetRowItemColorPicker().Color, (float)widthVal));
+            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetColorInColorPicker(), (float)widthVal));
         } catch (FormatException notFloat)
         {
             // no valid pen width to apply... this should not be reached in current iteration
@@ -148,9 +148,9 @@ public sealed class MapArtistController
         // }
         
         MapArtistDictionaries.ClearAll(player);
-        _guiContainer.GetRowItemColorPicker().Color = player.Character.MapDrawingColor;
-
-        _guiContainer.GetItemWidthSlider().Value = 4; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
+        _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
+        
+        _guiContainer.SetValueBrushWidth(4);
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
     }
 

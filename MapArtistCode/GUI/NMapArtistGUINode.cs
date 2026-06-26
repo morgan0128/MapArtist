@@ -30,51 +30,34 @@ public partial class NMapArtistGUINode : VBoxContainer
       GlobalPosition = new Vector2(12f, 158f);
     }
     
-    public override void _Ready()
+    public override void _Ready() {}
+    
+    public Color GetColorInColorPicker()
     {
-        // this.GuiInput += OnGuiInput;
-    }
-
-    public NColorPicker? GetRowItemColorPicker()
-    {
-        return _rowitemColorPicker;
-    }
-
-    public HBoxContainer? GetRowButtonsContainer()
-    {
-        return _rowButtonsContainer;
-    }
-
-    public NMapArtistApplyButton? GetItemApplyButton()
-    {
-        return _itemApplyButton;
-    }
-
-    public NMapArtistResetButton? GetItemResetButton()
-    {
-        return _itemResetButton;
-    }
-
-    public NMapArtistBrushWidthButton? GetItemBrushWidthButton()
-    {
-        return _itemBrushWidthButton;
+        return _rowitemColorPicker.Color;
     }
     
-    public HBoxContainer? GetItemWidthSliderContainer()
+    public void SetColorInColorPicker(Color color)
     {
-        return _bWidthSliderContainer;
+        _rowitemColorPicker.Color = color;
     }
-    
-    public HSlider? GetItemWidthSlider()
+
+    public int GetValueBrushWidth()
     {
-        return _bWidthSlider;
+        return _itemBrushWidthButton.BrushWidth;
     }
-    
-    public Label? GetItemWidthLabel()
+
+    public void SetValueBrushWidth(int value)
     {
-        return _bWidthLabel;
+        _bWidthSlider.Value = value; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
     }
-    
+
+
+
+    // public void AddRow(Container row)
+    // {
+    //     _rows.Add(row);
+    // }
 
     public void AssignRowitemColorPicker(NColorPicker colorPicker)
     {
