@@ -1,7 +1,9 @@
 using BaseLib;
 using BaseLib.Abstracts;
+using Godot;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -16,6 +18,9 @@ public sealed class MapArtistController
     private GUI.NMapArtistGUINode? _guiContainer;
     
     private Player? _localPlayer;
+    
+    private SubViewport _tempViewport;
+
     
     // Only to be called by NMapArtistGUIButton when enters tree
     public void InitializeGui(NMapScreen mapScene)
@@ -134,24 +139,17 @@ public sealed class MapArtistController
             BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
             return;
         }
-
-        // if (_rowitemColorPicker == null)
-        // {
-        //     BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ResetSettings() call.");
-        //     return;
-        // }
-        //
-        // if (_bWidthSlider == null)
-        // {
-        //     BaseLibMain.Logger.Info("[MapArtistController] _bWidthSlider == null on ResetSettings() call.");
-        //     return;
-        // }
         
+        
+        // // test
+        // /*
         MapArtistDictionaries.ClearAll(player);
         _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
         
         _guiContainer.SetValueBrushWidth(4);
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
+        // */
+        // UndoLine();
     }
 
     internal void BroadcastCurrentSettings(bool sendResetWhenDefault = false)
@@ -176,6 +174,17 @@ public sealed class MapArtistController
 
         CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(
             hasColor ? color : player.Character.MapDrawingColor, hasWidth ? width : 4f));
+    }
+
+    public void UndoLine()
+    {
+        _tempViewport.RemoveChildSafely(_tempViewport.GetChildren().Last());
+    }
+
+    public void TemporaryUpdateViewport(SubViewport subViewport)
+    {
+        _tempViewport = subViewport;
+
     }
 
     internal void ResetRunState()

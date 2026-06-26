@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Reflection;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
@@ -7,7 +8,7 @@ namespace MapArtist.MapArtistCode.Patches;
 
 [HarmonyPatch(typeof(NMapDrawings))]
 [HarmonyPatch("BeginLine")]
-public class CommonDrawingModeExceptionPatch
+public class BeginLinePatch
 {
     
     // temporary patch to suppress exception, to prevent users from experiencing BaseLib log window crash.
@@ -36,6 +37,16 @@ public class CommonDrawingModeExceptionPatch
                 return __exception;
         }
 
+    }
+    
+    private static void Postfix(object[] __args)
+    {
+        var outerType = typeof(NMapDrawings);
+        var nestedTypeDrawingState = outerType.GetNestedType("DrawingState", BindingFlags.NonPublic);
+        var state = (object)__args[0];
+
+        var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
+        MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
     }
     
     
