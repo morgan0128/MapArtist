@@ -12,15 +12,12 @@ public partial class NMapArtistApplyButton : GUI.Items.Abstract.NMapArtistButton
 {
     
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
-    // private static readonly StringName ImagePath = "res://images/packed/map/drawing_clear.png";
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    // private static readonly StringName GlowImagePath = "res://images/packed/map/drawing_clear_glow.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     public Control? MapArtistButtonContainer;
-    // private TextureRect? _icon;
     private HoverTip _hoverTip;
     private Tween? _tween;
     
@@ -40,11 +37,8 @@ public partial class NMapArtistApplyButton : GUI.Items.Abstract.NMapArtistButton
     
     public override void _Ready()
     {
-        // base._Ready();
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
-        
-        // _icon.Texture =  PreloadManager.Cache.GetTexture2D((string) ImagePath);
         
         ConnectSignals();
     }
