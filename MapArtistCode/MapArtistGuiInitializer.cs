@@ -21,7 +21,7 @@ public class MapArtistGuiInitializer
 
     private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself
     
-    // An existing Icon pulled from the Map Scene. Make new icons by shallow copying and modifying Texture.
+    // An existing Icon pulled from the Map Scene. Make new icons by deep copying then modifying Texture.
     private TextureRect? _prototypeIcon;
 
     // Used in this class for the initially rendered states of the MapArtist button icons
@@ -64,7 +64,7 @@ public class MapArtistGuiInitializer
         }
         
         InitializePrototypeIcon();
-        InitializeIconUseShallow(_prototypeIcon, LogoImagePath, _guiDisplayButton);
+        InitializeIconUseDeepCopy(_prototypeIcon, LogoImagePath, _guiDisplayButton);
         
         // Have DrawingTools expand horizontally to visually house the newly added toggleGUI button
         var dTools = _existingMapScene.GetNode<NinePatchRect>("DrawingTools");
@@ -131,15 +131,15 @@ public class MapArtistGuiInitializer
         _guiContainer.AssignRowButtonsContainer(container);
         
         var applyButton = new NMapArtistApplyButton();
-        InitializeIconUseShallow(_prototypeIcon, ApplyImagePath, applyButton);
+        InitializeIconUseDeepCopy(_prototypeIcon, ApplyImagePath, applyButton);
         _guiContainer.AssignItemApplyButton(applyButton);
         
         var resetButton = new NMapArtistResetButton();
-        InitializeIconUseShallow(_prototypeIcon, ResetImagePath, resetButton);
+        InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath, resetButton);
         _guiContainer.AssignItemResetButton(resetButton);
         
         var widthButton = new NMapArtistBrushWidthButton();
-        InitializeIconUseShallow(_prototypeIcon, WidthImagePath, widthButton);
+        InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath, widthButton);
         _guiContainer.AssignItemWidthButton(widthButton);
     }
     
@@ -166,7 +166,7 @@ public class MapArtistGuiInitializer
         _prototypeIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
     }
     
-    private static TextureRect ShallowCopyIcon(TextureRect toCopy)
+    private static TextureRect DeepCopyIcon(TextureRect toCopy)
     {
         var icon = new TextureRect();
 
@@ -192,17 +192,17 @@ public class MapArtistGuiInitializer
         return icon;
     }
 
-    private static TextureRect ShallowCopyIcon(TextureRect toCopy, StringName imagePath)
+    private static TextureRect DeepCopyIcon(TextureRect toCopy, StringName imagePath)
     {
-        var icon = ShallowCopyIcon(toCopy);
+        var icon = DeepCopyIcon(toCopy);
         icon.Texture = ResourceLoader.Load<Texture2D>(imagePath);
 
         return icon;
     }
     
-    private static void InitializeIconUseShallow(TextureRect toCopy, StringName imagePath, GUI.Items.Abstract.NMapArtistButton forButton)
+    private static void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath, GUI.Items.Abstract.NMapArtistButton forButton)
     {
-        var icon = ShallowCopyIcon(toCopy, imagePath);
+        var icon = DeepCopyIcon(toCopy, imagePath);
         forButton.SetIcon(icon);
         forButton.AddChild(icon);
     }
