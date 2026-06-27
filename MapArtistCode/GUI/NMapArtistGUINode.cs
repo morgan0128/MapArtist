@@ -14,10 +14,12 @@ public partial class NMapArtistGUINode : VBoxContainer
     
     private NMapArtistApplyButton? _itemApplyButton;
     private NMapArtistResetButton? _itemResetButton;
-    private NMapArtistBrushWidthButton? _itemBrushWidthButton;
-    private HBoxContainer? _bWidthSliderContainer;
-    private HSlider? _bWidthSlider;
-    private Label? _bWidthLabel;
+    
+    private NMapArtistBrushWidth? _itemBrushWidthInterface;
+    // private NMapArtistBrushWidthButton? _itemBrushWidthButton;
+    // private HBoxContainer? _bWidthSliderContainer;
+    // private HSlider? _bWidthSlider;
+    // private Label? _bWidthLabel;
     
     public NMapArtistGUINode()
     {
@@ -44,12 +46,12 @@ public partial class NMapArtistGUINode : VBoxContainer
 
     public int GetValueBrushWidth()
     {
-        return _itemBrushWidthButton.BrushWidth;
+        return _itemBrushWidthInterface.BrushWidth;
     }
 
-    public void SetValueBrushWidth(int value)
+    public void ResetBrushWidth()
     {
-        _bWidthSlider.Value = value; // changing slider value without Brush width; ValueChanged signal to update BrushWidth
+        _itemBrushWidthInterface.ResetValueBrushWidth(); // changing slider value without Brush width; ValueChanged signal to update BrushWidth
     }
 
 
@@ -70,6 +72,11 @@ public partial class NMapArtistGUINode : VBoxContainer
         _rowButtonsContainer = container;
         this.AddChild(_rowButtonsContainer);
     }
+    
+    public HBoxContainer GetRowButtonsContainer()
+    {
+        return _rowButtonsContainer;
+    }
 
     public void AssignItemApplyButton(NMapArtistApplyButton button)
     {
@@ -86,17 +93,16 @@ public partial class NMapArtistGUINode : VBoxContainer
         _itemResetButton.MapArtistButtonContainer = _rowButtonsContainer;
     }
     
-    public void AssignItemWidthButton(NMapArtistBrushWidthButton button)
+    public void AssignItemBrushWidthInterface(NMapArtistBrushWidth brushWidth)
     {
-        _itemBrushWidthButton = button;
-        _itemBrushWidthButton.MapArtistButtonContainer = _rowButtonsContainer;
-        _rowButtonsContainer.AddChild(_itemBrushWidthButton);
+        _itemBrushWidthInterface = brushWidth;
+        _rowButtonsContainer.AddChild(_itemBrushWidthInterface);
         
-        _bWidthSliderContainer = _rowButtonsContainer.GetNode<HBoxContainer>("LabelledSlideContainer");
-        _bWidthSlider = _bWidthSliderContainer.GetNode<HSlider>("WidthSlider");
-        _bWidthLabel = _bWidthSliderContainer.GetNode<Label>("WidthSliderLabel");
+        // _itemBrushWidthInterface.SetButtonAdjustSeparationOffset()
         
-        _bWidthSliderContainer.Position = new Vector2((_itemBrushWidthButton.Size.X + 7f), 0f);
+        
+        // do not use        
+        // _bWidthSliderContainer.Position = new Vector2((_itemBrushWidthButton.Size.X + 7f), 0f);
 
     }
     

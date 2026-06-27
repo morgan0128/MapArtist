@@ -11,10 +11,10 @@ public abstract partial class NMapArtistButton : NButton
         Icon = icon;
     }
 
-    // public override void _Ready()
-    // {
-    //     this.MousePressed += OnMousePressed;
-    // }
+    public override void _Ready()
+    {
+        SetVSizeFlags(SizeFlags.ShrinkBegin);
+    }
     //
     // private void OnMousePressed(InputEvent @event)
     // {

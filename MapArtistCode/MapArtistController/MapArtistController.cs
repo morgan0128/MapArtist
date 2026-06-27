@@ -1,6 +1,7 @@
 using BaseLib;
 using BaseLib.Abstracts;
 using Godot;
+using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
@@ -16,6 +17,8 @@ public sealed class MapArtistController
     public static MapArtistController Instance { get; } = new MapArtistController();
     
     private GUI.NMapArtistGUINode? _guiContainer;
+
+    public NMapArtistBrushWidth? BrushWidthInterface;
     
     private Player? _localPlayer;
     
@@ -26,6 +29,7 @@ public sealed class MapArtistController
     public void InitializeGui(NMapScreen mapScene)
     {
         _guiContainer = MapArtistGuiInitializer.Instance.InitializeMapArtistNodes(mapScene);
+        ApplySettings(); // for sake of consistency
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
@@ -68,6 +72,11 @@ public sealed class MapArtistController
         _guiContainer.Visible = false;
     }
 
+    public void ToggleBrushWidthGui()
+    {
+        BrushWidthInterface?.ToggleAdjustVisibility();
+    }
+
     public void ApplySettings()
     {
         var player = FetchLocalPlayer();
@@ -85,7 +94,7 @@ public sealed class MapArtistController
     {
         if (player == null)
         {
-            BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
+            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
             return;
         }
 
@@ -109,7 +118,7 @@ public sealed class MapArtistController
     {
         if (player == null)
         {
-            BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch player.");
+            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
             return;
         }
         
@@ -146,7 +155,7 @@ public sealed class MapArtistController
         MapArtistDictionaries.ClearAll(player);
         _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
         
-        _guiContainer.SetValueBrushWidth(4);
+        _guiContainer.ResetBrushWidth();
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
         // */
         // UndoLine();

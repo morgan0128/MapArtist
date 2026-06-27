@@ -40,8 +40,8 @@ public class MapArtistGuiInitializer
     {
         _existingMapScene = existingMapScene;
         CompleteSetupForAddedNode();
-        var gui = InitializeGui();
-        return gui;
+        InitializeGui();
+        return _existingMapScene.GetNode<NMapArtistGUINode>("MapArtistGUI");
     }
 
 
@@ -74,10 +74,9 @@ public class MapArtistGuiInitializer
         dToolsHBox.SetOffset(Side.Right, (dToolsHBox.GetOffset(Side.Right) + 34f));
     }
     
-    public NMapArtistGUINode InitializeGui()
+    private void InitializeGui()
     {
         ConstructGui(MapArtistConfig.TopLeftGui);
-        return _guiContainer;
     }
 
     private void ConstructGui(bool topLeft)
@@ -137,10 +136,11 @@ public class MapArtistGuiInitializer
         var resetButton = new NMapArtistResetButton();
         InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath, resetButton);
         _guiContainer.AssignItemResetButton(resetButton);
-        
-        var widthButton = new NMapArtistBrushWidthButton();
-        InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath, widthButton);
-        _guiContainer.AssignItemWidthButton(widthButton);
+
+        var brushWidth = new NMapArtistBrushWidth(container);
+        _guiContainer.AssignItemBrushWidthInterface(brushWidth);
+        InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath, brushWidth.WidthButton);
+        MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
     }
     
     private static HBoxContainer InitHBoxContainer()
