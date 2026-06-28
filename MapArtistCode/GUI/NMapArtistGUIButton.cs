@@ -12,18 +12,13 @@ namespace MapArtist.MapArtistCode.GUI;
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGUIButton.cs")]
 public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
 {
-    private bool HasControllerHotkey => this.Hotkeys.Length != 0;
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
     private NMapScreen? _mapScene;
-
     private Control? _drawingToolHolder;
-    // private TextureRect? _icon;
-    private HoverTip _hoverTip;
-    private Tween? _tween;
     
     // The existing, instantiated NMapScreen passed by constructor (because using lambda: AddedNode)
     private NMapArtistGUIButton(NMapScreen mapScene)
@@ -64,6 +59,7 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
         button.FocusNeighborLeft = new NodePath("../ClearButton");
         
         button._drawingToolHolder = parent;
+        button.MapArtistButtonContainer = button._drawingToolHolder;
         
         // return the newly created color picker button
         return button;
@@ -73,19 +69,8 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
     {
         LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.description");
         _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.title"), locDesc);
-
-        // MapArtistController.Instance.InitializeGui(_mapScene);
         
         ConnectSignals();
-    }
-    
-    protected override void ConnectSignals()
-    {
-        base.ConnectSignals();
-        if (this.HasControllerHotkey)
-            this.RegisterHotkeys();
-        this._controllerHotkeyIcon = this.GetNodeOrNull<TextureRect>((NodePath) "%ControllerIcon");
-        this.UpdateControllerButton();
     }
     
     public override void _EnterTree()
@@ -105,37 +90,12 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
 
     protected override void OnFocus()
     {
-        base.OnFocus();
- 
-        if (Icon == null || this._drawingToolHolder == null)
-        {
-            // PrintUninitializedError();
-            return;
-        }
-        
-        Icon.Texture = PreloadManager.Cache.GetTexture2D((string) GlowImagePath);
-        this._tween?.Kill();
-        this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) ActiveColor, 0.05);
-        NHoverTipSet.CreateAndShow(this._drawingToolHolder, (IHoverTip) this._hoverTip).GlobalPosition = this._drawingToolHolder.GlobalPosition + new Vector2(10f, -132f);
+        ChildIconSfxGlow(GlowImagePath, ActiveColor);
     }
 
     protected override void OnUnfocus()
     {
-        base.OnUnfocus();
-
-        if (Icon == null || this._drawingToolHolder == null)
-        {
-            // PrintUninitializedError();
-            return;
-        }
-        this.Icon.Texture = PreloadManager.Cache.GetTexture2D((string) ImagePath);
-        this._tween?.Kill();
-        this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) InactiveColor, 0.05);
-        NHoverTipSet.Remove(this._drawingToolHolder);
+        ChildIconSfxUnglow(ImagePath, InactiveColor);
     }
     
 }
