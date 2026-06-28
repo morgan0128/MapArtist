@@ -16,7 +16,7 @@ public sealed class MapArtistController
     private MapArtistController() { }
     public static MapArtistController Instance { get; } = new MapArtistController();
     
-    private GUI.NMapArtistGUINode? _guiContainer;
+    private GUI.NMapArtistGuiNode? _guiContainer;
 
     public NMapArtistBrushWidth? BrushWidthInterface;
     
@@ -25,7 +25,7 @@ public sealed class MapArtistController
     private SubViewport _tempViewport;
 
     
-    // Only to be called by NMapArtistGUIButton when enters tree
+    // Only to be called by NMapArtistGuiButton when enters tree
     public void InitializeGui(NMapScreen mapScene)
     {
         _guiContainer = MapArtistGuiInitializer.Instance.InitializeMapArtistNodes(mapScene);

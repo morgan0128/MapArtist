@@ -1,15 +1,11 @@
 using Godot;
-using MapArtist.MapArtistCode.Config;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Nodes.HoverTips;
-using Range = Godot.Range;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistBrushWidthButton.cs")]
-public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistButton
+public partial class NMapArtistBrushWidthButton : Abstract.NMapArtistButton
 {
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
@@ -36,8 +32,8 @@ public partial class NMapArtistBrushWidthButton : GUI.Items.Abstract.NMapArtistB
     {
         base._Ready();
         // Localization
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
+        var locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
+        HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
         
         ConnectSignals();
     }

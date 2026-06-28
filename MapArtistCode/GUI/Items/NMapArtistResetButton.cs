@@ -1,14 +1,11 @@
-using BaseLib;
 using Godot;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Nodes.HoverTips;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistResetButton.cs")]
-public partial class NMapArtistResetButton : GUI.Items.Abstract.NMapArtistButton
+public partial class NMapArtistResetButton : Abstract.NMapArtistButton
 {
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
@@ -27,8 +24,8 @@ public partial class NMapArtistResetButton : GUI.Items.Abstract.NMapArtistButton
     public override void _Ready()
     {
         base._Ready();
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.title"), locDesc);
+        var locDesc = new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.description");
+        HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-RESET_BUTTON.title"), locDesc);
         
         ConnectSignals();
     }

@@ -31,17 +31,17 @@ public class MapArtistGuiInitializer
     private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to toggle display of the MapArtist GUI
-    private NMapArtistGUIButton? _guiDisplayButton;
+    private NMapArtistGuiButton? _guiDisplayButton;
     
     // Container for the MapArtist GUI
-    private NMapArtistGUINode? _guiContainer;
+    private NMapArtistGuiNode? _guiContainer;
 
-    public NMapArtistGUINode InitializeMapArtistNodes(NMapScreen existingMapScene)
+    public NMapArtistGuiNode InitializeMapArtistNodes(NMapScreen existingMapScene)
     {
         _existingMapScene = existingMapScene;
         CompleteSetupForAddedNode();
         InitializeGui();
-        return _existingMapScene.GetNode<NMapArtistGUINode>("MapArtistGUI");
+        return _existingMapScene.GetNode<NMapArtistGuiNode>("MapArtistGUI");
     }
 
 
@@ -55,7 +55,7 @@ public class MapArtistGuiInitializer
         }
         
         // the AddedNode
-        _guiDisplayButton = _existingMapScene.GetNode<GUI.NMapArtistGUIButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
+        _guiDisplayButton = _existingMapScene.GetNode<GUI.NMapArtistGuiButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
         
         if (_guiDisplayButton == null)
         {
@@ -88,7 +88,7 @@ public class MapArtistGuiInitializer
             return;
         }
 
-        _guiContainer = new NMapArtistGUINode();
+        _guiContainer = new NMapArtistGuiNode();
         _existingMapScene.AddChild(_guiContainer);
         
         if (topLeft)

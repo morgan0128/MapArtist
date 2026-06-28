@@ -5,9 +5,7 @@ namespace MapArtist.MapArtistCode.GUI.Items;
 
 public partial class NMapArtistBrushWidth : HBoxContainer
 {
-    public const int DefaultBrushWidth = 4;
-    
-    public NMapArtistBrushWidthButton WidthButton;
+    public NMapArtistBrushWidthButton? WidthButton;
     
     private HBoxContainer _adjustContainer = new HBoxContainer();
     private HSlider _slider = new HSlider();
@@ -40,21 +38,21 @@ public partial class NMapArtistBrushWidth : HBoxContainer
         _slider.MinValue = 1;
         _slider.MaxValue = 20;
         _slider.Step = 1;
-        _slider.SetHSizeFlags(Control.SizeFlags.ExpandFill);
-        _slider.SetVSizeFlags(Control.SizeFlags.ShrinkCenter);
+        _slider.SetHSizeFlags(SizeFlags.ExpandFill);
+        _slider.SetVSizeFlags(SizeFlags.ShrinkCenter);
         _slider.Scrollable = false;
 
         _label.Name = "MapArtistBrushWidthLabel";
         _label.UniqueNameInOwner = true;
         _label.CustomMinimumSize = new Vector2(27f, 0f);
         _label.ClipText = true;
-        _label.FocusMode = Control.FocusModeEnum.None;
-        _label.MouseFilter =  Control.MouseFilterEnum.Pass;
+        _label.FocusMode = FocusModeEnum.None;
+        _label.MouseFilter =  MouseFilterEnum.Pass;
         _label.VerticalAlignment = VerticalAlignment.Center;
         _label.SetLabelSettings(new LabelSettings());
         _label.GetLabelSettings().FontColor = Colors.Gainsboro;
 
-        BrushWidth = DefaultBrushWidth;
+        BrushWidth = Util.DefaultBrushWidth;
     }
 
     public override void _Ready()
@@ -89,7 +87,7 @@ public partial class NMapArtistBrushWidth : HBoxContainer
 
     public void ResetValueBrushWidth()
     {
-        _slider.Value = DefaultBrushWidth;
+        _slider.Value = Util.DefaultBrushWidth;
     }
     
     

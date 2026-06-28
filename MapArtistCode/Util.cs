@@ -6,6 +6,8 @@ namespace MapArtist.MapArtistCode;
 
 public static class Util
 {
+    public const int DefaultBrushWidth = 4;
+    
     public static Player? GetLocalPlayer()
     {
         var currState = RunManager.Instance.DebugOnlyGetState();

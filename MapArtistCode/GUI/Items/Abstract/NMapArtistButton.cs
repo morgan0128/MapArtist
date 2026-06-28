@@ -9,16 +9,15 @@ namespace MapArtist.MapArtistCode.GUI.Items.Abstract;
 public abstract partial class NMapArtistButton : NButton
 {
     public Control? MapArtistButtonContainer;
-    // private TextureRect? _icon;
-    protected HoverTip _hoverTip;
-    protected Tween? _tween;
-    protected TextureRect? Icon;
+    protected HoverTip HoverTip;
+    private Tween? _tween;
+    private TextureRect? _icon;
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
 
     
     public void SetIcon(TextureRect icon)
     {
-        Icon = icon;
+        _icon = icon;
     }
 
     public override void _Ready()
@@ -37,26 +36,28 @@ public abstract partial class NMapArtistButton : NButton
 
     protected void ChildIconSfxGlow(StringName glowPath, Color active)
     {
-        if (Icon == null) return;
+        if (_icon == null || MapArtistButtonContainer == null) return;
         
-        Icon.Texture = PreloadManager.Cache.GetTexture2D((string) glowPath);
-        this._tween?.Kill();
-        this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.2f), 0.05);
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) active, 0.05);
-        NHoverTipSet.CreateAndShow(this.MapArtistButtonContainer, (IHoverTip) this._hoverTip).GlobalPosition = this.MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
+        _icon.Texture = PreloadManager.Cache.GetTexture2D(glowPath);
+        _tween?.Kill();
+        _tween = this.CreateTween().SetParallel();
+        _tween.TweenProperty(_icon, (NodePath) "scale", (Vector2.One * 1.2f), 0.05);
+        _tween.TweenProperty(_icon, (NodePath) "self_modulate", active, 0.05);
+        var hoverTipSet = NHoverTipSet.CreateAndShow(MapArtistButtonContainer, HoverTip);
+        if (hoverTipSet == null) return;
+        hoverTipSet.GlobalPosition = MapArtistButtonContainer.GlobalPosition + new Vector2(10f, -132f);
     }
     
     protected void ChildIconSfxUnglow(StringName imagePath, Color inactive)
     {
-        if (Icon == null) return;
+        if (_icon == null || MapArtistButtonContainer == null) return;
         
-        this.Icon.Texture = PreloadManager.Cache.GetTexture2D((string) imagePath);
-        this._tween?.Kill();
-        this._tween = this.CreateTween().SetParallel();
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "scale", (Variant) (Vector2.One * 1.1f), 0.05);
-        this._tween.TweenProperty((GodotObject) this.Icon, (NodePath) "self_modulate", (Variant) inactive, 0.05);
-        NHoverTipSet.Remove(this.MapArtistButtonContainer);
+        _icon.Texture = PreloadManager.Cache.GetTexture2D(imagePath);
+        _tween?.Kill();
+        _tween = CreateTween().SetParallel();
+        _tween.TweenProperty(_icon, (NodePath) "scale", (Vector2.One * 1.1f), 0.05);
+        _tween.TweenProperty(_icon, (NodePath) "self_modulate", inactive, 0.05);
+        NHoverTipSet.Remove(MapArtistButtonContainer);
     }
 
     

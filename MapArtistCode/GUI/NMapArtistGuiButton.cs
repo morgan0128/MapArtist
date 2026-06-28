@@ -1,16 +1,14 @@
 using BaseLib.Utils;
 using Godot;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
-using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
 namespace MapArtist.MapArtistCode.GUI;
 
-[ScriptPath("res://MapArtistCode/GUI/NMapArtistGUIButton.cs")]
-public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
+[ScriptPath("res://MapArtistCode/GUI/NMapArtistGuiButton.cs")]
+public partial class NMapArtistGuiButton : Items.Abstract.NMapArtistButton
 {
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo_glow.png";
@@ -21,7 +19,7 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
     private Control? _drawingToolHolder;
     
     // The existing, instantiated NMapScreen passed by constructor (because using lambda: AddedNode)
-    private NMapArtistGUIButton(NMapScreen mapScene)
+    private NMapArtistGuiButton(NMapScreen mapScene)
     {
         Name = "MapArtistGUIButton";
         UniqueNameInOwner = true;
@@ -32,12 +30,9 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
         _mapScene = mapScene;
     }
 
-    private NMapArtistGUIButton()
-    {
-
-    }
+    private NMapArtistGuiButton() {}
     
-    public static readonly AddedNode<NMapScreen, NMapArtistGUIButton> Map = new((mapScreen) =>
+    public static readonly AddedNode<NMapScreen, NMapArtistGuiButton> Map = new((mapScreen) =>
     {
         // grab the drawing tools node
         var drawingTools = mapScreen.GetNode<NinePatchRect>("DrawingTools");
@@ -49,7 +44,7 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
         var clearButton = (NButton)parent.GetNode("ClearButton");
         
         // initialize, grabbing the instantiated NMapScreen node to give to controller for gui initialization process
-        var button = new NMapArtistGUIButton(mapScreen);
+        var button = new NMapArtistGuiButton(mapScreen);
         
         // add this node to the drawing tools container
         parent.AddChild(button);
@@ -67,8 +62,8 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
 
     public override void _Ready()
     {
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.description");
-        _hoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.title"), locDesc);
+        var locDesc = new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.description");
+        HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-GUI_BUTTON.title"), locDesc);
         
         ConnectSignals();
     }
@@ -76,6 +71,8 @@ public partial class NMapArtistGUIButton : GUI.Items.Abstract.NMapArtistButton
     public override void _EnterTree()
     {
         base._EnterTree();
+        if (_mapScene == null) return;
+        
         if (_mapScene.GetNodeOrNull<VBoxContainer>("MapArtistGUI") == null)
         {
             MapArtistController.MapArtistController.Instance.InitializeGui(_mapScene);
