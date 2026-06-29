@@ -6,7 +6,6 @@ using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode.MapArtistController;
 
@@ -22,7 +21,7 @@ public sealed class MapArtistController
     
     private Player? _localPlayer;
     
-    private SubViewport _tempViewport;
+    private SubViewport? _tempViewport;
 
     
     // Only to be called by NMapArtistGuiButton when enters tree
@@ -92,18 +91,8 @@ public sealed class MapArtistController
 
     private void ApplySettingColor(Player? player)
     {
-        if (player == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
-            return;
-        }
+        if (player == null || _guiContainer == null) return;
 
-        // if (_rowitemColorPicker == null)
-        // {
-        //     BaseLibMain.Logger.Info("[MapArtistController] _rowitemColorPicker == null on ApplySettings() call.");
-        //     return;
-        // }
-        
         // apply brush color
         MapArtistDictionaries.SetColor(player, _guiContainer.GetColorInColorPicker());
     }
@@ -116,17 +105,7 @@ public sealed class MapArtistController
     
     private void ApplySettingWidth(Player? player)
     {
-        if (player == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
-            return;
-        }
-        
-        // if (_itemWidthButton == null)
-        // {
-        //     BaseLibMain.Logger.Info("[MapArtistController] _itemWidthButton == null on ApplySettings() call.");
-        //     return;
-        // }
+        if (player == null || _guiContainer == null) return;
         
         // apply pen width
         try {
@@ -143,12 +122,7 @@ public sealed class MapArtistController
     
     public void ResetSettings(){
         var player = FetchLocalPlayer();
-        if (player == null)
-        {
-            BaseLibMain.Logger.Info("[MapArtistController] Failed to fetch player.");
-            return;
-        }
-        
+        if (player == null || _guiContainer == null) return;
         
         // // test
         // /*
@@ -185,9 +159,10 @@ public sealed class MapArtistController
             hasColor ? color : player.Character.MapDrawingColor, hasWidth ? width : 4f));
     }
 
+    // test method
     public void UndoLine()
     {
-        _tempViewport.RemoveChildSafely(_tempViewport.GetChildren().Last());
+        _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
     }
 
     public void TemporaryUpdateViewport(SubViewport subViewport)

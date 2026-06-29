@@ -1,5 +1,4 @@
 using HarmonyLib;
-using MapArtist.MapArtistCode.MapArtistController;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode.Patches;

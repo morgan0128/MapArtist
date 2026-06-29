@@ -1,5 +1,4 @@
 using BaseLib.Abstracts;
-using MapArtist.MapArtistCode.MapArtistController;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 
 namespace MapArtist.MapArtistCode.Multiplayer;

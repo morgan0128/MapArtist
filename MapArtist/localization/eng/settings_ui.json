@@ -11,5 +11,7 @@
   "MAPARTIST-COLOR_SAMPLER_TOOL.hover.desc": "Enable and display the color sampler in the GUI",
   "MAPARTIST-EXPERIMENTAL_SETTINGS.title": "Experimental Settings",
   "MAPARTIST-USE_VANILLA_ERASER.title": "Use Vanilla Eraser",
-  "MAPARTIST-USE_VANILLA_ERASER.hover.desc": "WARNING: this option will likely result in inconsistent eraser behavior with custom colors."
+  "MAPARTIST-USE_VANILLA_ERASER.hover.desc": "WARNING: this option will likely result in inconsistent eraser behavior with custom colors.",
+  "MAPARTIST-SUPPRESS_VANILLA_GAME_DRAWING_BUTTONS_EXCEPTION.title": "Suppress Vanilla Game Drawing Buttons Exception",
+  "MAPARTIST-SUPPRESS_VANILLA_GAME_DRAWING_BUTTONS_EXCEPTION.hover.desc": "Suppresses an exception commonly thrown in the vanilla game when interacting with the drawing buttons. Safe to toggle."
 }

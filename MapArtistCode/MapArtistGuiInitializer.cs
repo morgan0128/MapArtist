@@ -1,13 +1,9 @@
 using BaseLib;
-using BaseLib.Abstracts;
 using Godot;
 using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI;
 using MapArtist.MapArtistCode.GUI.Items;
-using MapArtist.MapArtistCode.Multiplayer;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Runs;
 
 namespace MapArtist.MapArtistCode;
 

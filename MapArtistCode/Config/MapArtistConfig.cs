@@ -14,4 +14,6 @@ internal class MapArtistConfig : SimpleModConfig
     [ConfigSection("Experimental Settings")]
     public static bool UseVanillaEraser { get; set; } = false;
 
+    public static bool SuppressVanillaGameDrawingButtonsException { get; set; } = true;
+
 }
