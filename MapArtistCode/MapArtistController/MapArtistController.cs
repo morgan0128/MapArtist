@@ -95,6 +95,8 @@ public sealed class MapArtistController
 
         // apply brush color
         MapArtistDictionaries.SetColor(player, _guiContainer.GetColorInColorPicker());
+        
+        BroadcastCurrentSettings();
     }
 
     public void ApplySettingWidth()
@@ -111,11 +113,13 @@ public sealed class MapArtistController
         try {
             var widthVal = _guiContainer.GetValueBrushWidth();
             MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
-            CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetColorInColorPicker(), (float)widthVal));
+            // CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetColorInColorPicker(), (float)widthVal));
         } catch (FormatException notFloat)
         {
             // no valid pen width to apply... this should not be reached in current iteration
         }
+        BroadcastCurrentSettings();
+
     }
     
     
