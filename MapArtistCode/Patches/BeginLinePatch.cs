@@ -43,7 +43,13 @@ public class BeginLinePatch
         var state = (object)__args[0];
 
         var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
-        MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
+        var playerId = (ulong)AccessTools.Field(nestedTypeDrawingState, "playerId").GetValue(state);
+        var line = (Line2D?)AccessTools.Field(nestedTypeDrawingState, "currentlyDrawingLine").GetValue(state);
+        
+        MapArtistDrawingHistories.Instance.CheckUpdateDrawViewports(playerId, dvp);
+        MapArtistDrawingHistories.Instance.AddEntry(playerId, line);
+        // var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
+        // MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
     }
     
     
