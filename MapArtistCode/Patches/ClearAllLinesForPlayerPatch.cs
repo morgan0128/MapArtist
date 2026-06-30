@@ -24,8 +24,13 @@ public class ClearAllLinesForPlayerPatch
         var id = (ulong)playerId; // explicit conversion in C#; no data lost
         
         var linesToClear = dvp.GetChildren().OfType<Line2D>().ToList();
+        var linesSaved = new List<Line2D>();
+        foreach (var line in linesToClear)
+        {
+            linesSaved.Add((Line2D)line.Duplicate());
+        }
         
-        MapArtistDrawingHistory.Instance.NotifyPlayerCleared(id, dvp, linesToClear);
+        MapArtistDrawingHistory.Instance.NotifyPlayerCleared(id, dvp, linesSaved);
     }
     
 }
