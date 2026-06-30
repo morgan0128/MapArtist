@@ -20,30 +20,36 @@ public sealed class MapArtistDrawingHistory
 
     public static MapArtistDrawingHistory Instance { get; } = new MapArtistDrawingHistory();
     
-    // private struct CachedLine2DSet
-    // {
-    //     public List<Line2D>? LineSet; // if LineSet != null then consider each LineSet and ignore Line
-    //     public Line2D? Line; // else consider only Line and ignore LineSet
-    //     
-    //     public CachedLine2DSet(Line2D line)
-    //     {
-    //         LineSet = null;
-    //         Line = line;
-    //     }
-    //     public CachedLine2DSet(List<Line2D> set)
-    //     {
-    //         LineSet = set;
-    //         Line = null;
-    //     }
-    // }
+    private struct CachedDrawingOperation
+    {
+        // proper usage: between Line and LineSet, one and only one should be null
+        public readonly Line2D? Line = null;
+        public readonly List<Line2D>? LineSet = null;
 
-    // private static System.Collections.Generic.Dictionary<ulong, Array<Line2D>> _playerDrawings =
-        // new System.Collections.Generic.Dictionary<ulong, Array<Line2D>>();
+        public readonly bool IsClearOperation;
 
-    // private static System.Collections.Generic.Dictionary<ulong, SubViewport> _drawViewports = new System.Collections.Generic.Dictionary<ulong, SubViewport>();
+        public CachedDrawingOperation(bool isClearOperation, Line2D? line, List<Line2D>? set = null)
+        {
+            IsClearOperation = isClearOperation;
+            if ((line == null && set == null) || (line != null && set != null) ||
+                (!IsClearOperation && line == null)) return;
+
+            if (!IsClearOperation || Line != null)
+            {
+                Line = line;
+            }
+            else
+            {
+                LineSet = set;
+            }
+        }
+    }
+    
     private SubViewport? _localDrawViewport;
-    private Stack<List<Line2D>> _existingLinesCache = new Stack<List<Line2D>>();
-    private Stack<List<Line2D>> _deletedLinesCache = new Stack<List<Line2D>>();
+    private Stack<CachedDrawingOperation> _cachedOperations = new Stack<CachedDrawingOperation>();
+    private Stack<CachedDrawingOperation> _cachedUndoneOperations = new Stack<CachedDrawingOperation>();
+
+    public bool PerformingOpClear = false;
 
 
     
@@ -58,7 +64,7 @@ public sealed class MapArtistDrawingHistory
 
     private bool RedoLocked()
     {
-        return (_localPlayerLastDrew || _localDrawViewport == null || _deletedLinesCache.Count == 0);
+        return (_localPlayerLastDrew || _localDrawViewport == null || _cachedUndoneOperations.Count == 0);
     }
 
     public void NotifyBeginLine(ulong drawingStatePlayerId, SubViewport drawingStateDrawViewport, Line2D line)
@@ -72,32 +78,38 @@ public sealed class MapArtistDrawingHistory
     public void ResetState()
     {
         _localDrawViewport = null;
-        foreach (var cache in _existingLinesCache)
+        foreach (var operation in _cachedOperations)
         {
-            foreach (var line in cache)
-            {
-                line.QueueFreeSafely();
-            }
+            QueueFreeAllLines(operation);
         }
-        _existingLinesCache.Clear();
+        _cachedOperations.Clear();
 
-        foreach (var cache in _deletedLinesCache)
+        foreach (var operation in _cachedUndoneOperations)
         {
-            foreach (var line in cache)
-            {
-                line.QueueFreeSafely();
-            }
+            QueueFreeAllLines(operation);
         }
-        _deletedLinesCache.Clear();
+        _cachedUndoneOperations.Clear();
     }
 
     public void NotifyPlayerCleared(ulong drawingStatePlayerId, SubViewport drawingStateDrawViewport, List<Line2D> linesToSave)
     {
-        if (drawingStatePlayerId != Util.GetLocalPlayerId()) return;
+        if (drawingStatePlayerId != Util.GetLocalPlayerId() || linesToSave.Count == 0) return;
+        
+        PerformingOpClear = true;
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
-        _existingLinesCache.Push(linesToSave);
-        // pushed onto _existingLinesCache; a clear operation is denoted by a list of length > 1,
-        // and this list as an entry on _existingLinesCache 'exists' as a set of line erases
+        if (linesToSave.Count == 1)
+        {
+            // for sake of memory management
+            var line = linesToSave[0];
+            var operation = new CachedDrawingOperation(PerformingOpClear, line);
+            _cachedOperations.Push(operation);
+        }
+        else
+        {
+            var operation = new CachedDrawingOperation(PerformingOpClear, null, linesToSave);
+            _cachedOperations.Push(operation);
+        }
+        PerformingOpClear = false;
     }
     
     private void CheckUpdateLocalViewport(ulong playerId, SubViewport svp)
@@ -131,16 +143,35 @@ public sealed class MapArtistDrawingHistory
 
     public void Undo()
     {
-        if (_localDrawViewport == null || _existingLinesCache.Count == 0) return;
+        if (_localDrawViewport == null || _cachedOperations.Count == 0) return;
         
-        var cached = _existingLinesCache.Pop();
-        if (cached.Count > 1)
+        var operation = _cachedOperations.Pop();
+        if (operation.IsClearOperation)
         {
-            // this entry represents a 'cleared set'
-            if (!AddLine(cached)) return; // error, but don't break 'undo history' by looping line back on stack
+            if (operation.Line != null)
+            {
+                AddLine(operation.Line);
+            }
+            else if (operation.LineSet != null)
+            {
+                foreach (var line in operation.LineSet)
+                {
+                    AddLine(line);
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            _cachedUndoneOperations.Push(operation);
         }
         else
         {
+            if (operation.Line != null)
+            {
+                // TODO begin at line 173
+            }
             // regular undo drawn line operation
             if (!RemoveLine(cached)) return; // error, but don't break 'undo history' by looping line back on stack
         }
@@ -183,14 +214,42 @@ public sealed class MapArtistDrawingHistory
     
     private bool AddLine(List<Line2D> toAdd)
     {
-        foreach (var line in toAdd){
-            _localDrawViewport?.AddChildSafely((Node) line);
+        bool failure = false;
+        foreach (var line in toAdd)
+        {
+            if (!AddLine(line))
+            {
+                failure = true;
+            }
         }
+
+        return !failure;
+    }
+    
+    private bool AddLine(Line2D toAdd)
+    {
+        _localDrawViewport?.AddChildSafely((Node) toAdd);
         
         // TODO
         // send message to perform same operation to other players
 
         return true;
+    }
+    
+    // helper
+    private void QueueFreeAllLines(CachedDrawingOperation operation)
+    {
+        if (operation.Line != null)
+        {
+            operation.Line.QueueFreeSafely();
+        }
+        else if (operation.LineSet != null)
+        {
+            foreach (var line in operation.LineSet)
+            {
+                line.QueueFreeSafely();
+            }
+        }
     }
 
 }
