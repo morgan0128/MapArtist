@@ -136,7 +136,7 @@ public sealed class MapArtistController
         _guiContainer.ResetBrushWidth();
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
         */
-        UndoLine();
+        LocalDrawingHistoryUndo();
     }
 
     internal void BroadcastCurrentSettings(bool sendResetWhenDefault = false)
@@ -164,10 +164,16 @@ public sealed class MapArtistController
     }
 
     // test method
-    public void UndoLine()
+    public void LocalDrawingHistoryUndo()
     {
         // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
-        MapArtistDrawingHistories.Instance.Undo(Util.GetLocalPlayerId());
+        MapArtistDrawingHistory.Instance.Undo();
+    }
+    
+    public void LocalDrawingHistoryRedo()
+    {
+        // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
+        MapArtistDrawingHistory.Instance.Redo();
     }
 
     public void TemporaryUpdateViewport(SubViewport subViewport)
