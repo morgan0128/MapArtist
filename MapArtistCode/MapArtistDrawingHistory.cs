@@ -225,20 +225,20 @@ public sealed class MapArtistDrawingHistory
             }
         }
         
-        var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
-        while (_cachedUndoneOperations.Count > 0)
-        {
-            cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
-        }
-        
-        // _cachedUndoneOperations is now empty. Rebuilding (where applies):
-        for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
-        {
-            if (cachedUndoneOperationsList[i].IsClearOperation)
-            {
-                _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
-            }
-        }
+        // var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
+        // while (_cachedUndoneOperations.Count > 0)
+        // {
+        //     cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
+        // }
+        //
+        // // _cachedUndoneOperations is now empty. Rebuilding (where applies):
+        // for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
+        // {
+        //     if (cachedUndoneOperationsList[i].IsClearOperation)
+        //     {
+        //         _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
+        //     }
+        // }
 
         if (linesToCache.Count == 1)
         {
