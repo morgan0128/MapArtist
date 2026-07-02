@@ -10,7 +10,7 @@ namespace MapArtist.MapArtistCode.Patches;
 [HarmonyPatch("ClearAllLinesForPlayer")]
 public class ClearAllLinesForPlayerPatch
 {
-    // Patch for preserving player's cleared lines in their respective MapArtistDrawingHistory
+    // Patch for preserving player's cleared lines in their respective MapArtistLocalDrawingHistory
     private static void Prefix(object[] __args)
     {
         var outerType = typeof(NMapDrawings);
@@ -30,7 +30,7 @@ public class ClearAllLinesForPlayerPatch
             linesSaved.Add((Line2D)line.Duplicate());
         }
         
-        MapArtistDrawingHistory.Instance.NotifyPlayerCleared(id, dvp, linesSaved);
+        MapArtistLocalDrawingHistory.Instance.PatchNotifyClearAllLinesForPlayer(id, dvp, linesSaved);
     }
     
 }
