@@ -1,3 +1,4 @@
+using System.Data;
 using BaseLib;
 using Godot;
 using Godot.Collections;
@@ -34,13 +35,16 @@ public sealed class MapArtistDrawingHistory
             if ((line == null && set == null) || (line != null && set != null)) return;
             if (!IsClearOperation && line == null) return; // A regular draw/erase operation contains one and only one line
 
-            if (!IsClearOperation || Line != null)
+            if (!IsClearOperation || line != null)
             {
                 Line = line;
             }
             else
             {
-                LineSet = set;
+                if (set != null)
+                {
+                    LineSet = set;
+                }
             }
         }
 
@@ -154,15 +158,87 @@ public sealed class MapArtistDrawingHistory
         if (drawingStatePlayerId != Util.GetLocalPlayerId() || linesToCache.Count == 0) return;
 
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
-        // var reverseOrder = new Stack<CachedDrawingOperation>();
-        // while (_cachedUndoneOperations.Count > 0)
-        // {
-        //     reverseOrder.Push(_cachedUndoneOperations.Pop());
-        // }
-        // while (reverseOrder.Count > 0)
-        // {
-        //     _cachedOperations.Push(reverseOrder.Pop());
-        // }
+        
+        // Rebuild the history through the saved data in the ClearOperations
+        var cachedOperationsList = new List<CachedDrawingOperation>(_cachedOperations.Count);
+        while (_cachedOperations.Count > 0)
+        {
+            cachedOperationsList.Insert(0, _cachedOperations.Pop());
+        }
+        
+        // _cachedOperations is now empty. Rebuilding (where applies):
+        for (int i = 0; i < cachedOperationsList.Count(); i++)
+        {
+            if (cachedOperationsList[i].IsClearOperation)
+            {
+                _cachedOperations.Push(cachedOperationsList[i]);
+            }
+        }
+        
+        var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
+        while (_cachedUndoneOperations.Count > 0)
+        {
+            cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
+        }
+        
+        // _cachedUndoneOperations is now empty. Rebuilding (where applies):
+        for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
+        {
+            if (cachedUndoneOperationsList[i].IsClearOperation)
+            {
+                _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
+            }
+        }
+        
+        
+
+        if (linesToCache.Count == 1)
+        {
+            // for sake of memory management
+            var line = linesToCache[0];
+            var operation = new CachedDrawingOperation(true, line);
+            _cachedOperations.Push(operation);
+        }
+        else
+        {
+            var operation = new CachedDrawingOperation(true, null, linesToCache);
+            _cachedOperations.Push(operation);
+        }
+        
+    }
+    
+    public void ClearedFromRedo(List<Line2D> linesToCache)
+    {
+        // Rebuild the history through the saved data in the ClearOperations
+        var cachedOperationsList = new List<CachedDrawingOperation>(_cachedOperations.Count);
+        while (_cachedOperations.Count > 0)
+        {
+            cachedOperationsList.Insert(0, _cachedOperations.Pop());
+        }
+        
+        // _cachedOperations is now empty. Rebuilding (where applies):
+        for (int i = 0; i < cachedOperationsList.Count(); i++)
+        {
+            if (cachedOperationsList[i].IsClearOperation)
+            {
+                _cachedOperations.Push(cachedOperationsList[i]);
+            }
+        }
+        
+        var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
+        while (_cachedUndoneOperations.Count > 0)
+        {
+            cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
+        }
+        
+        // _cachedUndoneOperations is now empty. Rebuilding (where applies):
+        for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
+        {
+            if (cachedUndoneOperationsList[i].IsClearOperation)
+            {
+                _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
+            }
+        }
 
         if (linesToCache.Count == 1)
         {
@@ -190,10 +266,19 @@ public sealed class MapArtistDrawingHistory
             if (operation.Line != null)
             {
                 ViewportAddLine(operation.Line);
+                var redrawOperation = new CachedDrawingOperation(false, operation.Line);
+                _cachedOperations.Push(redrawOperation);
             }
             else
             {
-                ViewportAddLine(operation.LineSet!);
+                // ViewportAddLine(operation.LineSet!);
+                if (operation.LineSet == null) return;
+                ViewportAddLine(operation.LineSet);
+                for (int i = 0; i < operation.LineSet!.Count(); i++)
+                {
+                    var redrawOperation = new CachedDrawingOperation(false, operation.LineSet[i]);
+                    _cachedOperations.Push(redrawOperation);
+                }
             }
             
             _cachedUndoneOperations.Push(operation);
@@ -218,22 +303,27 @@ public sealed class MapArtistDrawingHistory
         
         if (operation.IsClearOperation)
         {
+            var lineSet = new List<Line2D>();
+            
             // this entry represents a 'cleared set,' in which the clear operation has been undone
             if (operation.Line != null)
             {
-                ViewportRemoveLine(operation.Line);   
+                ViewportRemoveLine(operation.Line);
+                lineSet.Add(operation.Line);
             }
             else
             {
                 ViewportRemoveLine(operation.LineSet!);
+                lineSet = operation.LineSet;
             }
 
+            ClearedFromRedo(lineSet);
         }
         else
         {
             ViewportAddLine(operation.Line!);
+            _cachedOperations.Push(operation);
         }
-        _cachedOperations.Push(operation);
         _localPlayerLastDrew = false;
     }
 
