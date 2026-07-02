@@ -58,8 +58,6 @@ public sealed class MapArtistDrawingHistory
     private SubViewport? _localDrawViewport;
     private Stack<CachedDrawingOperation> _cachedOperations = new Stack<CachedDrawingOperation>();
     private Stack<CachedDrawingOperation> _cachedUndoneOperations = new Stack<CachedDrawingOperation>();
-    
-    private bool _localPlayerLastDrew = false;
 
     private bool UndoLocked()
     {
@@ -67,7 +65,7 @@ public sealed class MapArtistDrawingHistory
     }
     private bool RedoLocked()
     {
-        return (_localPlayerLastDrew || _localDrawViewport == null || _cachedUndoneOperations.Count == 0);
+        return (_localDrawViewport == null || _cachedUndoneOperations.Count == 0);
     }
 
     public void ResetState()
@@ -86,6 +84,46 @@ public sealed class MapArtistDrawingHistory
         _cachedUndoneOperations.Clear();
     }
     
+    private void LocalPlayerOperationDrewOrErased(ulong drawingStatePlayerId, SubViewport drawingStateDrawViewport, Line2D line)
+    {
+        _cachedUndoneOperations.Clear();
+        CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
+        CacheOperationDrewOrErased(drawingStatePlayerId, line);
+    }
+    
+    private void LocalPlayerOperationCleared(ulong drawingStatePlayerId, SubViewport drawingStateDrawViewport, List<Line2D> linesToCache)
+    {
+        _cachedUndoneOperations.Clear();
+        
+        // Rebuild the history through the saved data in the ClearOperations
+        var cachedOperationsList = new List<CachedDrawingOperation>(_cachedOperations.Count);
+        while (_cachedOperations.Count > 0)
+        {
+            cachedOperationsList.Insert(0, _cachedOperations.Pop());
+        }
+        // _cachedOperations is now empty
+        for (int i = 0; i < cachedOperationsList.Count(); i++)
+        {
+            if (cachedOperationsList[i].IsClearOperation)
+            {
+                _cachedOperations.Push(cachedOperationsList[i]);
+            }
+        }
+        
+        if (linesToCache.Count == 1)
+        {
+            // for sake of memory management
+            var line = linesToCache[0];
+            var operation = new CachedDrawingOperation(true, line);
+            _cachedOperations.Push(operation);
+        }
+        else
+        {
+            var operation = new CachedDrawingOperation(true, null, linesToCache);
+            _cachedOperations.Push(operation);
+        }
+    }
+    
     private void CheckUpdateLocalViewport(ulong playerId, SubViewport svp)
     {
         if (playerId != Util.GetLocalPlayerId()) return;
@@ -100,11 +138,10 @@ public sealed class MapArtistDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId()) return;
         
-        CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
-        CacheOperationDrewLine(drawingStatePlayerId, line);
+        LocalPlayerOperationDrewOrErased(drawingStatePlayerId, drawingStateDrawViewport, line);
     }
     
-    private CachedDrawingOperation? CacheOperationDrewLine(ulong playerId, Line2D? line)
+    private CachedDrawingOperation? CacheOperationDrewOrErased(ulong playerId, Line2D? line)
     {
         if (_localDrawViewport == null) return null;
         if (playerId != Util.GetLocalPlayerId()) return null;
@@ -113,7 +150,6 @@ public sealed class MapArtistDrawingHistory
         var operation = new CachedDrawingOperation(false, line);
         
         _cachedOperations.Push(operation);
-        _localPlayerLastDrew = true;
         return operation;
     }
     
@@ -156,55 +192,8 @@ public sealed class MapArtistDrawingHistory
     public void NotifyPlayerCleared(ulong drawingStatePlayerId, SubViewport drawingStateDrawViewport, List<Line2D> linesToCache)
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId() || linesToCache.Count == 0) return;
-
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
-        
-        // Rebuild the history through the saved data in the ClearOperations
-        var cachedOperationsList = new List<CachedDrawingOperation>(_cachedOperations.Count);
-        while (_cachedOperations.Count > 0)
-        {
-            cachedOperationsList.Insert(0, _cachedOperations.Pop());
-        }
-        
-        // _cachedOperations is now empty. Rebuilding (where applies):
-        for (int i = 0; i < cachedOperationsList.Count(); i++)
-        {
-            if (cachedOperationsList[i].IsClearOperation)
-            {
-                _cachedOperations.Push(cachedOperationsList[i]);
-            }
-        }
-        
-        var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
-        while (_cachedUndoneOperations.Count > 0)
-        {
-            cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
-        }
-        
-        // _cachedUndoneOperations is now empty. Rebuilding (where applies):
-        for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
-        {
-            if (cachedUndoneOperationsList[i].IsClearOperation)
-            {
-                _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
-            }
-        }
-        
-        
-
-        if (linesToCache.Count == 1)
-        {
-            // for sake of memory management
-            var line = linesToCache[0];
-            var operation = new CachedDrawingOperation(true, line);
-            _cachedOperations.Push(operation);
-        }
-        else
-        {
-            var operation = new CachedDrawingOperation(true, null, linesToCache);
-            _cachedOperations.Push(operation);
-        }
-        
+        LocalPlayerOperationCleared(drawingStatePlayerId, drawingStateDrawViewport, linesToCache);
     }
     
     public void ClearedFromRedo(List<Line2D> linesToCache)
@@ -224,21 +213,6 @@ public sealed class MapArtistDrawingHistory
                 _cachedOperations.Push(cachedOperationsList[i]);
             }
         }
-        
-        // var cachedUndoneOperationsList = new List<CachedDrawingOperation>(_cachedUndoneOperations.Count);
-        // while (_cachedUndoneOperations.Count > 0)
-        // {
-        //     cachedUndoneOperationsList.Insert(0, _cachedUndoneOperations.Pop());
-        // }
-        //
-        // // _cachedUndoneOperations is now empty. Rebuilding (where applies):
-        // for (int i = 0; i < cachedUndoneOperationsList.Count(); i++)
-        // {
-        //     if (cachedUndoneOperationsList[i].IsClearOperation)
-        //     {
-        //         _cachedUndoneOperations.Push(cachedUndoneOperationsList[i]);
-        //     }
-        // }
 
         if (linesToCache.Count == 1)
         {
@@ -291,8 +265,6 @@ public sealed class MapArtistDrawingHistory
                 _cachedUndoneOperations.Push(operation);
             }
         }
-        _localPlayerLastDrew = false;
-
     }
     
     public void Redo()
@@ -324,7 +296,6 @@ public sealed class MapArtistDrawingHistory
             ViewportAddLine(operation.Line!);
             _cachedOperations.Push(operation);
         }
-        _localPlayerLastDrew = false;
     }
 
     
