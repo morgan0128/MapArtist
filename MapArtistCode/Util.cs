@@ -15,4 +15,9 @@ public static class Util
         BaseLibMain.Logger.Error("[MapArtistController] Failed to load current state");
         return null;
     }
+
+    public static ulong GetLocalPlayerId()
+    {
+        return RunManager.Instance.NetService.NetId;
+    }
 }

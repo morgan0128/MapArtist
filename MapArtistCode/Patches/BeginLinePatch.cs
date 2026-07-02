@@ -41,9 +41,17 @@ public class BeginLinePatch
         var outerType = typeof(NMapDrawings);
         var nestedTypeDrawingState = outerType.GetNestedType("DrawingState", BindingFlags.NonPublic);
         var state = (object)__args[0];
+        
+        var playerId = (ulong?)AccessTools.Field(nestedTypeDrawingState, "playerId").GetValue(state);
+        var dvp = (SubViewport?)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
+        var line = (Line2D?)AccessTools.Field(nestedTypeDrawingState, "currentlyDrawingLine").GetValue(state);
+        if (playerId == null || dvp == null || line == null) return;
 
-        var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
-        MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
+        var id = (ulong)playerId; // explicit conversion in C#; no data lost
+        
+        MapArtistLocalDrawingHistory.Instance.PatchNotifyBeginLine(id, dvp, line);
+        // var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
+        // MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
     }
     
     

@@ -33,7 +33,9 @@ public partial class NMapArtistApplyButton : Abstract.NMapArtistButton
     protected override void OnPress()
     {
         base.OnPress();
-        MapArtistController.MapArtistController.Instance.ApplySettings();
+        // test
+        // MapArtistController.MapArtistController.Instance.ApplySettings();
+        MapArtistController.MapArtistController.Instance.LocalDrawingHistoryRedo();
     }
     
     protected override void OnFocus()

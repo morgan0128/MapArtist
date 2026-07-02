@@ -128,15 +128,15 @@ public sealed class MapArtistController
         var player = FetchLocalPlayer();
         if (player == null || _guiContainer == null) return;
         
-        // // test
-        // /*
+        // test
+        /*
         MapArtistDictionaries.ClearAll(player);
         _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
         
         _guiContainer.ResetBrushWidth();
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
-        // */
-        // UndoLine();
+        */
+        LocalDrawingHistoryUndo();
     }
 
     internal void BroadcastCurrentSettings(bool sendResetWhenDefault = false)
@@ -164,9 +164,16 @@ public sealed class MapArtistController
     }
 
     // test method
-    public void UndoLine()
+    public void LocalDrawingHistoryUndo()
     {
-        _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
+        // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
+        MapArtistLocalDrawingHistory.Instance.Undo();
+    }
+    
+    public void LocalDrawingHistoryRedo()
+    {
+        // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
+        MapArtistLocalDrawingHistory.Instance.Redo();
     }
 
     public void TemporaryUpdateViewport(SubViewport subViewport)
