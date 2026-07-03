@@ -1,21 +1,24 @@
 using Godot;
 using MapArtist.MapArtistCode.GUI.Items;
+using MapArtist.MapArtistCode.GUI.Items.Abstract;
 
 namespace MapArtist.MapArtistCode.GUI;
 
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGuiNode.cs")]
 public partial class NMapArtistGuiNode : VBoxContainer
 {
-    // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
-    private NColorPicker? _rowitemColorPicker;
-    
-    // Container for buttons row of the MapArtist GUI container
-    private HBoxContainer? _rowButtonsContainer;
-    
-    private NMapArtistApplyButton? _itemApplyButton;
-    private NMapArtistResetButton? _itemResetButton;
-    private NMapArtistBrushWidth? _itemBrushWidthInterface;
+    // // Both a row and an item; no container exclusively for this item; first row of the MapArtist GUI container
+    // private NColorPickerItem? _rowitemColorPicker;
+    //
+    // // Container for buttons row of the MapArtist GUI container
+    // private HBoxContainer? _rowButtonsContainer;
+    //
+    // private NMapArtistApplyButton? _itemApplyButton;
+    // private NMapArtistResetButton? _itemResetButton;
+    // private NMapArtistBrushWidthItem? _itemBrushWidthInterface;
 
+    private List<NMapArtistItem> _rows = new List<NMapArtistItem>();
+    
     
     public NMapArtistGuiNode()
     {
@@ -51,7 +54,7 @@ public partial class NMapArtistGuiNode : VBoxContainer
         _itemBrushWidthInterface?.ResetValueBrushWidth(); // changing slider value without Brush width; ValueChanged signal to update BrushWidth
     }
     
-    public void AssignRowitemColorPicker(NColorPicker colorPicker)
+    public void AssignRowitemColorPicker(NColorPickerItem colorPicker)
     {
         _rowitemColorPicker = colorPicker;
         AddChild(_rowitemColorPicker);
@@ -82,9 +85,9 @@ public partial class NMapArtistGuiNode : VBoxContainer
         _itemResetButton.MapArtistButtonContainer = _rowButtonsContainer;
     }
     
-    public void AssignItemBrushWidthInterface(NMapArtistBrushWidth brushWidth)
+    public void AssignItemBrushWidthInterface(NMapArtistBrushWidthItem brushWidthItem)
     {
-        _itemBrushWidthInterface = brushWidth;
+        _itemBrushWidthInterface = brushWidthItem;
         _rowButtonsContainer?.AddChild(_itemBrushWidthInterface);
     }
     

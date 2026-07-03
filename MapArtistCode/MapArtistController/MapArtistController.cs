@@ -17,7 +17,7 @@ public sealed class MapArtistController
     
     private GUI.NMapArtistGuiNode? _guiContainer;
 
-    public NMapArtistBrushWidth? BrushWidthInterface;
+    public NMapArtistBrushWidthItem? BrushWidthInterface;
     
     private Player? _localPlayer;
     

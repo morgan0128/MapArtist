@@ -1,9 +1,10 @@
 using Godot;
 using MapArtist.MapArtistCode.Config;
+using MapArtist.MapArtistCode.GUI.Items.Abstract;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
-public partial class NMapArtistBrushWidth : HBoxContainer
+public partial class NMapArtistBrushWidthItem : NMapArtistItem
 {
     public NMapArtistBrushWidthButton? WidthButton;
     
@@ -13,18 +14,24 @@ public partial class NMapArtistBrushWidth : HBoxContainer
     
     public int BrushWidth;
 
-    public NMapArtistBrushWidth() {}
+    public NMapArtistBrushWidthItem() {}
 
-    public NMapArtistBrushWidth(Control mapArtistParent)
+    public NMapArtistBrushWidthItem(Control mapArtistParent)
     {
         Name = "NMapArtistBrushWidthInterface";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(185f, 35f);
         // SetHSizeFlags(Control.SizeFlags.ExpandFill);
         // SetVSizeFlags(Control.SizeFlags.ExpandFill);
-
-
         WidthButton = new NMapArtistBrushWidthButton(mapArtistParent);
+        
+        NestedButtons = new List<NMapArtistButton>();
+        NestedButtons.Add(WidthButton);
+        NestedControlNodes = new List<Control>();
+        NestedControlNodes.Add(_slider);
+        NestedControlNodes.Add(_label);
+
+        
         
         _adjustContainer.Name = "MapArtistBrushWidthAdjustContainer";
         _adjustContainer.UniqueNameInOwner = true;

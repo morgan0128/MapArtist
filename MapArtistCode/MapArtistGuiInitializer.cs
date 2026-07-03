@@ -108,9 +108,9 @@ public class MapArtistGuiInitializer
     
     private void ConstructGuiRowItemColorPicker()
     {
-        var colorPicker = new NColorPicker();
-        colorPicker.Name = "ItemColorPicker";
-        colorPicker.UniqueNameInOwner = true;
+        var colorPicker = new NColorPickerItem();
+        // colorPicker.Name = "ItemColorPicker";
+        // colorPicker.UniqueNameInOwner = true;
         var player = Util.GetLocalPlayer();
         if (player != null)
         {
@@ -133,7 +133,7 @@ public class MapArtistGuiInitializer
         InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath, resetButton);
         _guiContainer.AssignItemResetButton(resetButton);
 
-        var brushWidth = new NMapArtistBrushWidth(container);
+        var brushWidth = new NMapArtistBrushWidthItem(container);
         _guiContainer.AssignItemBrushWidthInterface(brushWidth);
         InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath, brushWidth.WidthButton);
         MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
