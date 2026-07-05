@@ -1,18 +1,19 @@
 using Godot;
+using MapArtist.MapArtistCode.GUI.Items.Abstract;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 
-namespace MapArtist.MapArtistCode.GUI.Items;
+namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 
-[ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistApplyButton.cs")]
-public partial class NMapArtistApplyButton : Abstract.NMapArtistButton
+[ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistApplyButtonItem.cs")]
+public partial class NMapArtistApplyButtonItem : NMapArtistButtonItem
 {
     private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
     private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    public NMapArtistApplyButton()
+    public NMapArtistApplyButtonItem()
     {
         Name = "MapArtistApplyButton";
         UniqueNameInOwner = true;

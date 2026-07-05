@@ -1,6 +1,7 @@
 using BaseLib;
 using BaseLib.Abstracts;
 using Godot;
+using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -15,7 +16,7 @@ public sealed class MapArtistController
     private MapArtistController() { }
     public static MapArtistController Instance { get; } = new MapArtistController();
     
-    private GUI.NMapArtistGuiNode? _guiContainer;
+    private GUI.NMapArtistGui? _guiContainer;
 
     public NMapArtistBrushWidthItem? BrushWidthInterface;
     
@@ -23,12 +24,40 @@ public sealed class MapArtistController
     
     private SubViewport? _tempViewport;
 
+    private Color _selectedColor;
+    public Color SelectedColor
+    {
+        set
+        {
+            _selectedColor = value;
+            if (MapArtistConfig.SynchronizedColorPicker)
+            {
+                ApplySettingColor();
+            }
+        }
+    }
     
-    // Only to be called by NMapArtistGuiButton when enters tree
+    private int _selectedWidth;
+    public int SelectedWidth
+    {
+        set
+        {
+            _selectedWidth = value;
+            if (MapArtistConfig.SynchronizedWidthSlider)
+            {
+                ApplySettingWidth();
+            }
+        }
+    }
+
+
+
+
+    // Only to be called by NMapArtistGuiButtonItem when enters tree
     public void InitializeGui(NMapScreen mapScene)
     {
         _guiContainer = MapArtistGuiInitializer.Instance.InitializeMapArtistNodes(mapScene);
-        ApplySettings(); // for sake of consistency
+        ResetRunState();
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
@@ -94,7 +123,7 @@ public sealed class MapArtistController
         if (player == null || _guiContainer == null) return;
 
         // apply brush color
-        MapArtistDictionaries.SetColor(player, _guiContainer.GetColorInColorPicker());
+        MapArtistDictionaries.SetColor(player, _selectedColor);
         
         BroadcastCurrentSettings();
     }
@@ -111,7 +140,7 @@ public sealed class MapArtistController
         
         // apply pen width
         try {
-            var widthVal = _guiContainer.GetValueBrushWidth();
+            var widthVal = _selectedWidth;
             MapArtistDictionaries.SetPenWidth(player, (float)widthVal);
             // CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(_guiContainer.GetColorInColorPicker(), (float)widthVal));
         } catch (FormatException notFloat)

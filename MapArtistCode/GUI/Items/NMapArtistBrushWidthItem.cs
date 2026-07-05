@@ -1,20 +1,27 @@
 using Godot;
 using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI.Items.Abstract;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 
 namespace MapArtist.MapArtistCode.GUI.Items;
 
-public partial class NMapArtistBrushWidthItem : NMapArtistItem
+public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
 {
-    public NMapArtistBrushWidthButton? WidthButton;
+    private NMapArtistBrushWidthButtonItem _widthButton;
     
     private HBoxContainer _adjustContainer = new HBoxContainer();
     private HSlider _slider = new HSlider();
     private Label _label = new Label();
-    
-    public int BrushWidth;
+
+    private int _brushWidth;
 
     public NMapArtistBrushWidthItem() {}
+    
+    public void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath)
+    {
+        _widthButton.InitializeIconUseDeepCopy(toCopy, imagePath);
+    }
 
     public NMapArtistBrushWidthItem(Control mapArtistParent)
     {
@@ -23,15 +30,7 @@ public partial class NMapArtistBrushWidthItem : NMapArtistItem
         CustomMinimumSize = new Vector2(185f, 35f);
         // SetHSizeFlags(Control.SizeFlags.ExpandFill);
         // SetVSizeFlags(Control.SizeFlags.ExpandFill);
-        WidthButton = new NMapArtistBrushWidthButton(mapArtistParent);
-        
-        NestedButtons = new List<NMapArtistButton>();
-        NestedButtons.Add(WidthButton);
-        NestedControlNodes = new List<Control>();
-        NestedControlNodes.Add(_slider);
-        NestedControlNodes.Add(_label);
-
-        
+        _widthButton = new NMapArtistBrushWidthButtonItem(mapArtistParent);
         
         _adjustContainer.Name = "MapArtistBrushWidthAdjustContainer";
         _adjustContainer.UniqueNameInOwner = true;
@@ -59,18 +58,18 @@ public partial class NMapArtistBrushWidthItem : NMapArtistItem
         _label.SetLabelSettings(new LabelSettings());
         _label.GetLabelSettings().FontColor = Colors.Gainsboro;
 
-        BrushWidth = Util.DefaultBrushWidth;
+        _brushWidth = Util.DefaultBrushWidth;
     }
 
     public override void _Ready()
     {
-        AddChild(WidthButton);
+        AddChild(_widthButton);
         AddChild(_adjustContainer);
         _adjustContainer.AddChild(_slider);
         _adjustContainer.AddChild(_label);
         
-        _slider.Value = BrushWidth;
-        _label.Text = BrushWidth.ToString();
+        _slider.Value = _brushWidth;
+        _label.Text = _brushWidth.ToString();
         
         _slider.ValueChanged += OnSliderValueChanged; 
         // _slider.Value = BrushWidth; calling OnSliderValueChanged before _Ready() is unsafe
@@ -79,12 +78,13 @@ public partial class NMapArtistBrushWidthItem : NMapArtistItem
     // setting _slider.Value in code or in UI updates _label.Text automatically
     private void OnSliderValueChanged(double value)
     {
-        BrushWidth = (int)value;
-        _label.Text = BrushWidth.ToString();
-        if (MapArtistConfig.SynchronizedWidthSlider)
-        {
-            MapArtistController.MapArtistController.Instance.ApplySettingWidth();
-        }
+        _brushWidth = (int)value;
+        _label.Text = _brushWidth.ToString();
+        MapArtistController.MapArtistController.Instance.SelectedWidth = _brushWidth;
+        // if (MapArtistConfig.SynchronizedWidthSlider)
+        // {
+        //     MapArtistController.MapArtistController.Instance.ApplySettingWidth();
+        // }
     }
 
     public void ToggleAdjustVisibility()
@@ -98,5 +98,55 @@ public partial class NMapArtistBrushWidthItem : NMapArtistItem
     }
     
     
+    public partial class NMapArtistBrushWidthButtonItem : NMapArtistButtonItem
+    {
+        private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+        private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
+        private static readonly Color ActiveColor = new Color("FFE57DFF");
+        private static readonly Color InactiveColor = new Color("FFFFFF80");
+
+    
+        public NMapArtistBrushWidthButtonItem()
+        {
+        }
+    
+        public NMapArtistBrushWidthButtonItem(Control mapArtistAncestorItemContainer)
+        {
+            Name = "MapArtistBrushWidthButton";
+            UniqueNameInOwner = true;
+            CustomMinimumSize = new Vector2(35f, 35f);
+            LayoutMode = 2;
+            FocusMode = FocusModeEnum.All;
+
+            MapArtistButtonContainer = mapArtistAncestorItemContainer;
+        }
+
+        public override void _Ready()
+        {
+            base._Ready();
+            // Localization
+            var locDesc = new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.description");
+            HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-BRUSH_WIDTH.title"), locDesc);
+        
+            ConnectSignals();
+        }
+    
+        protected override void OnPress()
+        {
+            base.OnPress();
+            MapArtistController.MapArtistController.Instance.ToggleBrushWidthGui();
+        }
+    
+        protected override void OnFocus()
+        {
+            ChildIconSfxGlow(GlowImagePath, ActiveColor);
+        }
+
+        protected override void OnUnfocus()
+        {
+            ChildIconSfxUnglow(ImagePath, InactiveColor);
+        }
+
+    }
     
 }

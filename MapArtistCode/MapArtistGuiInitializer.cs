@@ -3,7 +3,12 @@ using Godot;
 using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI;
 using MapArtist.MapArtistCode.GUI.Items;
+using MapArtist.MapArtistCode.GUI.Items.Abstract;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+using NMapArtistApplyButtonItem = MapArtist.MapArtistCode.GUI.Items.Buttons.NMapArtistApplyButtonItem;
+using NMapArtistGuiButtonItem = MapArtist.MapArtistCode.GUI.NMapArtistGuiButtonItem;
+using NMapArtistResetButtonItem = MapArtist.MapArtistCode.GUI.Items.Buttons.NMapArtistResetButtonItem;
 
 namespace MapArtist.MapArtistCode;
 
@@ -27,17 +32,17 @@ public class MapArtistGuiInitializer
     private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to toggle display of the MapArtist GUI
-    private NMapArtistGuiButton? _guiDisplayButton;
+    private NMapArtistGuiButtonItem? _guiDisplayButton;
     
     // Container for the MapArtist GUI
-    private NMapArtistGuiNode? _guiContainer;
+    private NMapArtistGui? _guiContainer;
 
-    public NMapArtistGuiNode InitializeMapArtistNodes(NMapScreen existingMapScene)
+    public NMapArtistGui InitializeMapArtistNodes(NMapScreen existingMapScene)
     {
         _existingMapScene = existingMapScene;
         CompleteSetupForAddedNode();
         InitializeGui();
-        return _existingMapScene.GetNode<NMapArtistGuiNode>("MapArtistGUI");
+        return _existingMapScene.GetNode<NMapArtistGui>("MapArtistGUI");
     }
 
 
@@ -51,7 +56,7 @@ public class MapArtistGuiInitializer
         }
         
         // the AddedNode
-        _guiDisplayButton = _existingMapScene.GetNode<GUI.NMapArtistGuiButton>("DrawingTools/HBoxContainer/MapArtistGUIButton");
+        _guiDisplayButton = _existingMapScene.GetNode<NMapArtistGuiButtonItem>("DrawingTools/HBoxContainer/MapArtistGUIButton");
         
         if (_guiDisplayButton == null)
         {
@@ -60,7 +65,7 @@ public class MapArtistGuiInitializer
         }
         
         InitializePrototypeIcon();
-        InitializeIconUseDeepCopy(_prototypeIcon, LogoImagePath, _guiDisplayButton);
+        _guiDisplayButton.InitializeIconUseDeepCopy(_prototypeIcon, LogoImagePath);
         
         // Have DrawingTools expand horizontally to visually house the newly added toggleGUI button
         var dTools = _existingMapScene.GetNode<NinePatchRect>("DrawingTools");
@@ -84,7 +89,7 @@ public class MapArtistGuiInitializer
             return;
         }
 
-        _guiContainer = new NMapArtistGuiNode();
+        _guiContainer = new NMapArtistGui();
         _existingMapScene.AddChild(_guiContainer);
         
         if (topLeft)
@@ -109,45 +114,32 @@ public class MapArtistGuiInitializer
     private void ConstructGuiRowItemColorPicker()
     {
         var colorPicker = new NColorPickerItem();
-        // colorPicker.Name = "ItemColorPicker";
-        // colorPicker.UniqueNameInOwner = true;
         var player = Util.GetLocalPlayer();
         if (player != null)
         {
             colorPicker.Color = player.Character.MapDrawingColor;
         }
-        _guiContainer.AssignRowitemColorPicker(colorPicker);
+        _guiContainer?.AddItemColorPicker(colorPicker);
     }
     
     private void ConstructGuiRowButtons()
     {
-        var container = InitHBoxContainer();
+        var container = new NMapArtistBoxContainerItem();
         container.Name = "BrushPropertyButtonContainer";
-        _guiContainer.AssignRowButtonsContainer(container);
+        _guiContainer?.AddItem(container);
         
-        var applyButton = new NMapArtistApplyButton();
-        InitializeIconUseDeepCopy(_prototypeIcon, ApplyImagePath, applyButton);
-        _guiContainer.AssignItemApplyButton(applyButton);
+        var applyButton = new NMapArtistApplyButtonItem();
+        applyButton.InitializeIconUseDeepCopy(_prototypeIcon, ApplyImagePath);
+        container.AddItem(applyButton);
         
-        var resetButton = new NMapArtistResetButton();
-        InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath, resetButton);
-        _guiContainer.AssignItemResetButton(resetButton);
+        var resetButton = new NMapArtistResetButtonItem();
+        resetButton.InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath);
+        container.AddItem(resetButton);
 
         var brushWidth = new NMapArtistBrushWidthItem(container);
-        _guiContainer.AssignItemBrushWidthInterface(brushWidth);
-        InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath, brushWidth.WidthButton);
+        container.AddItem(brushWidth);
+        brushWidth.InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath);
         MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
-    }
-    
-    private static HBoxContainer InitHBoxContainer()
-    {
-        var hbc = new HBoxContainer();
-        hbc.UniqueNameInOwner = true;
-        hbc.SizeFlagsHorizontal = Control.SizeFlags.Fill;
-        hbc.SizeFlagsVertical = Control.SizeFlags.Fill;
-        hbc.MouseFilter = Control.MouseFilterEnum.Ignore;
-      
-        return hbc;
     }
     
     private void InitializePrototypeIcon()
@@ -160,47 +152,6 @@ public class MapArtistGuiInitializer
         }
         
         _prototypeIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
-    }
-    
-    private static TextureRect DeepCopyIcon(TextureRect toCopy)
-    {
-        var icon = new TextureRect();
-
-        icon.Name = "Icon";
-        
-        icon.SelfModulate = toCopy.SelfModulate;
-        icon.SetMaterial(toCopy.GetMaterial());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.LayoutMode = toCopy.LayoutMode;
-        icon.AnchorsPreset = toCopy.AnchorsPreset;
-        icon.AnchorRight = toCopy.AnchorRight;
-        icon.AnchorBottom = toCopy.AnchorBottom;
-        icon.GrowHorizontal = toCopy.GrowHorizontal;
-        icon.GrowVertical = toCopy.GrowVertical;
-        icon.Scale =  new Vector2(toCopy.Scale.X, toCopy.Scale.Y);
-        icon.PivotOffset = new Vector2(toCopy.PivotOffset.X, toCopy.PivotOffset.Y);
-        icon.MouseFilter = toCopy.MouseFilter;
-        icon.SetTexture(toCopy.GetTexture());
-        icon.SetUseParentMaterial(toCopy.GetUseParentMaterial());
-        icon.ExpandMode = toCopy.ExpandMode;
-        icon.StretchMode = toCopy.StretchMode;
-        
-        return icon;
-    }
-
-    private static TextureRect DeepCopyIcon(TextureRect toCopy, StringName imagePath)
-    {
-        var icon = DeepCopyIcon(toCopy);
-        icon.Texture = ResourceLoader.Load<Texture2D>(imagePath);
-
-        return icon;
-    }
-    
-    private static void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath, GUI.Items.Abstract.NMapArtistButton forButton)
-    {
-        var icon = DeepCopyIcon(toCopy, imagePath);
-        forButton.SetIcon(icon);
-        forButton.AddChild(icon);
     }
     
 }

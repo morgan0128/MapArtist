@@ -6,13 +6,20 @@ using MegaCrit.Sts2.Core.Nodes.HoverTips;
 
 namespace MapArtist.MapArtistCode.GUI.Items.Abstract;
 
-public abstract partial class NMapArtistButton : NButton
+public abstract partial class NMapArtistButtonItem : NButton
 {
-    public Control? MapArtistButtonContainer;
+    protected Control? MapArtistButtonContainer;
     protected HoverTip HoverTip;
     private Tween? _tween;
     private TextureRect? _icon;
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
+    
+    public void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath)
+    {
+        var icon = Util.DeepCopyIcon(toCopy, imagePath);
+        SetIcon(icon);
+        AddChild(icon);
+    }
 
     
     public void SetIcon(TextureRect icon)
@@ -23,6 +30,7 @@ public abstract partial class NMapArtistButton : NButton
     public override void _Ready()
     {
         // SetVSizeFlags(SizeFlags.ShrinkBegin);
+        MapArtistButtonContainer ??= GetParentOrNull<Control>();
     }
     
     protected override void ConnectSignals()
@@ -59,8 +67,5 @@ public abstract partial class NMapArtistButton : NButton
         _tween.TweenProperty(_icon, (NodePath) "self_modulate", inactive, 0.05);
         NHoverTipSet.Remove(MapArtistButtonContainer);
     }
-
-    
-    
     
 }
