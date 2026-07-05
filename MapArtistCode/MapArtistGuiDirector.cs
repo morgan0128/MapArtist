@@ -12,12 +12,12 @@ using NMapArtistResetButtonItem = MapArtist.MapArtistCode.GUI.Items.Buttons.NMap
 
 namespace MapArtist.MapArtistCode;
 
-public class MapArtistGuiInitializer
+public class MapArtistGuiDirector
 {
 //--------------------------------------------------- Singleton ------------------------------------------------
-    static MapArtistGuiInitializer() { }
-    private MapArtistGuiInitializer() { }
-    public static MapArtistGuiInitializer Instance { get; } = new MapArtistGuiInitializer();
+    static MapArtistGuiDirector() { }
+    private MapArtistGuiDirector() { }
+    public static MapArtistGuiDirector Instance { get; } = new MapArtistGuiDirector();
 //--------------------------------------------------------------------------------------------------------------
 
     private NMapScreen? _existingMapScene; // The single, instantiated NMapScreen scene itself
@@ -26,10 +26,10 @@ public class MapArtistGuiInitializer
     private TextureRect? _prototypeIcon;
 
     // Used in this class for the initially rendered states of the MapArtist button icons
-    private static readonly StringName ApplyImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    private static readonly StringName ResetImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
-    private static readonly StringName WidthImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
-    private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
+    // private static readonly StringName ApplyImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
+    // private static readonly StringName ResetImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
+    // private static readonly StringName WidthImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+    // private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to toggle display of the MapArtist GUI
     private NMapArtistGuiButtonItem? _guiDisplayButton;
@@ -37,12 +37,13 @@ public class MapArtistGuiInitializer
     // Container for the MapArtist GUI
     private NMapArtistGui? _guiContainer;
 
-    public NMapArtistGui InitializeMapArtistNodes(NMapScreen existingMapScene)
+    public NMapArtistGui? InitializeMapArtistNodes(NMapScreen existingMapScene)
     {
         _existingMapScene = existingMapScene;
         CompleteSetupForAddedNode();
-        InitializeGui();
-        return _existingMapScene.GetNode<NMapArtistGui>("MapArtistGUI");
+        ConstructGui(MapArtistConfig.TopLeftGui);
+        // return _existingMapScene.GetNode<NMapArtistGui>("MapArtistGUI");
+        return _guiContainer;
     }
 
 
@@ -50,22 +51,21 @@ public class MapArtistGuiInitializer
     {
         if (_existingMapScene == null)
         {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call InitializeAddedNodeGuiButton() before" +
-                                     " assigning _existingMapScene.");
+            BaseLibMain.Logger.Info("[MapArtistDirector] Attempted to call InitializeAddedNodeGuiButton() before assigning _existingMapScene.");
             return;
         }
         
         // the AddedNode
-        _guiDisplayButton = _existingMapScene.GetNode<NMapArtistGuiButtonItem>("DrawingTools/HBoxContainer/MapArtistGUIButton");
+        _guiDisplayButton = _existingMapScene.GetNodeOrNull<NMapArtistGuiButtonItem>("DrawingTools/HBoxContainer/MapArtistGUIButton");
         
         if (_guiDisplayButton == null)
         {
-            BaseLibMain.Logger.Error("[MapArtistController] Failed to fetch or assign _guiDisplayButton from _existingMapScene.");
+            BaseLibMain.Logger.Error("[MapArtistDirector] Failed to fetch or assign _guiDisplayButton from _existingMapScene.");
             return;
         }
         
         InitializePrototypeIcon();
-        _guiDisplayButton.InitializeIconUseDeepCopy(_prototypeIcon, LogoImagePath);
+        _guiDisplayButton.InitializeIconUseDeepCopy(_prototypeIcon);
         
         // Have DrawingTools expand horizontally to visually house the newly added toggleGUI button
         var dTools = _existingMapScene.GetNode<NinePatchRect>("DrawingTools");
@@ -74,18 +74,12 @@ public class MapArtistGuiInitializer
         dToolsHBox.SetOffset(Side.Left, (dToolsHBox.GetOffset(Side.Left) - 34f));
         dToolsHBox.SetOffset(Side.Right, (dToolsHBox.GetOffset(Side.Right) + 34f));
     }
-    
-    private void InitializeGui()
-    {
-        ConstructGui(MapArtistConfig.TopLeftGui);
-    }
 
     private void ConstructGui(bool topLeft)
     {
         if (_existingMapScene == null)
         {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call ConstructGui() before" +
-                                    " assigning _existingMapScene.");
+            BaseLibMain.Logger.Info("[MapArtistDirector] Attempted to call ConstructGui() before assigning _existingMapScene.");
             return;
         }
 
@@ -96,19 +90,15 @@ public class MapArtistGuiInitializer
         {
             ConstructGuiRowItemColorPicker();
             ConstructGuiRowButtons();
+            _guiContainer.SetGlobalPosition(new Vector2(12f, 158f));
         }
         else
         {
-            _guiContainer.AddThemeConstantOverride("separation", 0);
-            _guiContainer.SetGlobalPosition(new Vector2(1605f, 725f));
-            if (MapArtistConfig.ColorSamplerTool)
-            {
-                // lazy way: to get v1.0.2 out today. refactor UI setup/config interactions later
-                _guiContainer.SetGlobalPosition(new Vector2(1605f, 720f));
-            }
             ConstructGuiRowButtons();
             ConstructGuiRowItemColorPicker();
+            _guiContainer.SetGlobalPosition(new Vector2(1590f, 717f));
         }
+        ApplyConfigColorSampler();
     }
     
     private void ConstructGuiRowItemColorPicker()
@@ -129,29 +119,39 @@ public class MapArtistGuiInitializer
         _guiContainer?.AddItem(container);
         
         var applyButton = new NMapArtistApplyButtonItem();
-        applyButton.InitializeIconUseDeepCopy(_prototypeIcon, ApplyImagePath);
+        applyButton.InitializeIconUseDeepCopy(_prototypeIcon);
         container.AddItem(applyButton);
         
         var resetButton = new NMapArtistResetButtonItem();
-        resetButton.InitializeIconUseDeepCopy(_prototypeIcon, ResetImagePath);
+        resetButton.InitializeIconUseDeepCopy(_prototypeIcon);
         container.AddItem(resetButton);
 
         var brushWidth = new NMapArtistBrushWidthItem(container);
         container.AddItem(brushWidth);
-        brushWidth.InitializeIconUseDeepCopy(_prototypeIcon, WidthImagePath);
+        brushWidth.InitializeIconUseDeepCopy(_prototypeIcon);
         MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
+    }
+
+    private void ApplyConfigColorSampler()
+    {
+        if (_guiContainer == null || !_guiContainer.AssignedColorPicker())
+        {
+            BaseLibMain.Logger.Info("[MapArtistDirector] In ApplyConfigColorSampler(): Construct gui and assign color picker, first!");
+            return;
+        }
+        
+        _guiContainer.SetColorSamplerVisible(MapArtistConfig.ColorSamplerTool);
     }
     
     private void InitializePrototypeIcon()
     {
         if (_existingMapScene == null)
         {
-            BaseLibMain.Logger.Info("[MapArtistController] Attempted to call DebugInitializePlaceholderIcon() before" +
-                                     " assigning _existingMapScene.");
+            BaseLibMain.Logger.Info("[MapArtistDirector] Attempted to call InitializePrototypeIcon() before assigning _existingMapScene.");
             return;
         }
         
-        _prototypeIcon = _existingMapScene.GetNode<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
+        _prototypeIcon = _existingMapScene.GetNodeOrNull<TextureRect>("DrawingTools/HBoxContainer/ClearButton/Icon");
     }
     
 }

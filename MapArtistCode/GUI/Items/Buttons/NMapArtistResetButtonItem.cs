@@ -8,8 +8,8 @@ namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistResetButtonItem.cs")]
 public partial class NMapArtistResetButtonItem : NMapArtistButtonItem
 {
-    private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
-    private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
+    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
+    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
 
@@ -20,6 +20,9 @@ public partial class NMapArtistResetButtonItem : NMapArtistButtonItem
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
+        
+        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
+        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
     }
 
     public override void _Ready()

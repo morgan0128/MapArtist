@@ -13,10 +13,22 @@ public abstract partial class NMapArtistButtonItem : NButton
     private Tween? _tween;
     private TextureRect? _icon;
     private bool HasControllerHotkey => this.Hotkeys.Length != 0;
+
+    protected StringName? ImagePath;
+    protected StringName? GlowImagePath;
     
-    public void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath)
+    // public void InitializeIconUseDeepCopy(TextureRect? toCopy, StringName imagePath)
+    // {
+    //     if (toCopy == null) return;
+    //     var icon = Util.DeepCopyIcon(toCopy, imagePath);
+    //     SetIcon(icon);
+    //     AddChild(icon);
+    // }
+    
+    public void InitializeIconUseDeepCopy(TextureRect? toCopy)
     {
-        var icon = Util.DeepCopyIcon(toCopy, imagePath);
+        if (toCopy == null) return;
+        var icon = Util.DeepCopyIcon(toCopy, ImagePath);
         SetIcon(icon);
         AddChild(icon);
     }

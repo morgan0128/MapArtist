@@ -8,8 +8,8 @@ namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistApplyButtonItem.cs")]
 public partial class NMapArtistApplyButtonItem : NMapArtistButtonItem
 {
-    private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
+    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
+    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
@@ -20,6 +20,9 @@ public partial class NMapArtistApplyButtonItem : NMapArtistButtonItem
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
+        
+        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
+        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     }
     
     public override void _Ready()
@@ -34,9 +37,7 @@ public partial class NMapArtistApplyButtonItem : NMapArtistButtonItem
     protected override void OnPress()
     {
         base.OnPress();
-        // test
-        // MapArtistController.MapArtistController.Instance.ApplySettings();
-        MapArtistController.MapArtistController.Instance.LocalDrawingHistoryRedo();
+        MapArtistController.MapArtistController.Instance.ApplySettings();
     }
     
     protected override void OnFocus()

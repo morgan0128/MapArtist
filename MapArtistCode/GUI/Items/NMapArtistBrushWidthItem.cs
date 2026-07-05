@@ -18,18 +18,24 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
 
     public NMapArtistBrushWidthItem() {}
     
-    public void InitializeIconUseDeepCopy(TextureRect toCopy, StringName imagePath)
-    {
-        _widthButton.InitializeIconUseDeepCopy(toCopy, imagePath);
-    }
+    // public void InitializeIconUseDeepCopy(TextureRect? toCopy, StringName imagePath)
+    // {
+    //     if (toCopy == null) return;
+    //     _widthButton.InitializeIconUseDeepCopy(toCopy, imagePath);
+    // }
 
+    public void InitializeIconUseDeepCopy(TextureRect? toCopy)
+    {
+        if (toCopy == null) return;
+        _widthButton.InitializeIconUseDeepCopy(toCopy);
+    }
+    
     public NMapArtistBrushWidthItem(Control mapArtistParent)
     {
         Name = "NMapArtistBrushWidthInterface";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(185f, 35f);
-        // SetHSizeFlags(Control.SizeFlags.ExpandFill);
-        // SetVSizeFlags(Control.SizeFlags.ExpandFill);
+        
         _widthButton = new NMapArtistBrushWidthButtonItem(mapArtistParent);
         
         _adjustContainer.Name = "MapArtistBrushWidthAdjustContainer";
@@ -59,6 +65,13 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
         _label.GetLabelSettings().FontColor = Colors.Gainsboro;
 
         _brushWidth = Util.DefaultBrushWidth;
+    }
+    
+    public void ResetWidth()
+    {
+        _label.Text = Util.DefaultBrushWidth.ToString();
+        _brushWidth = Util.DefaultBrushWidth;
+        _slider.Value = Util.DefaultBrushWidth; // in most cases this will override the previous two operations (OnValueChanged)
     }
 
     public override void _Ready()
@@ -91,17 +104,11 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     {
         _adjustContainer.Visible = !_adjustContainer.Visible;
     }
-
-    public void ResetValueBrushWidth()
-    {
-        _slider.Value = Util.DefaultBrushWidth;
-    }
-    
     
     public partial class NMapArtistBrushWidthButtonItem : NMapArtistButtonItem
     {
-        private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
-        private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
+        // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+        // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
         private static readonly Color ActiveColor = new Color("FFE57DFF");
         private static readonly Color InactiveColor = new Color("FFFFFF80");
 
@@ -110,6 +117,12 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
         {
         }
     
+        /*
+         * Note: we pass a Control 'mapArtistParent' to be known by _widthButton in order for _widthButton to display
+         * hovertip in correct container, given that _widthButton is generally intended to be doubly nested within a
+         * broader button container; unlike most button items which are generally intended to be direct children
+         */
+        
         public NMapArtistBrushWidthButtonItem(Control mapArtistAncestorItemContainer)
         {
             Name = "MapArtistBrushWidthButton";
@@ -119,6 +132,9 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
             FocusMode = FocusModeEnum.All;
 
             MapArtistButtonContainer = mapArtistAncestorItemContainer;
+            
+            ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
+            GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
         }
 
         public override void _Ready()

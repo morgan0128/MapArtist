@@ -20,7 +20,7 @@ public partial class NColorPickerItem : ColorPicker
         DeferredMode = true;
         
         InitRestrictiveDefaultSettings();
-        SamplerVisible = MapArtistConfig.ColorSamplerTool;
+        // SamplerVisible = MapArtistConfig.ColorSamplerTool;
     }
 
     // For a cleaner gui with fewer levers. Allow this to be toggleable in mod config, but set this as the default.
@@ -33,7 +33,7 @@ public partial class NColorPickerItem : ColorPicker
         PresetsVisible = false;
         SlidersVisible = false;
         PresetsVisible = false;
-        // SamplerVisible = false;
+        SamplerVisible = false;
         Alignment = AlignmentMode.Begin;
     }
     
@@ -51,10 +51,6 @@ public partial class NColorPickerItem : ColorPicker
     private void OnColorChanged(Color color)
     {
         MapArtistController.MapArtistController.Instance.SelectedColor = color;
-        // if (MapArtistConfig.SynchronizedColorPicker)
-        // {
-        // MapArtistController.MapArtistController.Instance.ApplySettingColor();
-        // }
     }
     
 }

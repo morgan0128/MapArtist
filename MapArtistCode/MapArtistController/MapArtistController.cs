@@ -56,7 +56,7 @@ public sealed class MapArtistController
     // Only to be called by NMapArtistGuiButtonItem when enters tree
     public void InitializeGui(NMapScreen mapScene)
     {
-        _guiContainer = MapArtistGuiInitializer.Instance.InitializeMapArtistNodes(mapScene);
+        _guiContainer = MapArtistGuiDirector.Instance.InitializeMapArtistNodes(mapScene);
         ResetRunState();
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
@@ -157,15 +157,14 @@ public sealed class MapArtistController
         var player = FetchLocalPlayer();
         if (player == null || _guiContainer == null) return;
         
-        // test
-        /*
         MapArtistDictionaries.ClearAll(player);
         _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
         
-        _guiContainer.ResetBrushWidth();
+        _guiContainer.ResetWidthInWidthItem();
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
-        */
-        LocalDrawingHistoryUndo();
+        
+        // test
+        // LocalDrawingHistoryUndo();
     }
 
     internal void BroadcastCurrentSettings(bool sendResetWhenDefault = false)
