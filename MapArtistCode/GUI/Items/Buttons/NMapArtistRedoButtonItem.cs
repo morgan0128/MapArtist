@@ -17,7 +17,7 @@ public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
         FocusMode = FocusModeEnum.All;
         
         ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo14.png";
-        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo_glow.png";
+        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo14_glow.png";
     }
     
     public override void _Ready()

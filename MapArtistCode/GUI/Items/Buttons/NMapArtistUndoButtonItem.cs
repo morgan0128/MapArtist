@@ -17,7 +17,7 @@ public partial class NMapArtistUndoButtonItem : NMapArtistButtonItem
         FocusMode = FocusModeEnum.All;
         
         ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_undo1.png";
-        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_undo_glow.png";
+        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_undo1_glow.png";
     }
     
     public override void _Ready()

@@ -17,12 +17,6 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     public int BrushWidth = Util.DefaultBrushWidth;
 
     public NMapArtistBrushWidthItem() {}
-    
-    // public void InitializeIconUseDeepCopy(TextureRect? toCopy, StringName imagePath)
-    // {
-    //     if (toCopy == null) return;
-    //     _widthButton.InitializeIconUseDeepCopy(toCopy, imagePath);
-    // }
 
     public void InitializeIconUseDeepCopy(TextureRect? toCopy)
     {
