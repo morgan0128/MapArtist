@@ -7,8 +7,6 @@ namespace MapArtist.MapArtistCode.GUI;
 [ScriptPath("res://MapArtistCode/GUI/NMapArtistGui.cs")]
 public partial class NMapArtistGui : NMapArtistBoxContainerItem
 {
-    // private NColorPickerItem? _itemColorPicker;
-    
     public NMapArtistGui()
     {
         Vertical = true;

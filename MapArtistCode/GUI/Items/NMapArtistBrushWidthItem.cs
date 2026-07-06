@@ -109,12 +109,7 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     
     public partial class NMapArtistBrushWidthButtonItem : NMapArtistButtonItem
     {
-        // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
-        // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width_glow.png";
-        private static readonly Color ActiveColor = new Color("FFE57DFF");
-        private static readonly Color InactiveColor = new Color("FFFFFF80");
-
-    
+        
         public NMapArtistBrushWidthButtonItem()
         {
         }

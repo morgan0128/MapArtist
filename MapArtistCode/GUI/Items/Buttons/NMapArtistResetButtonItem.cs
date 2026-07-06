@@ -8,11 +8,6 @@ namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistResetButtonItem.cs")]
 public partial class NMapArtistResetButtonItem : NMapArtistButtonItem
 {
-    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
-    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset_glow.png";
-    private static readonly Color ActiveColor = new Color("FFE57DFF");
-    private static readonly Color InactiveColor = new Color("FFFFFF80");
-
     public NMapArtistResetButtonItem()
     {
         Name = "MapArtistResetButton";

@@ -4,10 +4,9 @@ namespace MapArtist.MapArtistCode.GUI.Items.Abstract;
 
 public partial class NMapArtistBoxContainerItem : BoxContainer
 {
-
     protected List<Control>? ChildItems; // Ideally, T would be an interface for "MapArtistItems", however, there is no
-                                        // convenient way of using interfaces for set of classes that should all be Godot Nodes;
-                                        // to my knowledge, Godot provides no Node interface or anything of the sort
+                                         // convenient way of using interfaces for set of classes that should all be Godot Nodes;
+                                         // to my knowledge, Godot provides no Node interface or anything of the sort
 
     public NMapArtistBoxContainerItem()
     {

@@ -16,18 +16,13 @@ public abstract partial class NMapArtistButtonItem : NButton
 
     protected StringName? ImagePath;
     protected StringName? GlowImagePath;
-    
-    // public void InitializeIconUseDeepCopy(TextureRect? toCopy, StringName imagePath)
-    // {
-    //     if (toCopy == null) return;
-    //     var icon = Util.DeepCopyIcon(toCopy, imagePath);
-    //     SetIcon(icon);
-    //     AddChild(icon);
-    // }
+    protected static readonly Color ActiveColor = new Color("FFE57DFF");
+    protected static readonly Color InactiveColor = new Color("FFFFFF80");
+
     
     public void InitializeIconUseDeepCopy(TextureRect? toCopy)
     {
-        if (toCopy == null) return;
+        if (toCopy == null || ImagePath == null) return;
         var icon = Util.DeepCopyIcon(toCopy, ImagePath);
         SetIcon(icon);
         AddChild(icon);

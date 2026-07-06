@@ -8,11 +8,6 @@ namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistRedoButtonItem.cs")]
 public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
 {
-    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo.png";
-    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo_glow.png";
-    private static readonly Color ActiveColor = new Color("FFE57DFF");
-    private static readonly Color InactiveColor = new Color("FFFFFF80");
-    
     public NMapArtistRedoButtonItem()
     {
         Name = "MapArtistRedoButton";
@@ -21,15 +16,15 @@ public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
         
-        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo.png";
+        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo14.png";
         GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo_glow.png";
     }
     
     public override void _Ready()
     {
         base._Ready();
-        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.description");
-        HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-APPLY_BUTTON.title"), locDesc);
+        LocString locDesc = new LocString("static_hover_tips", "MAPARTIST-REDO_BUTTON.description");
+        HoverTip = new HoverTip(new LocString("static_hover_tips", "MAPARTIST-REDO_BUTTON.title"), locDesc);
         
         ConnectSignals();
     }

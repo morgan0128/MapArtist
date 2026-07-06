@@ -6,5 +6,9 @@
   "MAPARTIST-RESET_BUTTON.title": "Reset",
   "MAPARTIST-RESET_BUTTON.description": "Return to default drawing settings",
   "MAPARTIST-BRUSH_WIDTH.title": "Brush Width",
-  "MAPARTIST-BRUSH_WIDTH.description": "Adjust the brush width"
+  "MAPARTIST-BRUSH_WIDTH.description": "Adjust the brush width",
+  "MAPARTIST-UNDO_BUTTON.title": "Undo",
+  "MAPARTIST-UNDO_BUTTON.description": "Undo the last drawing operation",
+  "MAPARTIST-REDO_BUTTON.title": "Redo",
+  "MAPARTIST-REDO_BUTTON.description": "Redo the last undone operation"
 }
