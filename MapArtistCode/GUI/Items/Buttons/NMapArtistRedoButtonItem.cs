@@ -8,8 +8,8 @@ namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 [ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistRedoButtonItem.cs")]
 public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
 {
-    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
+    // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo.png";
+    // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
@@ -21,8 +21,8 @@ public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
         LayoutMode = 2;
         FocusMode = FocusModeEnum.All;
         
-        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
+        ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo.png";
+        GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_redo_glow.png";
     }
     
     public override void _Ready()

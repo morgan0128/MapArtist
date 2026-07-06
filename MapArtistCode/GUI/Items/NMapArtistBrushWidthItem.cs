@@ -11,10 +11,10 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     private NMapArtistBrushWidthButtonItem _widthButton;
     
     private HBoxContainer _adjustContainer = new HBoxContainer();
-    private HSlider _slider = new HSlider();
+    public HSlider _slider = new HSlider();
     private Label _label = new Label();
 
-    private int _brushWidth;
+    public int BrushWidth = Util.DefaultBrushWidth;
 
     public NMapArtistBrushWidthItem() {}
     
@@ -34,7 +34,8 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     {
         Name = "NMapArtistBrushWidthInterface";
         UniqueNameInOwner = true;
-        CustomMinimumSize = new Vector2(185f, 35f);
+        // CustomMinimumSize = new Vector2(185f, 35f);
+        SetHSizeFlags(SizeFlags.ExpandFill);
         
         _widthButton = new NMapArtistBrushWidthButtonItem(mapArtistParent);
         
@@ -56,21 +57,23 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
 
         _label.Name = "MapArtistBrushWidthLabel";
         _label.UniqueNameInOwner = true;
-        _label.CustomMinimumSize = new Vector2(27f, 0f);
-        _label.ClipText = true;
+        _label.CustomMinimumSize = new Vector2(0f, 0f);
+        // _label.SetHSizeFlags(SizeFlags.Fill);
+        _label.ClipText = false;
         _label.FocusMode = FocusModeEnum.None;
         _label.MouseFilter =  MouseFilterEnum.Pass;
         _label.VerticalAlignment = VerticalAlignment.Center;
+        _label.HorizontalAlignment = HorizontalAlignment.Left;
         _label.SetLabelSettings(new LabelSettings());
         _label.GetLabelSettings().FontColor = Colors.Gainsboro;
 
-        _brushWidth = Util.DefaultBrushWidth;
+        BrushWidth = Util.DefaultBrushWidth;
     }
     
     public void ResetWidth()
     {
         _label.Text = Util.DefaultBrushWidth.ToString();
-        _brushWidth = Util.DefaultBrushWidth;
+        BrushWidth = Util.DefaultBrushWidth;
         _slider.Value = Util.DefaultBrushWidth; // in most cases this will override the previous two operations (OnValueChanged)
     }
 
@@ -81,8 +84,8 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
         _adjustContainer.AddChild(_slider);
         _adjustContainer.AddChild(_label);
         
-        _slider.Value = _brushWidth;
-        _label.Text = _brushWidth.ToString();
+        _slider.Value = BrushWidth;
+        _label.Text = BrushWidth.ToString();
         
         _slider.ValueChanged += OnSliderValueChanged; 
         // _slider.Value = BrushWidth; calling OnSliderValueChanged before _Ready() is unsafe
@@ -91,9 +94,9 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     // setting _slider.Value in code or in UI updates _label.Text automatically
     private void OnSliderValueChanged(double value)
     {
-        _brushWidth = (int)value;
-        _label.Text = _brushWidth.ToString();
-        MapArtistController.MapArtistController.Instance.SelectedWidth = _brushWidth;
+        BrushWidth = (int)value;
+        _label.Text = BrushWidth.ToString();
+        MapArtistController.MapArtistController.Instance.SelectedWidth = BrushWidth;
         // if (MapArtistConfig.SynchronizedWidthSlider)
         // {
         //     MapArtistController.MapArtistController.Instance.ApplySettingWidth();

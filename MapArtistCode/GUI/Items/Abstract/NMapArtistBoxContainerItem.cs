@@ -69,6 +69,24 @@ public partial class NMapArtistBoxContainerItem : BoxContainer
 
     }
     
+    // protected Control? FetchFirstItemByType(Type t)
+    // {
+    //     if (ChildItems == null) return null;
+    //     foreach (var ctrl in ChildItems)
+    //     {
+    //         if (ctrl.GetType() == t)
+    //         {
+    //             return ctrl;
+    //         } else if (ctrl.GetType() == typeof(NMapArtistBoxContainerItem) && t != typeof(NMapArtistBoxContainerItem))
+    //         {
+    //             var box = (NMapArtistBoxContainerItem)ctrl;
+    //             box.FetchFirstItemByType(t);
+    //         }
+    //     }
+    //
+    //     return null;
+    // }
+    
 
 
     

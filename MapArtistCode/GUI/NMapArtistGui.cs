@@ -64,26 +64,22 @@ public partial class NMapArtistGui : NMapArtistBoxContainerItem
     {
         if (!AssignedColorPicker()) return;
         FetchColorPickerItem()!.Color = color;
+        MapArtistController.MapArtistController.Instance.SelectedColor = color;
     }
     
-    public void ResetWidthInWidthItem()
-    {
-        var widthItem = FetchFirstBrushWidthItem();
-        widthItem?.ResetWidth();
-    }
+    // public void ResetWidthInWidthItem()
+    // {
+    //     var widthItem = FetchFirstBrushWidthItem();
+    //     if (widthItem == null) return;
+    //     widthItem.ResetWidth();
+    //     MapArtistController.MapArtistController.Instance.SelectedWidth = widthItem.BrushWidth;
+    // }
     
-    private NMapArtistBrushWidthItem? FetchFirstBrushWidthItem()
-    {
-        if (ChildItems == null) return null;
-        foreach (var ctrl in ChildItems)
-        {
-            if (ctrl.GetType() == typeof(NMapArtistBrushWidthItem))
-            {
-                return (NMapArtistBrushWidthItem)ctrl;
-            }
-        }
-
-        return null;
-    }
+    // private NMapArtistBrushWidthItem? FetchFirstBrushWidthItem()
+    // {
+    //     var c = FetchFirstItemByType(typeof(NMapArtistBrushWidthItem));
+    //     if (c == null) return null;
+    //     return (NMapArtistBrushWidthItem)c;
+    // }
     
 }

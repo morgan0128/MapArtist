@@ -167,8 +167,15 @@ public sealed class MapArtistController
         
         MapArtistDictionaries.ClearAll(player);
         _guiContainer.SetColorInColorPicker(player.Character.MapDrawingColor);
+
         
-        _guiContainer.ResetWidthInWidthItem();
+        // TODO:
+        // FIX THIS
+        if (BrushWidthInterface != null)
+        {
+            BrushWidthInterface.BrushWidth = Util.DefaultBrushWidth;
+            BrushWidthInterface._slider.Value = Util.DefaultBrushWidth;
+        }
         CustomMessageWrapper.Send(MapArtistBrushSettingsMessage.Reset());
         
         // test
