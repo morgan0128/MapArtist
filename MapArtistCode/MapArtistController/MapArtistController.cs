@@ -57,7 +57,15 @@ public sealed class MapArtistController
     public void InitializeGui(NMapScreen mapScene)
     {
         _guiContainer = MapArtistGuiDirector.Instance.InitializeMapArtistNodes(mapScene);
-        ResetRunState();
+        // ResetRunState();
+        FetchLocalPlayer();
+        if (_localPlayer != null)
+        {
+            _selectedColor = _localPlayer.Character.MapDrawingColor;
+        }
+
+        _selectedWidth = Util.DefaultBrushWidth;
+        ApplySettings();
         BroadcastCurrentSettings();
         CustomMessageWrapper.Send(new MapArtistBrushSettingsRequestMessage());
     }
