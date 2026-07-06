@@ -198,8 +198,7 @@ public sealed class MapArtistController
         CustomMessageWrapper.Send(new MapArtistBrushSettingsMessage(
             hasColor ? color : player.Character.MapDrawingColor, hasWidth ? width : 4f));
     }
-
-    // test method
+    
     public void LocalDrawingHistoryUndo()
     {
         // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());

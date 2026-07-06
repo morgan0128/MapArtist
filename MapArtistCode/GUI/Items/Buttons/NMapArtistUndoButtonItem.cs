@@ -5,17 +5,17 @@ using MegaCrit.Sts2.Core.Localization;
 
 namespace MapArtist.MapArtistCode.GUI.Items.Buttons;
 
-[ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistRedoButtonItem.cs")]
-public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
+[ScriptPath("res://MapArtistCode/GUI/Items/NMapArtistUndoButtonItem.cs")]
+public partial class NMapArtistUndoButtonItem : NMapArtistButtonItem
 {
     // private static readonly StringName ImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
     // private static readonly StringName GlowImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply_glow.png";
     private static readonly Color ActiveColor = new Color("FFE57DFF");
     private static readonly Color InactiveColor = new Color("FFFFFF80");
     
-    public NMapArtistRedoButtonItem()
+    public NMapArtistUndoButtonItem()
     {
-        Name = "MapArtistRedoButton";
+        Name = "MapArtistUndoButton";
         UniqueNameInOwner = true;
         CustomMinimumSize = new Vector2(35f, 35f);
         LayoutMode = 2;
@@ -39,7 +39,7 @@ public partial class NMapArtistRedoButtonItem : NMapArtistButtonItem
         base.OnPress();
         // test
         // MapArtistController.MapArtistController.Instance.ApplySettings();
-        MapArtistController.MapArtistController.Instance.LocalDrawingHistoryRedo();
+        MapArtistController.MapArtistController.Instance.LocalDrawingHistoryUndo();
     }
     
     protected override void OnFocus()

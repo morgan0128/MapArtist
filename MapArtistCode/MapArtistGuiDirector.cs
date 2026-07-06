@@ -4,6 +4,7 @@ using MapArtist.MapArtistCode.Config;
 using MapArtist.MapArtistCode.GUI;
 using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.GUI.Items.Abstract;
+using MapArtist.MapArtistCode.GUI.Items.Buttons;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using NMapArtistApplyButtonItem = MapArtist.MapArtistCode.GUI.Items.Buttons.NMapArtistApplyButtonItem;
@@ -89,12 +90,16 @@ public class MapArtistGuiDirector
         if (topLeft)
         {
             ConstructGuiRowItemColorPicker();
-            ConstructGuiRowButtons();
+            // ConstructGuiRowButtons();
+            ConstructGuiRowButtons2();
+            ConstructGuiRowButtons1();
             _guiContainer.SetGlobalPosition(new Vector2(12f, 158f));
         }
         else
         {
-            ConstructGuiRowButtons();
+            // ConstructGuiRowButtons();
+            ConstructGuiRowButtons2();
+            ConstructGuiRowButtons1();
             ConstructGuiRowItemColorPicker();
             _guiContainer.SetGlobalPosition(new Vector2(1590f, 717f));
         }
@@ -126,6 +131,49 @@ public class MapArtistGuiDirector
         resetButton.InitializeIconUseDeepCopy(_prototypeIcon);
         container.AddItem(resetButton);
 
+        var brushWidth = new NMapArtistBrushWidthItem(container);
+        container.AddItem(brushWidth);
+        brushWidth.InitializeIconUseDeepCopy(_prototypeIcon);
+        MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
+
+        var undoButton = new NMapArtistUndoButtonItem();
+        undoButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(undoButton);
+        
+        var redoButton = new NMapArtistRedoButtonItem();
+        redoButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(redoButton);
+    }
+    
+    private void ConstructGuiRowButtons1()
+    {
+        var container = new NMapArtistBoxContainerItem();
+        container.Name = "ApplyResetButtonContainer";
+        _guiContainer?.AddItem(container);
+        
+        var applyButton = new NMapArtistApplyButtonItem();
+        applyButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(applyButton);
+        
+        var resetButton = new NMapArtistResetButtonItem();
+        resetButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(resetButton);
+    }
+    
+    private void ConstructGuiRowButtons2()
+    {
+        var container = new NMapArtistBoxContainerItem();
+        container.Name = "ToolsButtonContainer";
+        _guiContainer?.AddItem(container);
+
+        var undoButton = new NMapArtistUndoButtonItem();
+        undoButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(undoButton);
+        
+        var redoButton = new NMapArtistRedoButtonItem();
+        redoButton.InitializeIconUseDeepCopy(_prototypeIcon);
+        container.AddItem(redoButton);
+        
         var brushWidth = new NMapArtistBrushWidthItem(container);
         container.AddItem(brushWidth);
         brushWidth.InitializeIconUseDeepCopy(_prototypeIcon);
