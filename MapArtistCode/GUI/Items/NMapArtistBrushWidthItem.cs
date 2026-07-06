@@ -11,7 +11,7 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
     private NMapArtistBrushWidthButtonItem _widthButton;
     
     private HBoxContainer _adjustContainer = new HBoxContainer();
-    public HSlider _slider = new HSlider();
+    private HSlider _slider = new HSlider();
     private Label _label = new Label();
 
     public int BrushWidth = Util.DefaultBrushWidth;
@@ -70,11 +70,10 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
         BrushWidth = Util.DefaultBrushWidth;
     }
     
+    // Do not call before or during _Ready()
     public void ResetWidth()
     {
-        _label.Text = Util.DefaultBrushWidth.ToString();
-        BrushWidth = Util.DefaultBrushWidth;
-        _slider.Value = Util.DefaultBrushWidth; // in most cases this will override the previous two operations (OnValueChanged)
+        _slider.Value = Util.DefaultBrushWidth;
     }
 
     public override void _Ready()
