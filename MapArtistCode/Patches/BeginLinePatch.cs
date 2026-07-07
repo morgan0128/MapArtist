@@ -3,6 +3,7 @@ using System.Reflection;
 using Godot;
 using HarmonyLib;
 using MapArtist.MapArtistCode.Config;
+using MapArtist.MapArtistCode.DrawingHistory;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 
 namespace MapArtist.MapArtistCode.Patches;

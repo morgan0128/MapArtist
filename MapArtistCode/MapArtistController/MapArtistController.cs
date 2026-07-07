@@ -2,6 +2,7 @@ using BaseLib;
 using BaseLib.Abstracts;
 using Godot;
 using MapArtist.MapArtistCode.Config;
+using MapArtist.MapArtistCode.DrawingHistory;
 using MapArtist.MapArtistCode.GUI.Items;
 using MapArtist.MapArtistCode.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
