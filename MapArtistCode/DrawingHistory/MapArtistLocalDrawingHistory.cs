@@ -1,5 +1,10 @@
+using BaseLib;
+using BaseLib.Abstracts;
 using Godot;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Runs;
+
+// using MapArtist.MapArtistCode.DrawingHistory.MapArtistDrawHistoryUndoMessage;
 
 namespace MapArtist.MapArtistCode.DrawingHistory;
 
@@ -25,17 +30,8 @@ public sealed class MapArtistLocalDrawingHistory
 
     private readonly DrawHistoryData _localDrawData = new DrawHistoryData(null);
     
-    // private readonly MapArtistNetDrawingHistories _netDrawData = new MapArtistNetDrawingHistories();
     private static readonly Dictionary<ulong, DrawHistoryData> NetDrawHistories = new();
-
-    // private bool UndoLocked()
-    // {
-    //     return (_localDrawData.DrawViewport == null || _localDrawData.CachedOperations.Count == 0);
-    // }
-    // private bool RedoLocked()
-    // {
-    //     return (_localDrawData.DrawViewport == null || _localDrawData.CachedUndoneOperations.Count == 0);
-    // }
+    
 
     public void ResetState()
     {
@@ -51,6 +47,7 @@ public sealed class MapArtistLocalDrawingHistory
             QueueFreeAllLines(operation);
         }
         _localDrawData.CachedUndoneOperations.Clear();
+        
         if (NetDrawHistories.Count == 0) return;
         
         // if multiplayer entries
@@ -74,6 +71,7 @@ public sealed class MapArtistLocalDrawingHistory
         NetDrawHistories.Clear();
         netEnumerator.Dispose();
         
+        
     }
     
     // To be called only within BeginLine postfix patch.
@@ -81,8 +79,10 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
+            
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
             NetPlayerOperationDrewOrErased(drawingStatePlayerId, line);
+            
             return;
         }
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
@@ -94,8 +94,11 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
+            
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
             NetPlayerOperationCleared(drawingStatePlayerId, linesToCache);
+            
+            return;
         }
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
         LocalPlayerOperationCleared(linesToCache);
@@ -211,79 +214,118 @@ public sealed class MapArtistLocalDrawingHistory
         }
     }
     
-    private void LocalViewportAddLine(List<Line2D> toAdd)
+    // private void LocalViewportAddLine(List<Line2D> toAdd)
+    // {
+    //     foreach (var line in toAdd)
+    //     {
+    //         ViewportAddLine(line);
+    //     }
+    // }
+    
+    // private void LocalViewportAddLine(Line2D toAdd)
+    // {
+    //     _localDrawData.DrawViewport?.AddChildSafely((Node) toAdd);
+    //     
+    //     // TODO
+    //     // send message to perform same operation to other players
+    //     
+    //
+    //     return;
+    // }
+    
+    private void ViewportAddLine(List<Line2D> toAdd, SubViewport? subViewport = null)
     {
+        // var drawViewport = subViewport ?? _localDrawData.DrawViewport;
+        // if (drawViewport == null) return;
+        
         foreach (var line in toAdd)
         {
-            LocalViewportAddLine(line);
+            ViewportAddLine(line, subViewport);
         }
     }
     
-    private void LocalViewportAddLine(Line2D toAdd)
+    private void ViewportAddLine(Line2D toAdd, SubViewport? subViewport = null)
     {
+        var drawViewport = subViewport ?? _localDrawData.DrawViewport;
+        if (drawViewport == null) return;
         _localDrawData.DrawViewport?.AddChildSafely((Node) toAdd);
         
         // TODO
         // send message to perform same operation to other players
+        
 
         return;
     }
     
-    private void NetViewportAddLine(ulong playerId, List<Line2D> toAdd)
-    {
-        foreach (var line in toAdd)
-        {
-            NetViewportAddLine(playerId, line);
-        }
-    }
-
-    private void NetViewportAddLine(ulong playerId, Line2D toAdd)
-    {
-        NetDrawHistories.TryGetValue(playerId, out var history);
-        if (history == null) return;
-
-        history.DrawViewport?.AddChildSafely((Node)toAdd);
-    }
+    // private void NetViewportAddLine(ulong playerId, List<Line2D> toAdd)
+    // {
+    //     foreach (var line in toAdd)
+    //     {
+    //         NetViewportAddLine(playerId, line);
+    //     }
+    // }
+    //
+    // private void NetViewportAddLine(ulong playerId, Line2D toAdd)
+    // {
+    //     NetDrawHistories.TryGetValue(playerId, out var history);
+    //     if (history == null) return;
+    //
+    //     history.DrawViewport?.AddChildSafely((Node)toAdd);
+    // }
     
-    private void LocalViewportRemoveLine(List<Line2D> toRemove)
+    private void ViewportRemoveLine(List<Line2D> toRemove, SubViewport? subViewport = null)
     {
         foreach (var line in toRemove)
         {
-            LocalViewportRemoveLine(line);
+            ViewportRemoveLine(line, subViewport);
         }
     }
     
-    private void LocalViewportRemoveLine(Line2D toRemove)
+    private void ViewportRemoveLine(Line2D toRemove, SubViewport? subViewport = null)
     {
-        _localDrawData.DrawViewport?.RemoveChildSafely((Node) toRemove);
+
         
         // TODO
         // send message to perform same operation to other players
+        // if (_localDrawData.DrawViewport == null) return;
+        // CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage(_localDrawData.DrawViewport, toRemove));
+        // CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage());
+
+        var drawViewport = subViewport ?? _localDrawData.DrawViewport;
+        if (drawViewport == null) return;
+        
+        
+        drawViewport.RemoveChildSafely((Node) toRemove);
 
         return;
     }
 
-    private void NetViewportRemoveLine(ulong playerId, List<Line2D> toRemove)
-    {
-        foreach (var line in toRemove)
-        {
-            NetViewportRemoveLine(playerId, line);
-        }
-    }
-
-    private void NetViewportRemoveLine(ulong playerId, Line2D toRemove)
-    {
-        NetDrawHistories.TryGetValue(playerId, out var history);
-        if (history == null) return;
-        
-        history.DrawViewport?.RemoveChildSafely((Node) toRemove);
-    }
+    // private void NetViewportRemoveLine(ulong playerId, List<Line2D> toRemove)
+    // {
+    //     foreach (var line in toRemove)
+    //     {
+    //         NetViewportRemoveLine(playerId, line);
+    //     }
+    // }
+    //
+    // private void NetViewportRemoveLine(ulong playerId, Line2D toRemove)
+    // {
+    //     NetDrawHistories.TryGetValue(playerId, out var history);
+    //     if (history == null) return;
+    //     
+    //     history.DrawViewport?.RemoveChildSafely((Node) toRemove);
+    // }
 
     // Do not enter parameter for local
     public void Undo(ulong? playerId = null)
     {
-        DrawHistoryData? history = _localDrawData;
-        if (playerId != null)
+        DrawHistoryData? history;
+        if (playerId == null || playerId == RunManager.Instance.NetService.NetId)
+        {
+            CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage());
+            history = _localDrawData;
+        }
+        else
         {
             var id = (ulong)playerId;
             if (!NetDrawHistories.TryGetValue(id, out history)) return;
@@ -304,12 +346,12 @@ public sealed class MapArtistLocalDrawingHistory
             */
             if (operation.Line != null)
             {
-                LocalViewportAddLine(operation.Line);
+                ViewportAddLine(operation.Line, history.DrawViewport);
                 var redrawOperation = new DrawHistoryData.CachedDrawingOperation(false, operation.Line);
                 history.CachedOperations.Push(redrawOperation);
             } else if (operation.LineSet != null) 
             {
-                LocalViewportAddLine(operation.LineSet);
+                ViewportAddLine(operation.LineSet, history.DrawViewport);
                 for (var i = 0; i < operation.LineSet.Count; i++)
                 {
                     var redrawOperation = new DrawHistoryData.CachedDrawingOperation(false, operation.LineSet[i]);
@@ -323,7 +365,7 @@ public sealed class MapArtistLocalDrawingHistory
         {
             if (operation.Line != null)
             {
-                LocalViewportRemoveLine(operation.Line);
+                ViewportRemoveLine(operation.Line, history.DrawViewport);
                 history.CachedUndoneOperations.Push(operation);
             }
         }
@@ -332,8 +374,13 @@ public sealed class MapArtistLocalDrawingHistory
     // Do not enter parameter for local
     public void Redo(ulong? playerId = null)
     {
-        DrawHistoryData? history = _localDrawData;
-        if (playerId != null)
+        DrawHistoryData? history;
+        if (playerId == null || playerId == RunManager.Instance.NetService.NetId)
+        {
+            CustomMessageWrapper.Send(new MapArtistDrawHistoryRedoMessage());
+            history = _localDrawData;
+        }
+        else
         {
             var id = (ulong)playerId;
             if (!NetDrawHistories.TryGetValue(id, out history)) return;
@@ -349,12 +396,12 @@ public sealed class MapArtistLocalDrawingHistory
             var lineSet = new List<Line2D>();
             if (operation.Line != null)
             {
-                LocalViewportRemoveLine(operation.Line);
+                ViewportRemoveLine(operation.Line, history.DrawViewport);
                 lineSet.Add(operation.Line);
             }
             else if (operation.LineSet != null)
             {
-                LocalViewportRemoveLine(operation.LineSet);
+                ViewportRemoveLine(operation.LineSet, history.DrawViewport);
                 lineSet = operation.LineSet;
             }
 
@@ -363,7 +410,7 @@ public sealed class MapArtistLocalDrawingHistory
         else
         {
             if (operation.Line == null) return;
-            LocalViewportAddLine(operation.Line);
+            ViewportAddLine(operation.Line, history.DrawViewport);
             history.CachedOperations.Push(operation);
         }
     }
