@@ -247,14 +247,7 @@ public sealed class MapArtistLocalDrawingHistory
     private void ViewportAddLine(Line2D toAdd, SubViewport? subViewport = null)
     {
         var drawViewport = subViewport ?? _localDrawData.DrawViewport;
-        if (drawViewport == null) return;
-        _localDrawData.DrawViewport?.AddChildSafely((Node) toAdd);
-        
-        // TODO
-        // send message to perform same operation to other players
-        
-
-        return;
+        drawViewport?.AddChildSafely((Node) toAdd);
     }
     
     // private void NetViewportAddLine(ulong playerId, List<Line2D> toAdd)
@@ -283,21 +276,8 @@ public sealed class MapArtistLocalDrawingHistory
     
     private void ViewportRemoveLine(Line2D toRemove, SubViewport? subViewport = null)
     {
-
-        
-        // TODO
-        // send message to perform same operation to other players
-        // if (_localDrawData.DrawViewport == null) return;
-        // CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage(_localDrawData.DrawViewport, toRemove));
-        // CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage());
-
         var drawViewport = subViewport ?? _localDrawData.DrawViewport;
-        if (drawViewport == null) return;
-        
-        
-        drawViewport.RemoveChildSafely((Node) toRemove);
-
-        return;
+        drawViewport?.RemoveChildSafely((Node) toRemove);
     }
 
     // private void NetViewportRemoveLine(ulong playerId, List<Line2D> toRemove)
@@ -328,7 +308,8 @@ public sealed class MapArtistLocalDrawingHistory
         else
         {
             var id = (ulong)playerId;
-            if (!NetDrawHistories.TryGetValue(id, out history)) return;
+            NetDrawHistories.TryGetValue(id, out history);
+            if (history == null) return;
         }
         
         if (history.UndoLocked()) return;
@@ -383,7 +364,8 @@ public sealed class MapArtistLocalDrawingHistory
         else
         {
             var id = (ulong)playerId;
-            if (!NetDrawHistories.TryGetValue(id, out history)) return;
+            NetDrawHistories.TryGetValue(id, out history);
+            if (history == null) return;
         }
         
         if (history.RedoLocked()) return;
