@@ -31,6 +31,8 @@ public sealed class MapArtistLocalDrawingHistory
     private readonly DrawHistoryData _localDrawData = new DrawHistoryData(null);
     
     private static readonly Dictionary<ulong, DrawHistoryData> NetDrawHistories = new();
+
+    private readonly bool _multiplayerFunctionalityDisabled = false;
     
 
     public void ResetState()
@@ -79,6 +81,7 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
+            if (_multiplayerFunctionalityDisabled) return;
             
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
             NetPlayerOperationDrewOrErased(drawingStatePlayerId, line);
@@ -94,14 +97,16 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
-            
+            if (_multiplayerFunctionalityDisabled) return;
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
-            NetPlayerOperationCleared(drawingStatePlayerId, linesToCache);
-            
-            return;
+            // NetPlayerOperationCleared(drawingStatePlayerId, linesToCache);
+            //
+            // return;
         }
         CheckUpdateLocalViewport(drawingStatePlayerId, drawingStateDrawViewport);
-        LocalPlayerOperationCleared(linesToCache);
+        // LocalPlayerOperationCleared(linesToCache);
+
+        PlayerOperationCleared(drawingStatePlayerId, linesToCache);
     }
     
     private void LocalPlayerOperationDrewOrErased(Line2D line)
@@ -112,53 +117,26 @@ public sealed class MapArtistLocalDrawingHistory
     
     private void NetPlayerOperationDrewOrErased(ulong playerId, Line2D line)
     {
+        if (_multiplayerFunctionalityDisabled) return;
         NetDrawHistories.TryGetValue(playerId, out var history);
         history?.CachedUndoneOperations.Clear();
         history?.CachedOperations.Push(new DrawHistoryData.CachedDrawingOperation(false, line));
     }
     
     // Reusable, with caution; consider parameter calledFromRedo 
-    private void LocalPlayerOperationCleared(List<Line2D> linesToCache, bool calledFromRedo = false)
+    private void PlayerOperationCleared(ulong playerId, List<Line2D> linesToCache, bool calledFromRedo = false)
     {
-        if (linesToCache.Count == 0) return; // ; ignore this operation
-        if (!calledFromRedo)
+        DrawHistoryData? history;
+        if (playerId == Util.GetLocalPlayerId())
         {
-            _localDrawData.CachedUndoneOperations.Clear();
-        }
-        
-        // We recover/rebuild cleared (i.e., deleted by ClearAllLinesForPlayer) draw history through the saved data in the cached clear operations
-        var cachedOperationsList = new List<DrawHistoryData.CachedDrawingOperation>(_localDrawData.CachedOperations.Count);
-        while (_localDrawData.CachedOperations.Count > 0)
-        {
-            cachedOperationsList.Insert(0, _localDrawData.CachedOperations.Pop());
-        }
-        for (var i = 0; i < cachedOperationsList.Count; i++)
-        {
-            if (cachedOperationsList[i].IsClearOperation)
-            {
-                _localDrawData.CachedOperations.Push(cachedOperationsList[i]);
-            }
-        }
-        
-        if (linesToCache.Count == 1)
-        {
-            // for sake of memory (micro)management
-            var line = linesToCache[0];
-            var operation = new DrawHistoryData.CachedDrawingOperation(true, line);
-            _localDrawData.CachedOperations.Push(operation);
+            history = _localDrawData;
         }
         else
         {
-            var operation = new DrawHistoryData.CachedDrawingOperation(true, null, linesToCache);
-            _localDrawData.CachedOperations.Push(operation);
+            if (_multiplayerFunctionalityDisabled) return;
+            NetDrawHistories.TryGetValue(playerId, out history);
+            if (history == null) return;
         }
-    }
-    
-    // Reusable, with caution; consider parameter calledFromRedo 
-    private void NetPlayerOperationCleared(ulong playerId, List<Line2D> linesToCache, bool calledFromRedo = false)
-    {
-        NetDrawHistories.TryGetValue(playerId, out var history);
-        if (history == null) return;
         
         if (linesToCache.Count == 0) return; // ; ignore this operation
         if (!calledFromRedo)
@@ -194,6 +172,46 @@ public sealed class MapArtistLocalDrawingHistory
         }
     }
     
+    // // Reusable, with caution; consider parameter calledFromRedo 
+    // private void NetPlayerOperationCleared(ulong playerId, List<Line2D> linesToCache, bool calledFromRedo = false)
+    // {
+    //     NetDrawHistories.TryGetValue(playerId, out var history);
+    //     if (history == null) return;
+    //     
+    //     if (linesToCache.Count == 0) return; // ; ignore this operation
+    //     if (!calledFromRedo)
+    //     {
+    //         history.CachedUndoneOperations.Clear();
+    //     }
+    //     
+    //     // We recover/rebuild cleared (i.e., deleted by ClearAllLinesForPlayer) draw history through the saved data in the cached clear operations
+    //     var cachedOperationsList = new List<DrawHistoryData.CachedDrawingOperation>(history.CachedOperations.Count);
+    //     while (history.CachedOperations.Count > 0)
+    //     {
+    //         cachedOperationsList.Insert(0, history.CachedOperations.Pop());
+    //     }
+    //     for (var i = 0; i < cachedOperationsList.Count; i++)
+    //     {
+    //         if (cachedOperationsList[i].IsClearOperation)
+    //         {
+    //             history.CachedOperations.Push(cachedOperationsList[i]);
+    //         }
+    //     }
+    //     
+    //     if (linesToCache.Count == 1)
+    //     {
+    //         // for sake of memory (micro)management
+    //         var line = linesToCache[0];
+    //         var operation = new DrawHistoryData.CachedDrawingOperation(true, line);
+    //         history.CachedOperations.Push(operation);
+    //     }
+    //     else
+    //     {
+    //         var operation = new DrawHistoryData.CachedDrawingOperation(true, null, linesToCache);
+    //         history.CachedOperations.Push(operation);
+    //     }
+    // }
+    
     private void CheckUpdateLocalViewport(ulong playerId, SubViewport svp)
     {
         if (playerId != Util.GetLocalPlayerId()) return;
@@ -205,6 +223,7 @@ public sealed class MapArtistLocalDrawingHistory
 
     private void CheckUpdateNetHistories(ulong playerId, SubViewport svp)
     {
+        if (_multiplayerFunctionalityDisabled) return;
         if (!NetDrawHistories.TryGetValue(playerId, out var history))
         {
             NetDrawHistories.Add(playerId, new DrawHistoryData(svp));
@@ -307,6 +326,7 @@ public sealed class MapArtistLocalDrawingHistory
         }
         else
         {
+            if (_multiplayerFunctionalityDisabled) return;
             var id = (ulong)playerId;
             NetDrawHistories.TryGetValue(id, out history);
             if (history == null) return;
@@ -363,6 +383,7 @@ public sealed class MapArtistLocalDrawingHistory
         }
         else
         {
+            if (_multiplayerFunctionalityDisabled) return;
             var id = (ulong)playerId;
             NetDrawHistories.TryGetValue(id, out history);
             if (history == null) return;
@@ -387,7 +408,8 @@ public sealed class MapArtistLocalDrawingHistory
                 lineSet = operation.LineSet;
             }
 
-            LocalPlayerOperationCleared(lineSet, true);
+            var id = playerId ?? Util.GetLocalPlayerId();
+            PlayerOperationCleared(id, lineSet, true);
         }
         else
         {
