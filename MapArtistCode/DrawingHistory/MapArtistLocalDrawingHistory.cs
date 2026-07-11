@@ -1,6 +1,7 @@
 using BaseLib;
 using BaseLib.Abstracts;
 using Godot;
+using MapArtist.MapArtistCode.Config;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -15,25 +16,9 @@ public sealed class MapArtistLocalDrawingHistory
     private MapArtistLocalDrawingHistory() {}
     public static MapArtistLocalDrawingHistory Instance { get; } = new MapArtistLocalDrawingHistory();
     
-    // private readonly struct CachedDrawingOperation(bool isClearOperation, Line2D? line = null, List<Line2D>? set = null)
-    // {
-    //     // proper usage: between Line and LineSet, one and only one should be null
-    //     public Line2D? Line => IsValid ? line : null;
-    //     public List<Line2D>? LineSet => IsValid ? set : null;
-    //     public bool IsClearOperation => isClearOperation;
-    //     public bool IsValid => !((line == null && (set == null || set.Count == 0)) || (line != null && set != null) || (!isClearOperation && (line == null || set != null)));
-    // }   
-    //
-    // private SubViewport? _localDrawData.LocalDrawViewport;
-    // private readonly Stack<CachedDrawingOperation> _localDrawData.CachedOperations = new Stack<CachedDrawingOperation>();
-    // private readonly Stack<CachedDrawingOperation> _localDrawData.CachedUndoneOperations = new Stack<CachedDrawingOperation>();
-
     private readonly DrawHistoryData _localDrawData = new DrawHistoryData(null);
     
     private static readonly Dictionary<ulong, DrawHistoryData> NetDrawHistories = new();
-
-    private readonly bool _multiplayerFunctionalityDisabled = false;
-    
 
     public void ResetState()
     {
@@ -81,7 +66,6 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
-            if (_multiplayerFunctionalityDisabled) return;
             
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
             NetPlayerOperationDrewOrErased(drawingStatePlayerId, line);
@@ -97,7 +81,6 @@ public sealed class MapArtistLocalDrawingHistory
     {
         if (drawingStatePlayerId != Util.GetLocalPlayerId())
         {
-            if (_multiplayerFunctionalityDisabled) return;
             CheckUpdateNetHistories(drawingStatePlayerId, drawingStateDrawViewport);
             // NetPlayerOperationCleared(drawingStatePlayerId, linesToCache);
             //
@@ -117,7 +100,6 @@ public sealed class MapArtistLocalDrawingHistory
     
     private void NetPlayerOperationDrewOrErased(ulong playerId, Line2D line)
     {
-        if (_multiplayerFunctionalityDisabled) return;
         NetDrawHistories.TryGetValue(playerId, out var history);
         history?.CachedUndoneOperations.Clear();
         history?.CachedOperations.Push(new DrawHistoryData.CachedDrawingOperation(false, line));
@@ -133,7 +115,6 @@ public sealed class MapArtistLocalDrawingHistory
         }
         else
         {
-            if (_multiplayerFunctionalityDisabled) return;
             NetDrawHistories.TryGetValue(playerId, out history);
             if (history == null) return;
         }
@@ -223,7 +204,6 @@ public sealed class MapArtistLocalDrawingHistory
 
     private void CheckUpdateNetHistories(ulong playerId, SubViewport svp)
     {
-        if (_multiplayerFunctionalityDisabled) return;
         if (!NetDrawHistories.TryGetValue(playerId, out var history))
         {
             NetDrawHistories.Add(playerId, new DrawHistoryData(svp));
@@ -326,7 +306,6 @@ public sealed class MapArtistLocalDrawingHistory
         }
         else
         {
-            if (_multiplayerFunctionalityDisabled) return;
             var id = (ulong)playerId;
             NetDrawHistories.TryGetValue(id, out history);
             if (history == null) return;
@@ -383,7 +362,6 @@ public sealed class MapArtistLocalDrawingHistory
         }
         else
         {
-            if (_multiplayerFunctionalityDisabled) return;
             var id = (ulong)playerId;
             NetDrawHistories.TryGetValue(id, out history);
             if (history == null) return;
