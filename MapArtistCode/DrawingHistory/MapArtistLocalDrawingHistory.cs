@@ -2,7 +2,9 @@ using BaseLib;
 using BaseLib.Abstracts;
 using Godot;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves.MapDrawing;
 
 // using MapArtist.MapArtistCode.DrawingHistory.MapArtistDrawHistoryUndoMessage;
 
@@ -14,6 +16,8 @@ public sealed class MapArtistLocalDrawingHistory
     static MapArtistLocalDrawingHistory() {}
     private MapArtistLocalDrawingHistory() {}
     public static MapArtistLocalDrawingHistory Instance { get; } = new MapArtistLocalDrawingHistory();
+
+    public NMapDrawings? MapDrawings;
     
     // private readonly struct CachedDrawingOperation(bool isClearOperation, Line2D? line = null, List<Line2D>? set = null)
     // {
@@ -315,25 +319,37 @@ public sealed class MapArtistLocalDrawingHistory
     //     history.DrawViewport?.RemoveChildSafely((Node) toRemove);
     // }
 
-    // Do not enter parameter for local
-    public void Undo(ulong? playerId = null)
+    public void RemoveRemoteLine(ulong playerId, SerializableMapDrawingLine drawingLine)
     {
-        DrawHistoryData? history;
-        if (playerId == null || playerId == RunManager.Instance.NetService.NetId)
+        NetDrawHistories.TryGetValue(playerId, out var data);
+        if (data == null) return;
+        var drawingViewport = data.DrawViewport;
+
+        // var serializedPoints = drawingLine.mapPoints;
+        var serializedPoints = new List<Vector2>();
+        foreach (var line in drawingLine.mapPoints)
         {
-            CustomMessageWrapper.Send(new MapArtistDrawHistoryUndoMessage());
-            history = _localDrawData;
-        }
-        else
-        {
-            if (_multiplayerFunctionalityDisabled) return;
-            var id = (ulong)playerId;
-            NetDrawHistories.TryGetValue(id, out history);
-            if (history == null) return;
+            serializedPoints.Add(FromNetPosition(line));
         }
         
-        if (history.UndoLocked()) return;
-        var operation = history.CachedOperations.Pop();
+        var viewportLines = drawingViewport.GetChildren().OfType<Line2D>();
+
+        foreach (var line in viewportLines)
+        {
+            var pointsList = line.Points.ToList();
+
+            if (pointsList == serializedPoints)
+            {
+                ViewportRemoveLine(line, drawingViewport);
+            }
+        }
+    }
+
+    // Do not enter parameter for local
+    public void Undo()
+    {
+        if (_localDrawData.UndoLocked()) return;
+        var operation = _localDrawData.CachedOperations.Pop();
         if (!operation.IsValid) return;
         
         if (operation.IsClearOperation)
@@ -347,50 +363,62 @@ public sealed class MapArtistLocalDrawingHistory
             */
             if (operation.Line != null)
             {
-                ViewportAddLine(operation.Line, history.DrawViewport);
+                ViewportAddLine(operation.Line, _localDrawData.DrawViewport);
                 var redrawOperation = new DrawHistoryData.CachedDrawingOperation(false, operation.Line);
-                history.CachedOperations.Push(redrawOperation);
+                _localDrawData.CachedOperations.Push(redrawOperation);
             } else if (operation.LineSet != null) 
             {
-                ViewportAddLine(operation.LineSet, history.DrawViewport);
+                ViewportAddLine(operation.LineSet, _localDrawData.DrawViewport);
                 for (var i = 0; i < operation.LineSet.Count; i++)
                 {
                     var redrawOperation = new DrawHistoryData.CachedDrawingOperation(false, operation.LineSet[i]);
-                    history.CachedOperations.Push(redrawOperation);
+                    _localDrawData.CachedOperations.Push(redrawOperation);
                 }
             }
             
-            history.CachedUndoneOperations.Push(operation);
+            _localDrawData.CachedUndoneOperations.Push(operation);
         }
         else
         {
             if (operation.Line != null)
             {
-                ViewportRemoveLine(operation.Line, history.DrawViewport);
-                history.CachedUndoneOperations.Push(operation);
+                var serializedLine = new SerializableMapDrawingLine
+                {
+                    // mapPoints = operation.Line.Points.ToList()
+                    mapPoints = new List<Vector2>()
+                };
+                serializedLine.isEraser = false;
+                foreach (Vector2 point in operation.Line.Points)
+                    serializedLine.mapPoints.Add(this.ToNetPosition(point));
+                CustomMessageWrapper.Send(new MapArtistDrawHistoryRemoveLineMessage(serializedLine));
+
+                ViewportRemoveLine(operation.Line, _localDrawData.DrawViewport);
+                _localDrawData.CachedUndoneOperations.Push(operation);
             }
         }
+    }
+    
+    private Vector2 ToNetPosition(Vector2 pos)
+    {
+        if (MapDrawings == null) return pos;
+        pos.X -= MapDrawings.Size.X * 0.5f;
+        pos /= new Vector2(960f, MapDrawings.Size.Y);
+        return pos;
+    }
+    
+    private Vector2 FromNetPosition(Vector2 pos)
+    {
+        if (MapDrawings == null) return pos;
+        pos *= new Vector2(960f, MapDrawings.Size.Y);
+        pos.X += MapDrawings.Size.X * 0.5f;
+        return pos;
     }
 
     // Do not enter parameter for local
     public void Redo(ulong? playerId = null)
     {
-        DrawHistoryData? history;
-        if (playerId == null || playerId == RunManager.Instance.NetService.NetId)
-        {
-            CustomMessageWrapper.Send(new MapArtistDrawHistoryRedoMessage());
-            history = _localDrawData;
-        }
-        else
-        {
-            if (_multiplayerFunctionalityDisabled) return;
-            var id = (ulong)playerId;
-            NetDrawHistories.TryGetValue(id, out history);
-            if (history == null) return;
-        }
-        
-        if (history.RedoLocked()) return;
-        var operation = history.CachedUndoneOperations.Pop();
+        if (_localDrawData.RedoLocked()) return;
+        var operation = _localDrawData.CachedUndoneOperations.Pop();
         if (!operation.IsValid) return;
         
         if (operation.IsClearOperation)
@@ -399,12 +427,12 @@ public sealed class MapArtistLocalDrawingHistory
             var lineSet = new List<Line2D>();
             if (operation.Line != null)
             {
-                ViewportRemoveLine(operation.Line, history.DrawViewport);
+                ViewportRemoveLine(operation.Line, _localDrawData.DrawViewport);
                 lineSet.Add(operation.Line);
             }
             else if (operation.LineSet != null)
             {
-                ViewportRemoveLine(operation.LineSet, history.DrawViewport);
+                ViewportRemoveLine(operation.LineSet, _localDrawData.DrawViewport);
                 lineSet = operation.LineSet;
             }
 
@@ -414,8 +442,8 @@ public sealed class MapArtistLocalDrawingHistory
         else
         {
             if (operation.Line == null) return;
-            ViewportAddLine(operation.Line, history.DrawViewport);
-            history.CachedOperations.Push(operation);
+            ViewportAddLine(operation.Line, _localDrawData.DrawViewport);
+            _localDrawData.CachedOperations.Push(operation);
         }
     }
 

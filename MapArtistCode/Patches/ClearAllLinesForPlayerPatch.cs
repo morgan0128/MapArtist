@@ -12,7 +12,7 @@ namespace MapArtist.MapArtistCode.Patches;
 public class ClearAllLinesForPlayerPatch
 {
     // Patch for preserving player's cleared lines in their respective MapArtistLocalDrawingHistory
-    private static void Prefix(object[] __args)
+    private static void Prefix(object[] __args, NMapDrawings __instance)
     {
         var outerType = typeof(NMapDrawings);
         var nestedTypeDrawingState = outerType.GetNestedType("DrawingState", BindingFlags.NonPublic);
@@ -30,7 +30,8 @@ public class ClearAllLinesForPlayerPatch
         {
             linesSaved.Add((Line2D)line.Duplicate());
         }
-        
+
+        MapArtistLocalDrawingHistory.Instance.MapDrawings = __instance;
         MapArtistLocalDrawingHistory.Instance.PatchNotifyClearAllLinesForPlayer(id, dvp, linesSaved);
     }
     
