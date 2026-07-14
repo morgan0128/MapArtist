@@ -25,12 +25,6 @@ public class MapArtistGuiDirector
     
     // An existing Icon pulled from the Map Scene. Make new icons by deep copying then modifying Texture.
     private TextureRect? _prototypeIcon;
-
-    // Used in this class for the initially rendered states of the MapArtist button icons
-    // private static readonly StringName ApplyImagePath = "res://MapArtist/Images/CustomIcons/mapartist_apply.png";
-    // private static readonly StringName ResetImagePath = "res://MapArtist/Images/CustomIcons/mapartist_reset.png";
-    // private static readonly StringName WidthImagePath = "res://MapArtist/Images/CustomIcons/mapartist_width.png";
-    // private static readonly StringName LogoImagePath = "res://MapArtist/Images/CustomIcons/mapartist_logo.png";
     
     // The button added to the existing DrawingTools/HBoxContainer to toggle display of the MapArtist GUI
     private NMapArtistGuiButtonItem? _guiDisplayButton;
@@ -130,6 +124,10 @@ public class MapArtistGuiDirector
         container.SetHSizeFlags(Control.SizeFlags.Fill);
         container.Name = "BrushPropertyButtonContainer";
         _guiContainer?.AddItem(container);
+        
+        var offsetBoxL = new NMapArtistBoxContainerItem();
+        offsetBoxL.CustomMinimumSize = new Vector2(10.0f, 0.0f);
+        container.AddItem(offsetBoxL);
 
         if (!MapArtistConfig.SynchronizedColorPicker || !MapArtistConfig.SynchronizedWidthSlider)
         {
@@ -137,6 +135,12 @@ public class MapArtistGuiDirector
             applyButton.InitializeIconUseDeepCopy(_prototypeIcon);
             container.AddItem(applyButton);
         }
+        // else
+        // {
+        //     var offsetBoxL = new NMapArtistBoxContainerItem();
+        //     offsetBoxL.CustomMinimumSize = new Vector2(10.0f, 0.0f);
+        //     container.AddItem(offsetBoxL);
+        // }
         
         var resetButton = new NMapArtistResetButtonItem();
         resetButton.InitializeIconUseDeepCopy(_prototypeIcon);
@@ -154,6 +158,10 @@ public class MapArtistGuiDirector
         container.AddItem(brushWidth);
         brushWidth.InitializeIconUseDeepCopy(_prototypeIcon);
         MapArtistController.MapArtistController.Instance.BrushWidthInterface = brushWidth;
+        
+        var offsetBoxR = new NMapArtistBoxContainerItem();
+        offsetBoxR.CustomMinimumSize = new Vector2(15.0f, 0.0f);
+        container.AddItem(offsetBoxR);
     }
     
     private void ConstructGuiButtonRowApplyReset()

@@ -203,13 +203,13 @@ public sealed class MapArtistController
     public void LocalDrawingHistoryUndo()
     {
         // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
-        MapArtistLocalDrawingHistory.Instance.Undo();
+        MapArtistDrawingHistory.Instance.Undo();
     }
     
     public void LocalDrawingHistoryRedo()
     {
         // _tempViewport?.RemoveChildSafely(_tempViewport.GetChildren().Last());
-        MapArtistLocalDrawingHistory.Instance.Redo();
+        MapArtistDrawingHistory.Instance.Redo();
     }
 
     public void TemporaryUpdateViewport(SubViewport subViewport)

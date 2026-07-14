@@ -20,7 +20,6 @@ public partial class NColorPickerItem : ColorPicker
         DeferredMode = true;
         
         InitRestrictiveDefaultSettings();
-        // SamplerVisible = MapArtistConfig.ColorSamplerTool;
     }
 
     // For a cleaner gui with fewer levers. Allow this to be toggleable in mod config, but set this as the default.

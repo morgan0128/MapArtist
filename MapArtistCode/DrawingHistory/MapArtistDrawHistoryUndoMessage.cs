@@ -12,16 +12,6 @@ public sealed class MapArtistDrawHistoryUndoMessage : ICustomMessage
 {
     public bool ShouldBroadcast => true;
 
-    // public SubViewport? DrawViewport;
-    //
-    // public Line2D? Line;
-
-    // public MapArtistDrawHistoryUndoMessage(SubViewport drawViewport, Line2D line)
-    // {
-    //     DrawViewport = drawViewport;
-    //     Line = line;
-    // }
-
     public MapArtistDrawHistoryUndoMessage()
     {
     }
@@ -42,11 +32,9 @@ public sealed class MapArtistDrawHistoryUndoMessage : ICustomMessage
 
     public void HandleMessage(ulong playerId)
     {
-        BaseLibMain.Logger.Info("Received message.\n");
-        // BaseLibMain.Logger.Info("Message has null DrawViewport? " + (DrawViewport == null) + "\n");
-        // DrawViewport?.RemoveChildSafely(Line);
+        // BaseLibMain.Logger.Info("Received message.\n");
         
-        MapArtistLocalDrawingHistory.Instance.Undo(playerId);
+        MapArtistDrawingHistory.Instance.Undo(playerId);
         
     }
 

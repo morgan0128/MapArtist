@@ -50,7 +50,7 @@ public class BeginLinePatch
 
         var id = (ulong)playerId; // explicit conversion in C#; no data lost
         
-        MapArtistLocalDrawingHistory.Instance.PatchNotifyBeginLine(id, dvp, line);
+        MapArtistDrawingHistory.Instance.PatchNotifyBeginLine(id, dvp, line);
         // var dvp = (SubViewport)AccessTools.Field(nestedTypeDrawingState, "drawViewport").GetValue(state);
         // MapArtistController.MapArtistController.Instance.TemporaryUpdateViewport(dvp);
     }

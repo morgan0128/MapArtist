@@ -90,10 +90,6 @@ public partial class NMapArtistBrushWidthItem : NMapArtistBoxContainerItem
         BrushWidth = (int)value;
         _label.Text = BrushWidth.ToString();
         MapArtistController.MapArtistController.Instance.SelectedWidth = BrushWidth;
-        // if (MapArtistConfig.SynchronizedWidthSlider)
-        // {
-        //     MapArtistController.MapArtistController.Instance.ApplySettingWidth();
-        // }
     }
 
     public void ToggleAdjustVisibility()

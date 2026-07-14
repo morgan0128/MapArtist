@@ -32,8 +32,6 @@ public partial class NMapArtistUndoButtonItem : NMapArtistButtonItem
     protected override void OnPress()
     {
         base.OnPress();
-        // test
-        // MapArtistController.MapArtistController.Instance.ApplySettings();
         MapArtistController.MapArtistController.Instance.LocalDrawingHistoryUndo();
     }
     

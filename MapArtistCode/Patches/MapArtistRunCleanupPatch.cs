@@ -10,6 +10,6 @@ public static class MapArtistRunCleanupPatch
     private static void Postfix()
     {
         MapArtistController.MapArtistController.Instance.ResetRunState();
-        MapArtistLocalDrawingHistory.Instance.ResetState();
+        MapArtistDrawingHistory.Instance.ResetState();
     }
 }
